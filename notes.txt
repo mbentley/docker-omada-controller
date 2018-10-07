@@ -1,0 +1,35 @@
+DEST_DIR=/opt/tplink
+DEST_FOLDER=EAPController
+INSTALLDIR=${DEST_DIR}/${DEST_FOLDER}
+DATA_DIR="${INSTALLDIR}/data"
+LINK=/etc/init.d/tpeap
+LINK_CMD=/usr/bin/tpeap
+
+BACKUP_DIR=${INSTALLDIR}/../eap_db_backup
+DB_FILE_NAME=eap.db.tar.gz
+MAP_FILE_NAME=eap.map.tar.gz
+
+
+-java-home ${JRE_HOME}
+
+${JSVC} ${JSVC_OPTS} ${MAIN_CLASS} start
+
+JSVC_OPTS
+ -pidfile ${PID_FILE} \
+ -home ${JRE_HOME} \
+ -cp /usr/share/java/commons-daemon.jar:${OMADA_HOME}/lib/* \
+ -outfile ${LOG_DIR}/startup.log \
+ -errfile ${LOG_DIR}/startup.log \
+ -user ${OMADA_USER} \
+ -procname ${NAME} \
+ -showversion \
+ ${JAVA_OPTS}"
+ 
+ 
+OMADA_HOME="/opt/tplink/EAPController" 
+JRE_HOME="/opt/tplink/EAPController/jre"
+JAVA_TOOL="/opt/tplink/EAPController/jre/bin/java"
+JAVA_OPTS="-server -Xms128m -Xmx1024m -XX:MaxHeapFreeRatio=60 -XX:MinHeapFreeRatio=30  -XX:+HeapDumpOnOutOfMemoryError -Deap.home=${OMADA_HOME}"
+MAIN_CLASS="com.tp_link.eap.start.EapLinuxMain"
+
+/opt/tplink/EAPController/jre/bin/java -server -Xms128m -Xmx1024m -XX:MaxHeapFreeRatio=60 -XX:MinHeapFreeRatio=30  -XX:+HeapDumpOnOutOfMemoryError -Deap.home=/opt/tplink/EAPController com.tp_link.eap.start.EapLinuxMain
