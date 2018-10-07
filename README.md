@@ -12,10 +12,8 @@ Example usage:
 docker run -d --name omada-controller \
   -p 8088:8088 \
   -p 8043:8043 \
-  -v omada-data-db:/opt/tplink/EAPController/data/db \
-  -v omada-data-map:/opt/tplink/EAPController/data/map \
-  -v omada-data-portal:/opt/tplink/EAPController/data/portal \
-  -v omada-data-work:/opt/tplink/EAPController/work \
+  -v omada-data:/opt/tplink/EAPController/data \
+  -v omada-work:/opt/tplink/EAPController/work \
   -v omada-logs:/opt/tplink/EAPController/logs \
   mbentley/omada-controller
 ```
