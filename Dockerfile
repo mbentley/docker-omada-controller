@@ -8,11 +8,12 @@ RUN apt-get update &&\
 
 # install omada controller (instructions taken from install.sh); then create a user & group and set the appropriate file system permissions
 RUN cd /tmp &&\
-  wget https://static.tp-link.com/2018/201811/20181108/Omada_Controller_v3.0.5_linux_x64.tar.gz.zip &&\
-  unzip Omada_Controller_v3.0.5_linux_x64.tar.gz.zip &&\
-  rm Omada_Controller_v3.0.5_linux_x64.tar.gz.zip &&\
-  tar zxvf Omada_Controller_v3.0.5_linux_x64.tar.gz &&\
-  cd Omada_Controller_v3.0.5_linux_x64 &&\
+  wget https://static.tp-link.com/2019/201903/20190326/Omada_Controller_v3.1.4_linux_x64.tar.gz.zip &&\
+  unzip Omada_Controller_v3.1.4_linux_x64.tar.gz.zip &&\
+  rm Omada_Controller_v3.1.4_linux_x64.tar.gz.zip &&\
+  tar zxvf Omada_Controller_v3.1.4_linux_x64.tar.gz &&\
+  rm Omada_Controller_v3.1.4_linux_x64.tar.gz &&\
+  cd Omada_Controller_* &&\
   mkdir /opt/tplink/EAPController -vp &&\
   cp bin /opt/tplink/EAPController -r &&\
   cp data /opt/tplink/EAPController -r &&\
@@ -26,7 +27,7 @@ RUN cd /tmp &&\
   chmod 755 /opt/tplink/EAPController/bin/* &&\
   chmod 755 /opt/tplink/EAPController/jre/bin/* &&\
   cd /tmp &&\
-  rm -rf /tmp/Omada_Controller_v3.0.5_linux_x64 Omada_Controller_v3.0.5_linux_x64.tar.gz &&\
+  rm -rf /tmp/Omada_Controller* &&\
   groupadd -g 508 omada &&\
   useradd -u 508 -g 508 -d /opt/tplink/EAPController omada &&\
   mkdir /opt/tplink/EAPController/logs /opt/tplink/EAPController/work &&\
