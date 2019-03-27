@@ -1,15 +1,18 @@
 mbentley/omada-controller
 =========================
 
-docker image for TP-Link Omada Controller
-based off of ubuntu:18.04
+docker image based off of ubuntu:18.04 for [TP-Link Omada Controller](https://www.tp-link.com/en/products/details/EAP-Controller.html) to control [TP-Link Omada EAP Series Wireless Access Points](https://www.tp-link.com/en/omada/)
 
-To pull this image:
-`docker pull mbentley/omada-controller`
+## Tags
+  * `latest`, `3.1` - Omada Controller 3.1.x (currently 3.1.4)
+  * `3.0` - Omada Controller 3.0.x (currently 3.0.5)
 
-Example usage:
+## Example usage
+To run this Docker image and keep persistent data in named volumes:
 ```
-docker run -d --name omada-controller \
+docker run -d \
+  --name omada-controller \
+  --restart unless-stopped \
   -p 8088:8088 \
   -p 8043:8043 \
   -v omada-data:/opt/tplink/EAPController/data \
