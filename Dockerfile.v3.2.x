@@ -11,7 +11,7 @@ RUN cd /tmp &&\
   wget https://static.tp-link.com/2019/201907/20190726/Omada_Controller_v3.2.1_linux_x64.tar.gz &&\
   tar zxvf Omada_Controller_v3.2.1_linux_x64.tar.gz &&\
   rm Omada_Controller_v3.2.1_linux_x64.tar.gz &&\
-  cd Omada_Controller_* &&\
+  cd Omada_Controller_*/Omada_Controller_* &&\
   mkdir /opt/tplink/EAPController -vp &&\
   cp bin /opt/tplink/EAPController -r &&\
   cp data /opt/tplink/EAPController -r &&\
