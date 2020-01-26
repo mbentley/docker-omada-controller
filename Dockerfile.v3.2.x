@@ -33,6 +33,6 @@ RUN cd /tmp &&\
 
 USER omada
 WORKDIR /opt/tplink/EAPController
-EXPOSE 8088 8043
+EXPOSE 8088 8043 29810/udp 29811 29812 29813
 VOLUME ["/opt/tplink/EAPController/data","/opt/tplink/EAPController/work","/opt/tplink/EAPController/logs"]
 CMD ["/opt/tplink/EAPController/jre/bin/java","-server","-Xms128m","-Xmx1024m","-XX:MaxHeapFreeRatio=60","-XX:MinHeapFreeRatio=30","-XX:+HeapDumpOnOutOfMemoryError","-XX:-UsePerfData","-Deap.home=/opt/tplink/EAPController","-cp","/opt/tplink/EAPController/lib/*:","com.tp_link.eap.start.EapLinuxMain"]
