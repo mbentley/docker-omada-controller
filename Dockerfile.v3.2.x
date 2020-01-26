@@ -9,11 +9,11 @@ RUN apt-get update &&\
 # install omada controller (instructions taken from install.sh); then create a user & group and set the appropriate file system permissions
 RUN cd /tmp &&\
   echo Downloading Omada controller package.. &&\
-  wget -nv https://static.tp-link.com/2019/201911/20191108/Omada_Controller_v3.2.4_linux_x64.tar.gz &&\
+  wget -nv https://static.tp-link.com/2020/202001/20200116/Omada_Controller_v3.2.6_linux_x64.tar.gz &&\
   echo Extracting tar file.. &&\
-  tar zxf Omada_Controller_v3.2.4_linux_x64.tar.gz &&\
+  tar zxf Omada_Controller_v3.2.6_linux_x64.tar.gz &&\
   echo removing tar file.. &&\
-  rm Omada_Controller_v3.2.4_linux_x64.tar.gz &&\
+  rm Omada_Controller_v3.2.6_linux_x64.tar.gz &&\
   cd Omada_Controller_*/ &&\
   mkdir /opt/tplink/EAPController -vp &&\
   cp bin /opt/tplink/EAPController -r &&\
