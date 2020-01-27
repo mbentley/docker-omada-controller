@@ -1,14 +1,16 @@
 FROM ubuntu:18.04
 MAINTAINER Matt Bentley <mbentley@mbentley.net>
 
-# install runtime dependencies
-RUN apt-get update &&\
-  DEBIAN_FRONTEND="noninteractive" apt-get install -y tzdata net-tools wget &&\
-  rm -rf /var/lib/apt/lists/*
-
 # install omada controller (instructions taken from install.sh); then create a user & group and set the appropriate file system permissions
-RUN cd /tmp &&\
+RUN \
+  echo "**** Install Dependencies ****" &&\
+  apt-get update &&\
+  DEBIAN_FRONTEND="noninteractive" apt-get install -y tzdata net-tools wget &&\
+  rm -rf /var/lib/apt/lists/* &&\
+  echo "**** Download Omada Controller ****" &&\
+  cd /tmp &&\
   wget -nv https://static.tp-link.com/2020/202001/20200116/Omada_Controller_v3.2.6_linux_x64.tar.gz &&\
+  echo "**** Extract and Install Omada Controller ****" &&\
   tar zxvf Omada_Controller_v3.2.6_linux_x64.tar.gz &&\
   rm Omada_Controller_v3.2.6_linux_x64.tar.gz &&\
   cd Omada_Controller_* &&\
@@ -24,8 +26,10 @@ RUN cd /tmp &&\
   cp jre /opt/tplink/EAPController/jre -r &&\
   chmod 755 /opt/tplink/EAPController/bin/* &&\
   chmod 755 /opt/tplink/EAPController/jre/bin/* &&\
+  echo "**** Cleanup ****" &&\
   cd /tmp &&\
   rm -rf /tmp/Omada_Controller* &&\
+  echo "**** Setup omada User Account ****" &&\
   groupadd -g 508 omada &&\
   useradd -u 508 -g 508 -d /opt/tplink/EAPController omada &&\
   mkdir /opt/tplink/EAPController/logs /opt/tplink/EAPController/work &&\
