@@ -3,7 +3,7 @@ MAINTAINER Matt Bentley <mbentley@mbentley.net>
 
 # install runtime dependencies
 RUN apt-get update &&\
-  apt-get install -y libcap-dev net-tools wget &&\
+  DEBIAN_FRONTEND="noninteractive" apt-get install -y tzdata net-tools wget &&\
   rm -rf /var/lib/apt/lists/*
 
 # install omada controller (instructions taken from install.sh); then create a user & group and set the appropriate file system permissions
