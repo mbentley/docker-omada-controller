@@ -35,8 +35,13 @@ RUN \
   mkdir /opt/tplink/EAPController/logs /opt/tplink/EAPController/work &&\
   chown -R omada:omada /opt/tplink/EAPController/data /opt/tplink/EAPController/logs /opt/tplink/EAPController/work
 
+COPY entrypoint.sh /entrypoint.sh
+
+ENV TZ="Etc/UTC"
+
 USER omada
 WORKDIR /opt/tplink/EAPController
 EXPOSE 8088 8043 27001/udp 27002 29810/udp 29811 29812 29813
 VOLUME ["/opt/tplink/EAPController/data","/opt/tplink/EAPController/work","/opt/tplink/EAPController/logs"]
+ENTRYPOINT ["/entrypoint.sh"]
 CMD ["/opt/tplink/EAPController/jre/bin/java","-server","-Xms128m","-Xmx1024m","-XX:MaxHeapFreeRatio=60","-XX:MinHeapFreeRatio=30","-XX:+HeapDumpOnOutOfMemoryError","-XX:-UsePerfData","-Deap.home=/opt/tplink/EAPController","-cp","/opt/tplink/EAPController/lib/*:","com.tp_link.eap.start.EapLinuxMain"]
