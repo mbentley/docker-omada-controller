@@ -37,8 +37,6 @@ RUN \
 
 COPY entrypoint.sh /entrypoint.sh
 
-ENV TZ="Etc/UTC"
-
 USER omada
 WORKDIR /opt/tplink/EAPController
 EXPOSE 8088 8043 27001/udp 27002 29810/udp 29811 29812 29813

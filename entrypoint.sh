@@ -2,7 +2,9 @@
 
 set -e
 
-# notify user of time zone
+# set default time zone and notify user of time zone
+export TZ
+TZ="${TZ:-Etc/UTC}"
 echo "INFO: Time zone set to '${TZ}'"
 
 # make sure permissions are set appropriately on each directory
