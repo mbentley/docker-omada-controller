@@ -37,6 +37,8 @@ By default, this image uses the `Etc/UTC` time zone.  You may update the time zo
 
 ## Persistent Data and Permissions
 
+**Note**: This only applies to tags for `3.1.x` and `3.0.x` as the `3.2.x` branch manages the permissions for you.
+
 If you utilize bind mounts instead of Docker named volumes (e.g. - `-v /path/to/data:/opt/tplink/EAPController/data`) in your run command, you will want to make sure that you have set the permissions appropriately on the filesystem otherwise you will run into permissions errors and the container will not run because it won't have the permissions to write data since this container uses a non-root user.  To resolve that, you need to `chown` the directory to `508:508` on the host as that is the UID and GID that we use inside the container.  For example:
 
 ```
