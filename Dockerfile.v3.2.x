@@ -1,4 +1,5 @@
 FROM ubuntu:18.04
+HEALTHCHECK --start-period=15m CMD wget --quiet --tries=1 --no-check-certificate http://127.0.0.1:8088 || exit 1
 MAINTAINER Matt Bentley <mbentley@mbentley.net>
 
 # install omada controller (instructions taken from install.sh); then create a user & group and set the appropriate file system permissions
