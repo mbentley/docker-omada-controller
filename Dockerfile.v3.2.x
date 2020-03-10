@@ -32,7 +32,6 @@ RUN \
   cp lib /opt/tplink/EAPController -r &&\
   cp install.sh /opt/tplink/EAPController -r &&\
   cp uninstall.sh /opt/tplink/EAPController -r &&\
-  cp jre /opt/tplink/EAPController/jre -r &&\
   chmod 755 /opt/tplink/EAPController/bin/* &&\
   chmod 755 /opt/tplink/EAPController/jre/bin/* &&\
   echo "**** Cleanup ****" &&\
