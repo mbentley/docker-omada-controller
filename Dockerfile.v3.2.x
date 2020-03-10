@@ -2,6 +2,14 @@ FROM ubuntu:18.04
 HEALTHCHECK --start-period=15m CMD wget --quiet --tries=1 --no-check-certificate http://127.0.0.1:8088 || exit 1
 MAINTAINER Matt Bentley <mbentley@mbentley.net>
 
+# Install java
+RUN apt-get update && \
+    apt-get install -y openjdk-8-jdk
+
+# Install mongodb
+RUN apt-get update && \
+    apt-get install -y mongodb
+
 # install omada controller (instructions taken from install.sh); then create a user & group and set the appropriate file system permissions
 RUN \
   echo "**** Install Dependencies ****" &&\
@@ -35,6 +43,15 @@ RUN \
   useradd -u 508 -g 508 -d /opt/tplink/EAPController omada &&\
   mkdir /opt/tplink/EAPController/logs /opt/tplink/EAPController/work &&\
   chown -R omada:omada /opt/tplink/EAPController/data /opt/tplink/EAPController/logs /opt/tplink/EAPController/work
+
+# Replace with installed versions
+RUN echo "*** Replacing bundled versions ***" && \
+  rm -f /opt/tplink/EAPController/bin/mongod && \
+  ln -s /usr/bin/mongod /opt/tplink/EAPController/bin/mongod && \
+  rm -f /opt/tplink/EAPController/bin/mongo && \
+  ln -s /usr/bin/mongod /opt/tplink/EAPController/bin/mongo && \
+  rm -rf /opt/tplink/EAPController/jre && \
+  ln -s /usr/lib/jvm/java-8-openjdk-arm64/jre /opt/tplink/EAPController/jre 
 
 COPY entrypoint.sh /entrypoint.sh
 
