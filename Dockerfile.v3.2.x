@@ -33,7 +33,6 @@ RUN \
   cp install.sh /opt/tplink/EAPController -r &&\
   cp uninstall.sh /opt/tplink/EAPController -r &&\
   chmod 755 /opt/tplink/EAPController/bin/* &&\
-  chmod 755 /opt/tplink/EAPController/jre/bin/* &&\
   echo "**** Cleanup ****" &&\
   cd /tmp &&\
   rm -rf /tmp/Omada_Controller* &&\
