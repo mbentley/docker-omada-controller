@@ -1,5 +1,14 @@
 FROM ubuntu:18.04
+HEALTHCHECK --start-period=5m CMD wget --quiet --tries=1 --no-check-certificate http://127.0.0.1:8088 || exit 1
 MAINTAINER Matt Bentley <mbentley@mbentley.net>
+
+# Install java (same version as Omada, as of 3.2.6)
+RUN apt-get update && \
+    apt-get install -y openjdk-8-jdk=8u162-b12-1
+
+# Install mongodb
+RUN apt-get update && \
+    apt-get install -y mongodb
 
 # install omada controller (instructions taken from install.sh); then create a user & group and set the appropriate file system permissions
 RUN \
@@ -23,9 +32,7 @@ RUN \
   cp lib /opt/tplink/EAPController -r &&\
   cp install.sh /opt/tplink/EAPController -r &&\
   cp uninstall.sh /opt/tplink/EAPController -r &&\
-  cp jre /opt/tplink/EAPController/jre -r &&\
   chmod 755 /opt/tplink/EAPController/bin/* &&\
-  chmod 755 /opt/tplink/EAPController/jre/bin/* &&\
   echo "**** Cleanup ****" &&\
   cd /tmp &&\
   rm -rf /tmp/Omada_Controller* &&\
@@ -34,6 +41,19 @@ RUN \
   useradd -u 508 -g 508 -d /opt/tplink/EAPController omada &&\
   mkdir /opt/tplink/EAPController/logs /opt/tplink/EAPController/work &&\
   chown -R omada:omada /opt/tplink/EAPController/data /opt/tplink/EAPController/logs /opt/tplink/EAPController/work
+
+# Replace with installed versions
+RUN echo "*** Replacing bundled versions ***" && \
+  rm -f /opt/tplink/EAPController/bin/mongod && \
+  ln -s /usr/bin/mongod /opt/tplink/EAPController/bin/mongod && \
+  rm -f /opt/tplink/EAPController/bin/mongo && \
+  ln -s /usr/bin/mongod /opt/tplink/EAPController/bin/mongo && \
+  rm -rf /opt/tplink/EAPController/jre && \
+  ln -s /usr/lib/jvm/java-8-openjdk-arm64/jre /opt/tplink/EAPController/jre
+
+# Remove mention of --nohttpinterface, which is not supported in MongoDB >= 3.6
+RUN echo "*** Fixing properties ***" &&\
+  sed -i -e 's/ --nohttpinterface//g' /opt/tplink/EAPController/properties/mongodb.properties
 
 COPY entrypoint.sh /entrypoint.sh
 
