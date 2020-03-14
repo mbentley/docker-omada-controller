@@ -49,7 +49,11 @@ RUN echo "*** Replacing bundled versions ***" && \
   rm -f /opt/tplink/EAPController/bin/mongo && \
   ln -s /usr/bin/mongod /opt/tplink/EAPController/bin/mongo && \
   rm -rf /opt/tplink/EAPController/jre && \
-  ln -s /usr/lib/jvm/java-8-openjdk-arm64/jre /opt/tplink/EAPController/jre 
+  ln -s /usr/lib/jvm/java-8-openjdk-arm64/jre /opt/tplink/EAPController/jre
+
+# Remove mention of --nohttpinterface, which is not supported in MongoDB >= 3.6
+RUN echo "*** Fixing properties ***" &&\
+  sed -i -e 's/ --nohttpinterface//g' /opt/tplink/EAPController/properties/mongodb.properties
 
 COPY entrypoint.sh /entrypoint.sh
 
