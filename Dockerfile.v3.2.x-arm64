@@ -4,7 +4,7 @@ MAINTAINER Matt Bentley <mbentley@mbentley.net>
 
 # Install java (same version as Omada, as of 3.2.6)
 RUN apt-get update && \
-    apt-get install -y openjdk-8-jdk=8u162-b12-1
+    apt-get install -y openjdk-8-jre-headless=8u162-b12-1
 
 # Install mongodb
 RUN apt-get update && \
