@@ -1,5 +1,5 @@
 FROM ubuntu:18.04
-HEALTHCHECK --start-period=5m CMD wget --quiet --tries=1 --no-check-certificate http://127.0.0.1:8088 || exit 1
+HEALTHCHECK --start-period=15m CMD wget --quiet --tries=1 --no-check-certificate http://127.0.0.1:8088 || exit 1
 MAINTAINER Matt Bentley <mbentley@mbentley.net>
 
 # Install java (same version as Omada, as of 3.2.6)
