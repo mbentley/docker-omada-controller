@@ -17,6 +17,7 @@ docker run -d \
   --name omada-controller \
   --restart unless-stopped \
   -e TZ=Etc/UTC \
+  -e SMALL_FILES=false \
   -p 8088:8088 \
   -p 8043:8043 \
   -p 27001:27001/udp \
@@ -34,6 +35,10 @@ docker run -d \
 ## Time Zones
 
 By default, this image uses the `Etc/UTC` time zone.  You may update the time zone used by passing a different value in the `TZ` variable.  See [List of tz database time zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) for a complete list of values in the `TZ database name` table column.
+
+## Small Files
+
+By default, this image uses the default mongodb settings for journal files.  If disk space is an issue, you can set the `SMALL_FILES` variable to `true` which will add [`--smallfiles`](https://docs.mongodb.com/v2.2/administration/journaling/#journaling-internals) to the startup arguments for MongoDB.
 
 ## Persistent Data and Permissions
 
