@@ -2,10 +2,21 @@
 
 set -e
 
-# set default time zone and notify user of time zone
+# set environment variables
 export TZ
 TZ="${TZ:-Etc/UTC}"
+SMALL_FILES="${SMALL_FILES:-false}"
+
+# set default time zone and notify user of time zone
 echo "INFO: Time zone set to '${TZ}'"
+
+# append smallfiles if set to true
+if [ "${SMALL_FILES}" = "true" ]
+then
+  echo "INFO: Enabling smallfiles"
+  # shellcheck disable=SC2016
+  sed -i 's#^eap.mongod.args=--port ${eap.mongod.port} --dbpath "${eap.mongod.db}" -pidfilepath "${eap.mongod.pid.path}" --logappend --logpath "${eap.home}/logs/mongod.log" --nohttpinterface --bind_ip 127.0.0.1#eap.mongod.args=--smallfiles --port ${eap.mongod.port} --dbpath "${eap.mongod.db}" -pidfilepath "${eap.mongod.pid.path}" --logappend --logpath "${eap.home}/logs/mongod.log" --nohttpinterface --bind_ip 127.0.0.1#' /opt/tplink/EAPController/properties/mongodb.properties
+fi
 
 # make sure permissions are set appropriately on each directory
 for DIR in data work logs
