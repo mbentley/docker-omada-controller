@@ -4,9 +4,15 @@ docker image based off of ubuntu:18.04 for [TP-Link Omada Controller](https://ww
 
 ## Tags
 
-* `latest`, `3.2` - Omada Controller 3.2.x (currently 3.2.6)
+### Tags for `amd64`
+
+* `latest`, `3.2` - Omada Controller 3.2.x (currently 3.2.9)
 * `3.1` - Omada Controller 3.1.x (currently 3.1.13)
 * `3.0` - Omada Controller 3.0.x (currently 3.0.5)
+
+### Tags for `arm64`
+
+* `3.2-arm64` - Omada Controller 3.2.x (currently 3.2.9)
 
 ## Example usage
 
@@ -29,7 +35,29 @@ docker run -d \
   -v omada-data:/opt/tplink/EAPController/data \
   -v omada-work:/opt/tplink/EAPController/work \
   -v omada-logs:/opt/tplink/EAPController/logs \
-  mbentley/omada-controller
+  mbentley/omada-controller:3.2
+```
+
+## Example usage for `arm64`
+
+```
+docker run -d \
+  --name omada-controller \
+  --restart unless-stopped \
+  -e TZ=Etc/UTC \
+  -e SMALL_FILES=false \
+  -p 8088:8088 \
+  -p 8043:8043 \
+  -p 27001:27001/udp \
+  -p 27002:27002 \
+  -p 29810:29810/udp \
+  -p 29811:29811 \
+  -p 29812:29812 \
+  -p 29813:29813 \
+  -v omada-data:/opt/tplink/EAPController/data \
+  -v omada-work:/opt/tplink/EAPController/work \
+  -v omada-logs:/opt/tplink/EAPController/logs \
+  mbentley/omada-controller:3.2-arm64
 ```
 
 ## Time Zones
