@@ -6,13 +6,13 @@ docker image based off of ubuntu:18.04 for [TP-Link Omada Controller](https://ww
 
 ### Tags for `amd64`
 
-* `latest`, `3.2` - Omada Controller 3.2.x (currently 3.2.9)
+* `latest`, `3.2` - Omada Controller 3.2.x (currently 3.2.10)
 * `3.1` - Omada Controller 3.1.x (currently 3.1.13)
 * `3.0` - Omada Controller 3.0.x (currently 3.0.5)
 
 ### Tags for `arm64`
 
-* `3.2-arm64` - Omada Controller 3.2.x (currently 3.2.9)
+* `3.2-arm64` - Omada Controller 3.2.x (currently 3.2.10)
 
 ## Example usage
 
