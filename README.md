@@ -14,6 +14,10 @@ docker image based off of ubuntu:18.04 for [TP-Link Omada Controller](https://ww
 
 * `3.2-arm64` - Omada Controller 3.2.x (currently 3.2.10)
 
+### Tags for `armv7l`
+
+* `3.2-armv7l` - Omada Controller 3.2.x (currently 3.2.10)
+
 ## Example usage
 
 To run this Docker image and keep persistent data in named volumes:
