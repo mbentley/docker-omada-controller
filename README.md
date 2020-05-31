@@ -64,6 +64,28 @@ docker run -d \
   mbentley/omada-controller:3.2-arm64
 ```
 
+## Example usage for `armv7l`
+
+```
+docker run -d \
+  --name omada-controller \
+  --restart unless-stopped \
+  -e TZ=Etc/UTC \
+  -e SMALL_FILES=false \
+  -p 8088:8088 \
+  -p 8043:8043 \
+  -p 27001:27001/udp \
+  -p 27002:27002 \
+  -p 29810:29810/udp \
+  -p 29811:29811 \
+  -p 29812:29812 \
+  -p 29813:29813 \
+  -v omada-data:/opt/tplink/EAPController/data \
+  -v omada-work:/opt/tplink/EAPController/work \
+  -v omada-logs:/opt/tplink/EAPController/logs \
+  mbentley/omada-controller:3.2-armv7l
+```
+
 ## Time Zones
 
 By default, this image uses the `Etc/UTC` time zone.  You may update the time zone used by passing a different value in the `TZ` variable.  See [List of tz database time zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) for a complete list of values in the `TZ database name` table column.
