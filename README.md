@@ -20,24 +20,15 @@ docker image based off of ubuntu:18.04 for [TP-Link Omada Controller](https://ww
 
 ## Example usage
 
-*Note*: running with the specific ports being published currently does not work - APs can't be discovered.  Use `host` networking or something like `macvlan` to directly connect the container on it's own IP to the network.  See #45.
-
 To run this Docker image and keep persistent data in named volumes:
 
 ```
 docker run -d \
   --name omada-controller \
   --restart unless-stopped \
+  --net host \
   -e TZ=Etc/UTC \
   -e SMALL_FILES=false \
-  -p 8088:8088 \
-  -p 8043:8043 \
-  -p 27001:27001/udp \
-  -p 27002:27002 \
-  -p 29810:29810/udp \
-  -p 29811:29811 \
-  -p 29812:29812 \
-  -p 29813:29813 \
   -v omada-data:/opt/tplink/EAPController/data \
   -v omada-work:/opt/tplink/EAPController/work \
   -v omada-logs:/opt/tplink/EAPController/logs \
@@ -50,16 +41,9 @@ docker run -d \
 docker run -d \
   --name omada-controller \
   --restart unless-stopped \
+  --net host \
   -e TZ=Etc/UTC \
   -e SMALL_FILES=false \
-  -p 8088:8088 \
-  -p 8043:8043 \
-  -p 27001:27001/udp \
-  -p 27002:27002 \
-  -p 29810:29810/udp \
-  -p 29811:29811 \
-  -p 29812:29812 \
-  -p 29813:29813 \
   -v omada-data:/opt/tplink/EAPController/data \
   -v omada-work:/opt/tplink/EAPController/work \
   -v omada-logs:/opt/tplink/EAPController/logs \
@@ -72,16 +56,9 @@ docker run -d \
 docker run -d \
   --name omada-controller \
   --restart unless-stopped \
+  --net host \
   -e TZ=Etc/UTC \
   -e SMALL_FILES=false \
-  -p 8088:8088 \
-  -p 8043:8043 \
-  -p 27001:27001/udp \
-  -p 27002:27002 \
-  -p 29810:29810/udp \
-  -p 29811:29811 \
-  -p 29812:29812 \
-  -p 29813:29813 \
   -v omada-data:/opt/tplink/EAPController/data \
   -v omada-work:/opt/tplink/EAPController/work \
   -v omada-logs:/opt/tplink/EAPController/logs \
