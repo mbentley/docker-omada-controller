@@ -20,6 +20,8 @@ docker image based off of ubuntu:18.04 for [TP-Link Omada Controller](https://ww
 
 ## Example usage
 
+*Note*: running with the specific ports being published currently does not work - APs can't be discovered.  Use `host` networking or something like `macvlan` to directly connect the container on it's own IP to the network.  See #45.
+
 To run this Docker image and keep persistent data in named volumes:
 
 ```
