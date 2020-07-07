@@ -42,5 +42,29 @@ then
   echo "done"
 fi
 
+set -x ###############
+# Import a cert from a possibly mounted kubernetes secret at /cert
+if [ -f /cert/tls.key ] && [ -f /cert/tls.crt ]
+then
+  echo "INFO: Importing Cert from /cert/tls.[key|crt]"
+  #./certbot-auto certonly --standalone --preferred-challenges http -d mydomain.net 
+  openssl pkcs12 -export \
+    -inkey /cert/tls.key \
+    -in /cert/tls.crt \
+    -certfile /cert/tls.crt \
+    -name eap \
+    -out /opt/tplink/EAPController/keystore/cert.p12 \
+    -passout pass:tplink
+
+  #delete the existing keystore
+  rm /opt/tplink/EAPController/keystore/eap.keystore
+  /opt/tplink/EAPController/jre/bin/keytool -importkeystore \
+    -deststorepass tplink \
+    -destkeystore /opt/tplink/EAPController/keystore/eap.keystore \
+    -srckeystore /opt/tplink/EAPController/keystore/cert.p12 \
+    -srcstoretype PKCS12 \
+    -srcstorepass tplink
+fi
+
 echo "INFO: Starting Omada Controller as user omada"
 exec gosu omada "${@}"

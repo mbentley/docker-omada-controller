@@ -83,3 +83,6 @@ If you utilize bind mounts instead of Docker named volumes (e.g. - `-v /path/to/
 chown -R 508:508 /data/omada/data /data/omada/work /data/omada/logs
 ```
 
+## Custom Certificates
+
+By default, Omada software uses self-signed certificates. If however you want to use custom certificates you can mount them in /cert/tls.key and /cert/tls.crt. tls.crt needs to include the full chain of certificates, i.e. cert, intermediate cert(s) and CA cert. This is compatible with kubernetes TLS secrets. Entrypoint script will convert them into Java Keystore used by jetty inside the Omada SW.
