@@ -13,9 +13,8 @@ echo "INFO: Time zone set to '${TZ}'"
 # append smallfiles if set to true
 if [ "${SMALL_FILES}" = "true" ]
 then
-  echo "INFO: Enabling smallfiles"
-  # shellcheck disable=SC2016
-  sed -i 's#^eap.mongod.args=--port ${eap.mongod.port} --dbpath "${eap.mongod.db}" -pidfilepath "${eap.mongod.pid.path}" --logappend --logpath "${eap.home}/logs/mongod.log" --nohttpinterface --bind_ip 127.0.0.1#eap.mongod.args=--smallfiles --port ${eap.mongod.port} --dbpath "${eap.mongod.db}" -pidfilepath "${eap.mongod.pid.path}" --logappend --logpath "${eap.home}/logs/mongod.log" --nohttpinterface --bind_ip 127.0.0.1#' /opt/tplink/EAPController/properties/mongodb.properties
+  echo "WARNING: smallfiles was passed but is not supported in >= 4.1 with the WiredTiger engine in use by MongoDB"
+  echo "INFO: skipping setting smallfiles option"
 fi
 
 # make sure permissions are set appropriately on each directory
@@ -42,11 +41,11 @@ then
   echo "done"
 fi
 
-# Import a cert from a possibly mounted kubernetes secret at /cert
+# Import a cert from a possibly mounted secret or file at /cert
 if [ -f /cert/tls.key ] && [ -f /cert/tls.crt ]
 then
   echo "INFO: Importing Cert from /cert/tls.[key|crt]"
-  #./certbot-auto certonly --standalone --preferred-challenges http -d mydomain.net 
+  # example certbot usage: ./certbot-auto certonly --standalone --preferred-challenges http -d mydomain.net
   openssl pkcs12 -export \
     -inkey /cert/tls.key \
     -in /cert/tls.crt \
@@ -55,9 +54,9 @@ then
     -out /opt/tplink/EAPController/keystore/cert.p12 \
     -passout pass:tplink
 
-  #delete the existing keystore
+  # delete the existing keystore
   rm /opt/tplink/EAPController/keystore/eap.keystore
-  /opt/tplink/EAPController/jre/bin/keytool -importkeystore \
+  keytool -importkeystore \
     -deststorepass tplink \
     -destkeystore /opt/tplink/EAPController/keystore/eap.keystore \
     -srckeystore /opt/tplink/EAPController/keystore/cert.p12 \
@@ -65,5 +64,19 @@ then
     -srcstorepass tplink
 fi
 
+# see if any of these files exist; if so, do not start as they are from older versions
+if [ -f /opt/tplink/EAPController/data/db/tpeap.0 ] || [ -f /opt/tplink/EAPController/data/db/tpeap.1 ] || [ -f /opt/tplink/EAPController/data/db/tpeap.ns ]
+then
+  echo "ERROR: the data volume mounted to /opt/tplink/EAPController/data appears to have data from a previous version!"
+  echo "  Follow the upgrade instructions at https://github.com/mbentley/docker-omada-controller#upgrading-to-41"
+  exit 1
+fi
+
 echo "INFO: Starting Omada Controller as user omada"
+
+# tail the logs in the background so they output to STDOUT
+gosu omada tail -F -n 0 /opt/tplink/EAPController/logs/server.log &
+gosu omada tail -F -n 0 /opt/tplink/EAPController/logs/mongod.log &
+
+# run the actual command as the omada user
 exec gosu omada "${@}"
