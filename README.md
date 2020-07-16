@@ -13,10 +13,12 @@ docker image based off of ubuntu:18.04 for [TP-Link Omada Controller](https://ww
 
 ### Tags for `arm64`
 
+* `4.1-arm64` - Omada Controller 4.1.x (currently 4.1.5)
 * `3.2-arm64` - Omada Controller 3.2.x (currently 3.2.10)
 
 ### Tags for `armv7l`
 
+* `4.1-armv7l` - Omada Controller 4.1.x (currently 4.1.5)
 * `3.2-armv7l` - Omada Controller 3.2.x (currently 3.2.10)
 
 ## Upgrading to 4.1
@@ -60,23 +62,6 @@ docker run -d \
 ```
 
 <details>
-<summary>Example usage for arm64</summary>
-
-```
-docker run -d \
-  --name omada-controller \
-  --restart unless-stopped \
-  --net host \
-  -e TZ=Etc/UTC \
-  -e SMALL_FILES=false \
-  -v omada-data:/opt/tplink/EAPController/data \
-  -v omada-work:/opt/tplink/EAPController/work \
-  -v omada-logs:/opt/tplink/EAPController/logs \
-  mbentley/omada-controller:3.2-arm64
-```
-</details>
-
-<details>
 <summary>Example usage for armv7l</summary>
 
 ```
@@ -89,7 +74,24 @@ docker run -d \
   -v omada-data:/opt/tplink/EAPController/data \
   -v omada-work:/opt/tplink/EAPController/work \
   -v omada-logs:/opt/tplink/EAPController/logs \
-  mbentley/omada-controller:3.2-armv7l
+  mbentley/omada-controller:4.1-armv7l
+```
+</details>
+
+<details>
+<summary>Example usage for arm64</summary>
+
+```
+docker run -d \
+  --name omada-controller \
+  --restart unless-stopped \
+  --net host \
+  -e TZ=Etc/UTC \
+  -e SMALL_FILES=false \
+  -v omada-data:/opt/tplink/EAPController/data \
+  -v omada-work:/opt/tplink/EAPController/work \
+  -v omada-logs:/opt/tplink/EAPController/logs \
+  mbentley/omada-controller:4.1-arm64
 ```
 </details>
 
