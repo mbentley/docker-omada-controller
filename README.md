@@ -95,15 +95,20 @@ docker run -d \
 ```
 </details>
 
-## Time Zones
 
-By default, this image uses the `Etc/UTC` time zone.  You may update the time zone used by passing a different value in the `TZ` variable.  See [List of tz database time zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) for a complete list of values in the `TZ database name` table column.
+## Optional Variables
 
-## Small Files
+| Variable | Default | Values | Description |
+| :------- | :------ | :----: | :---------- |
+| `MANAGE_HTTP_PORT` | `8088` | `1024`-`65535` | Management portal HTTP port |
+| `MANAGE_HTTPS_PORT` | `8043` | `443`, `1024`-`65535` | Management portal HTTPS port; if using `443`, see [Unprivileged Ports](#unprivileged-ports) |
+| `PORTAL_HTTP_PORT` | `8088` | `1024`-`65535` | User authentication portal HTTP port |
+| `PORTAL_HTTPS_PORT` | `8843` | `1024`-`65535` | User authentication portal HTTPS port |
+| `SHOW_SERVER_LOGS` | `true` | `[true\|false]` | Outputs Omada Controller logs to STDOUT at runtime |
+| `SHOW_MONGODB_LOGS` | `false` | `[true\|false]` | Outputs MongoDB logs to STDOUT at runtime |
+| `SMALL_FILES` | `false` | `[true\|false]` | See [Small Files](#small-files) for more detail |
+| `TZ` | `Etc/UTC` | _\<many\>_ | See [Time Zones](#time-zones) for more detail |
 
-In Omada 3.2 and older, this image uses the default mongodb settings for journal files.  If disk space is an issue, you can set the `SMALL_FILES` variable to `true` which will add [`--smallfiles`](https://docs.mongodb.com/v3.6/core/journaling/#journaling-journal-files) to the startup arguments for MongoDB.
-
-**Warning** - As of the version 4.1 and newer, MongoDB utilizes the `WiredTiger` storage engine by default which does not have the same journal file size issue as the `MMAPv1` storage engine.  If `SMALL_FILES` is set to `true`, a warning will be issued at startup but startup will still proceed.
 
 ## Persistent Data and Permissions
 
@@ -120,3 +125,17 @@ chown -R 508:508 /data/omada/data /data/omada/work /data/omada/logs
 By default, Omada software uses self-signed certificates. If however you want to use custom certificates you can mount them into the container as `/cert/tls.key` and `/cert/tls.crt`. The `tls.crt` file needs to include the full chain of certificates, i.e. cert, intermediate cert(s) and CA cert. This is compatible with kubernetes TLS secrets. Entrypoint script will convert them into Java Keystore used by jetty inside the Omada SW.
 
 **Warning** - As of the version 4.1, certificates can also be installed through the web UI.  You should not attempt to mix certificate management methods as installing certificates via the UI will store the certificates in MongoDB and then the `/cert` volume method will cease to function.
+
+## Small Files
+
+In Omada 3.2 and older, this image uses the default mongodb settings for journal files.  If disk space is an issue, you can set the `SMALL_FILES` variable to `true` which will add [`--smallfiles`](https://docs.mongodb.com/v3.6/core/journaling/#journaling-journal-files) to the startup arguments for MongoDB.
+
+**Warning** - As of the version 4.1 and newer, MongoDB utilizes the `WiredTiger` storage engine by default which does not have the same journal file size issue as the `MMAPv1` storage engine.  If `SMALL_FILES` is set to `true`, a warning will be issued at startup but startup will still proceed.
+
+## Time Zones
+
+By default, this image uses the `Etc/UTC` time zone.  You may update the time zone used by passing a different value in the `TZ` variable.  See [List of tz database time zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) for a complete list of values in the `TZ database name` table column.
+
+## Unprivileged Ports
+
+This Docker image runs as a non-root user by default.  In order to bind unprivileged ports (ports < 1024 by default), you must include `--sysctl net.ipv4.ip_unprivileged_port_start=0` in your `docker run` command to allow ports below 1024 to be bound by non-root users.
