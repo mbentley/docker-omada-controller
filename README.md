@@ -53,8 +53,13 @@ docker run -d \
   --name omada-controller \
   --restart unless-stopped \
   --net host \
+  -e MANAGE_HTTP_PORT=8088 \
+  -e MANAGE_HTTPS_PORT=8043 \
+  -e PORTAL_HTTP_PORT=8088 \
+  -e PORTAL_HTTPS_PORT=8843 \
+  -e SHOW_SERVER_LOGS=true \
+  -e SHOW_MONGODB_LOGS=false \
   -e TZ=Etc/UTC \
-  -e SMALL_FILES=false \
   -v omada-data:/opt/tplink/EAPController/data \
   -v omada-work:/opt/tplink/EAPController/work \
   -v omada-logs:/opt/tplink/EAPController/logs \
@@ -69,8 +74,13 @@ docker run -d \
   --name omada-controller \
   --restart unless-stopped \
   --net host \
+  -e MANAGE_HTTP_PORT=8088 \
+  -e MANAGE_HTTPS_PORT=8043 \
+  -e PORTAL_HTTP_PORT=8088 \
+  -e PORTAL_HTTPS_PORT=8843 \
+  -e SHOW_SERVER_LOGS=true \
+  -e SHOW_MONGODB_LOGS=false \
   -e TZ=Etc/UTC \
-  -e SMALL_FILES=false \
   -v omada-data:/opt/tplink/EAPController/data \
   -v omada-work:/opt/tplink/EAPController/work \
   -v omada-logs:/opt/tplink/EAPController/logs \
@@ -86,8 +96,13 @@ docker run -d \
   --name omada-controller \
   --restart unless-stopped \
   --net host \
+  -e MANAGE_HTTP_PORT=8088 \
+  -e MANAGE_HTTPS_PORT=8043 \
+  -e PORTAL_HTTP_PORT=8088 \
+  -e PORTAL_HTTPS_PORT=8843 \
+  -e SHOW_SERVER_LOGS=true \
+  -e SHOW_MONGODB_LOGS=false \
   -e TZ=Etc/UTC \
-  -e SMALL_FILES=false \
   -v omada-data:/opt/tplink/EAPController/data \
   -v omada-work:/opt/tplink/EAPController/work \
   -v omada-logs:/opt/tplink/EAPController/logs \
@@ -100,13 +115,13 @@ docker run -d \
 
 | Variable | Default | Values | Description |
 | :------- | :------ | :----: | :---------- |
-| `MANAGE_HTTP_PORT` | `8088` | `1024`-`65535` | Management portal HTTP port |
-| `MANAGE_HTTPS_PORT` | `8043` | `443`, `1024`-`65535` | Management portal HTTPS port; if using `443`, see [Unprivileged Ports](#unprivileged-ports) |
-| `PORTAL_HTTP_PORT` | `8088` | `1024`-`65535` | User authentication portal HTTP port |
-| `PORTAL_HTTPS_PORT` | `8843` | `1024`-`65535` | User authentication portal HTTPS port |
+| `MANAGE_HTTP_PORT` | `8088` | `1024`-`65535` | Management portal HTTP port; for ports < 1024, see [Unprivileged Ports](#unprivileged-ports) |
+| `MANAGE_HTTPS_PORT` | `8043` | `1024`-`65535` | Management portal HTTPS port; for ports < 1024, see [Unprivileged Ports](#unprivileged-ports) |
+| `PORTAL_HTTP_PORT` | `8088` | `1024`-`65535` | User portal HTTP port; for ports < 1024, see [Unprivileged Ports](#unprivileged-ports) |
+| `PORTAL_HTTPS_PORT` | `8843` | `1024`-`65535` | User portal HTTPS port; for ports < 1024, see [Unprivileged Ports](#unprivileged-ports) |
 | `SHOW_SERVER_LOGS` | `true` | `[true\|false]` | Outputs Omada Controller logs to STDOUT at runtime |
 | `SHOW_MONGODB_LOGS` | `false` | `[true\|false]` | Outputs MongoDB logs to STDOUT at runtime |
-| `SMALL_FILES` | `false` | `[true\|false]` | See [Small Files](#small-files) for more detail |
+| `SMALL_FILES` | `false` | `[true\|false]` | See [Small Files](#small-files) for more detail; deprecated in 4.1.x |
 | `TZ` | `Etc/UTC` | _\<many\>_ | See [Time Zones](#time-zones) for more detail |
 
 
