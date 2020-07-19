@@ -37,7 +37,7 @@ RUN \
 COPY entrypoint-4.1.x.sh /entrypoint.sh
 
 WORKDIR /opt/tplink/EAPController/lib
-EXPOSE 8088 8043 27001/udp 27002 29810/udp 29811 29812 29813
+EXPOSE 8088 8043 8843 27001/udp 27002 29810/udp 29811 29812 29813
 HEALTHCHECK --start-period=5m CMD wget --quiet --tries=1 --no-check-certificate -O /dev/null --server-response --timeout=5 https://127.0.0.1:8043/login || exit 1
 VOLUME ["/opt/tplink/EAPController/data","/opt/tplink/EAPController/work","/opt/tplink/EAPController/logs"]
 ENTRYPOINT ["/entrypoint.sh"]
