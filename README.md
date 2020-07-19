@@ -37,7 +37,7 @@ The upgrade to the 4.1.x version is not a seamless upgrade and can't be done in 
 
 ## Notes for 4.1
 
-1. **Ports** - Do not change the ports for the controller or portal in the UI to ports below 1024 unless you have adjusted the unprivileged ports; for ports < 1024, see [Unprivileged Ports](#unprivileged-ports)
+1. **Ports** - Do not change the ports for the controller or portal in the UI to ports below 1024 unless you have adjusted the unprivileged ports; for ports < 1024, see [Unprivileged Ports](#unprivileged-ports).  If you change the default port for the management interface, you should also either disable the container health check or update it to the new port.
 1. **SSL Certificates** - if you are installing your own SSL certificates, you should only manage them using one method - through the UI or by using the `/cert` volume as [described below](#custom-certificates).
 
 </details>
