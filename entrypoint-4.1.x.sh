@@ -12,6 +12,8 @@ PORTAL_HTTP_PORT="${PORTAL_HTTP_PORT:-8088}"
 PORTAL_HTTPS_PORT="${PORTAL_HTTPS_PORT:-8843}"
 SHOW_SERVER_LOGS="${SHOW_SERVER_LOGS:-true}"
 SHOW_MONGODB_LOGS="${SHOW_MONGODB_LOGS:-false}"
+SSL_CERT_NAME="${SSL_CERT_NAME:-tls.crt}"
+SSL_KEY_NAME="${SSL_KEY_NAME:-tls.key}"
 
 # set default time zone and notify user of time zone
 echo "INFO: Time zone set to '${TZ}'"
@@ -90,14 +92,14 @@ then
 fi
 
 # Import a cert from a possibly mounted secret or file at /cert
-if [ -f /cert/tls.key ] && [ -f /cert/tls.crt ]
+if [ -f "/cert/${SSL_KEY_NAME}" ] && [ -f "/cert/${SSL_CERT_NAME}" ]
 then
   echo "INFO: Importing Cert from /cert/tls.[key|crt]"
   # example certbot usage: ./certbot-auto certonly --standalone --preferred-challenges http -d mydomain.net
   openssl pkcs12 -export \
-    -inkey /cert/tls.key \
-    -in /cert/tls.crt \
-    -certfile /cert/tls.crt \
+    -inkey "/cert/${SSL_KEY_NAME}" \
+    -in "/cert/${SSL_CERT_NAME}" \
+    -certfile "/cert/${SSL_CERT_NAME}" \
     -name eap \
     -out /opt/tplink/EAPController/keystore/cert.p12 \
     -passout pass:tplink
