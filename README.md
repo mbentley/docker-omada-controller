@@ -60,6 +60,8 @@ docker run -d \
   -e PORTAL_HTTPS_PORT=8843 \
   -e SHOW_SERVER_LOGS=true \
   -e SHOW_MONGODB_LOGS=false \
+  -e SSL_CERT_NAME="tls.crt" \
+  -e SSL_KEY_NAME="tls.key" \
   -e TZ=Etc/UTC \
   -v omada-data:/opt/tplink/EAPController/data \
   -v omada-work:/opt/tplink/EAPController/work \
@@ -81,6 +83,8 @@ docker run -d \
   -e PORTAL_HTTPS_PORT=8843 \
   -e SHOW_SERVER_LOGS=true \
   -e SHOW_MONGODB_LOGS=false \
+  -e SSL_CERT_NAME="tls.crt" \
+  -e SSL_KEY_NAME="tls.key" \
   -e TZ=Etc/UTC \
   -v omada-data:/opt/tplink/EAPController/data \
   -v omada-work:/opt/tplink/EAPController/work \
@@ -103,6 +107,8 @@ docker run -d \
   -e PORTAL_HTTPS_PORT=8843 \
   -e SHOW_SERVER_LOGS=true \
   -e SHOW_MONGODB_LOGS=false \
+  -e SSL_CERT_NAME="tls.crt" \
+  -e SSL_KEY_NAME="tls.key" \
   -e TZ=Etc/UTC \
   -v omada-data:/opt/tplink/EAPController/data \
   -v omada-work:/opt/tplink/EAPController/work \
@@ -123,6 +129,8 @@ docker run -d \
 | `SHOW_SERVER_LOGS` | `true` | `[true\|false]` | Outputs Omada Controller logs to STDOUT at runtime |
 | `SHOW_MONGODB_LOGS` | `false` | `[true\|false]` | Outputs MongoDB logs to STDOUT at runtime |
 | `SMALL_FILES` | `false` | `[true\|false]` | See [Small Files](#small-files) for more detail; deprecated in 4.1.x |
+| `SSL_CERT_NAME` | `tls.crt` | _any_ | Name of the public cert chain mounted to `/cert`; see [Custom Certificates](#custom-certificates) |
+| `SSL_KEY_NAME` | `tls.key` | _any_ | Name of the private cert mounted to `/cert`; see [Custom Certificates](#custom-certificates) |
 | `TZ` | `Etc/UTC` | _\<many\>_ | See [Time Zones](#time-zones) for more detail |
 
 
@@ -138,7 +146,7 @@ chown -R 508:508 /data/omada/data /data/omada/work /data/omada/logs
 
 ## Custom Certificates
 
-By default, Omada software uses self-signed certificates. If however you want to use custom certificates you can mount them into the container as `/cert/tls.key` and `/cert/tls.crt`. The `tls.crt` file needs to include the full chain of certificates, i.e. cert, intermediate cert(s) and CA cert. This is compatible with kubernetes TLS secrets. Entrypoint script will convert them into Java Keystore used by jetty inside the Omada SW.
+By default, Omada software uses self-signed certificates. If however you want to use custom certificates you can mount them into the container as `/cert/tls.key` and `/cert/tls.crt`. The `tls.crt` file needs to include the full chain of certificates, i.e. cert, intermediate cert(s) and CA cert. This is compatible with kubernetes TLS secrets. Entrypoint script will convert them into Java Keystore used by jetty inside the Omada SW.  If you need to use different file names, you can customize them by passing values for `SSL_CERT_NAME` and `SSL_KEY_NAME` as seen above in the [Optional Variables](#optional-variables) section.
 
 **Warning** - As of the version 4.1, certificates can also be installed through the web UI.  You should not attempt to mix certificate management methods as installing certificates via the UI will store the certificates in MongoDB and then the `/cert` volume method will cease to function.
 
