@@ -9,7 +9,7 @@ RUN \
   rm -rf /var/lib/apt/lists/* &&\
   echo "**** Download Omada Controller ****" &&\
   cd /tmp &&\
-  wget -nv "https://static.tp-link.com/2020/202007/20200714/Omada_SDN_Controller_v4.2.4_linux_x64.tar.gz" &&\
+  wget -nv "https://static.tp-link.com/2020/202011/20201110/Omada_SDN_Controller_v4.2.4_linux_x64.tar.gz" &&\
   echo "**** Extract and Install Omada Controller ****" &&\
   tar zxvf Omada_SDN_Controller_v4.2.4_linux_x64.tar.gz &&\
   rm Omada_SDN_Controller_v4.2.4_linux_x64.tar.gz &&\
