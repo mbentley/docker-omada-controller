@@ -9,10 +9,10 @@ RUN \
   rm -rf /var/lib/apt/lists/* &&\
   echo "**** Download Omada Controller ****" &&\
   cd /tmp &&\
-  wget -nv "https://static.tp-link.com/2020/202004/20200420/Omada_Controller_v3.2.10_linux_x64.tar.gz" &&\
+  wget -nv "https://static.tp-link.com/2020/202012/20201225/Omada_Controller_v3.2.14_linux_x64.tar.gz" &&\
   echo "**** Extract and Install Omada Controller ****" &&\
-  tar zxvf Omada_Controller_v3.2.10_linux_x64.tar.gz &&\
-  rm Omada_Controller_v3.2.10_linux_x64.tar.gz &&\
+  tar zxvf Omada_Controller_v3.2.14_linux_x64.tar.gz &&\
+  rm Omada_Controller_v3.2.14_linux_x64.tar.gz &&\
   cd Omada_Controller_* &&\
   mkdir /opt/tplink/EAPController -vp &&\
   cp bin /opt/tplink/EAPController -r &&\
