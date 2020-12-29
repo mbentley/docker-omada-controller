@@ -1,18 +1,23 @@
 FROM ubuntu:18.04
 LABEL maintainer="Matt Bentley <mbentley@mbentley.net>"
 
+ARG DEBIAN_FRONTEND=noninteractive
+ARG OMADA_VER=4.2.8
+ARG OMADA_TAR="Omada_SDN_Controller_v${OMADA_VER}_linux_x64.tar.gz"
+ARG OMADA_URL="https://static.tp-link.com/2020/202012/20201211/${OMADA_TAR}"
+
 # install omada controller (instructions taken from install.sh); then create a user & group and set the appropriate file system permissions
 RUN \
   echo "**** Install Dependencies ****" &&\
   apt-get update &&\
-  DEBIAN_FRONTEND="noninteractive" apt-get install --no-install-recommends -y gosu mongodb-server-core net-tools openjdk-8-jre-headless tzdata wget &&\
+  apt-get install --no-install-recommends -y gosu mongodb-server-core net-tools openjdk-8-jre-headless tzdata wget &&\
   rm -rf /var/lib/apt/lists/* &&\
   echo "**** Download Omada Controller ****" &&\
   cd /tmp &&\
-  wget -nv "https://static.tp-link.com/2020/202012/20201211/Omada_SDN_Controller_v4.2.8_linux_x64.tar.gz" &&\
+  wget -nv ${OMADA_URL} &&\
   echo "**** Extract and Install Omada Controller ****" &&\
-  tar zxvf Omada_SDN_Controller_v4.2.8_linux_x64.tar.gz &&\
-  rm Omada_SDN_Controller_v4.2.8_linux_x64.tar.gz &&\
+  tar zxvf ${OMADA_TAR} &&\
+  rm ${OMADA_TAR} &&\
   cd Omada_SDN_Controller_* &&\
   mkdir /opt/tplink/EAPController -vp &&\
   cp bin /opt/tplink/EAPController -r &&\
