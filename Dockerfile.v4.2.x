@@ -8,11 +8,9 @@ ARG OMADA_TAR="Omada_SDN_Controller_v${OMADA_VER}_linux_x64.tar.gz"
 ARG OMADA_URL="https://static.tp-link.com/2020/202012/20201211/${OMADA_TAR}"
 # valid values: amd64 (default) | arm64 | armv7l
 ARG ARCH=amd64
-# suffix to {entrypoint,install}.sh
-ARG SCRIPT_VER=4.2.x
 
-COPY entrypoint-${SCRIPT_VER}.sh /entrypoint.sh
-COPY install-${SCRIPT_VER}.sh    /install.sh
+COPY entrypoint-4.2.x.sh /entrypoint.sh
+COPY install.sh /
 
 # install omada controller (instructions taken from install.sh); then create a user & group and set the appropriate file system permissions
 RUN /install.sh && rm /install.sh
