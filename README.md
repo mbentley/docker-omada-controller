@@ -50,6 +50,38 @@ The upgrade to the 4.1.x version is not a seamless upgrade and can't be done in 
 
 </details>
 
+## Building images
+
+<details>
+<summary>Click to expand docker build instructions</summary>
+
+As of the Omada Controller version 4.2.x, the Dockerfiles have been simplified so that there is a unified Dockerfile.  There are some differences between the build steps for `amd64`, `arm64`, and `armv7l`.  These changes will happen automatically if you use the following build-args:
+
+### `amd64`
+
+  No build args required; set for the default build-args
+
+  ```
+  docker build -f Dockerfile.v4.2.x -t mbentley/omada-controller:4.2 .
+  ```
+
+### `arm64`
+
+  Only the `ARCH` build-arg is required
+
+  ```
+  docker build --build-arg ARCH="arm64" -f Dockerfile.v4.2.x -t mbentley/omada-controller:4.2-arm64 .
+  ```
+
+### `armv7l`
+
+  Both the `ARCH` and `BASE` build-args are required
+
+  ```
+  docker build --build-arg ARCH="armv7l" --build-arg BASE="ubuntu:16.04" -f Dockerfile.v4.2.x -t mbentley/omada-controller:4.2-armv7l .
+  ```
+</details>
+
 ## Example usage
 
 **Warning**: running with the specific ports being published currently does not work - APs can't be discovered.  Use `host` networking or something like `macvlan` to directly connect the container on it's own IP to the network.  See #45.
