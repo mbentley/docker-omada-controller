@@ -3,9 +3,9 @@ FROM ${BASE}
 
 LABEL maintainer="Matt Bentley <mbentley@mbentley.net>"
 
-ARG OMADA_VER=4.2.8
+ARG OMADA_VER=4.2.11
 ARG OMADA_TAR="Omada_SDN_Controller_v${OMADA_VER}_linux_x64.tar.gz"
-ARG OMADA_URL="https://static.tp-link.com/2020/202012/20201211/${OMADA_TAR}"
+ARG OMADA_URL="https://static.tp-link.com/2021/202102/20210209/${OMADA_TAR}"
 # valid values: amd64 (default) | arm64 | armv7l
 ARG ARCH=amd64
 
