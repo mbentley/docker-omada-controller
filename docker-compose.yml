@@ -15,6 +15,7 @@ services:
       - SHOW_MONGODB_LOGS=false
 #      - SSL_CERT_NAME="tls.crt"
 #      - SSL_KEY_NAME="tls.key"
+     network_mode:host
      ports:
       - 8088:8088
       - 8043:8043
