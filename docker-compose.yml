@@ -1,0 +1,35 @@
+
+version: "3.1"
+
+services:
+   omada-controller:
+     container_name: Omada
+     image: mbentley/omada-controller:4.2
+     environment:
+      - TZ=America/Chicago
+      - MANAGE_HTTP_PORT=8088
+      - MANAGE_HTTPS_PORT=8043
+      - PORTAL_HTTP_PORT=8088
+      - PORTAL_HTTPS_PORT=8043
+      - SHOW_SERVER_LOGS=true
+      - SHOW_MONGODB_LOGS=false
+#      - SSL_CERT_NAME="tls.crt"
+#      - SSL_KEY_NAME="tls.key"
+     ports:
+      - 8088:8088
+      - 8043:8043
+      - 8843:8843
+      - 29810:29810
+      - 29810:29810/udp
+      - 29811:29811
+      - 29811:29811/udp
+      - 29812:29812
+      - 29812:29812/udp
+      - 29813:29813
+      - 29813:29813/udp
+     volumes:
+      - <Insert Path here>/omada-data:/opt/tplink/EAPController/data
+      - <Insert Path here>/omada-work:/opt/tplink/EAPController/work
+      - <Insert Path here>/omada-logs:/opt/tplink/EAPController/logs
+     restart: always
+
