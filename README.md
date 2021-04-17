@@ -88,6 +88,8 @@ To run this Docker image and keep persistent data in named volumes:
 
 ### Using port mapping
 
+*Note*: If you want to change the controller ports from the default mappings, you *absolutely must* update the port binding inside the container via the environment variables.  The ports exposed must match what is inside the container.  The Omada Controller software expects that the ports are the same inside the container and outside and will load a blank page if that is not done.  See [#99](https://github.com/mbentley/docker-omada-controller/issues/99#issuecomment-821243857) for details and and example of the behavior.
+
 ```
 docker run -d \
   --name omada-controller \
