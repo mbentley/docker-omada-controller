@@ -6,7 +6,8 @@ docker image based off of ubuntu:18.04 for [TP-Link Omada Controller](https://ww
 
 ### Tags for `amd64`
 
-* `latest`, `4.2` - Omada Controller 4.2.x (currently 4.2.11)
+* `latest`, `4.3` - Omada Controller 4.3.x (currently 4.3.5)
+* `4.2` - Omada Controller 4.2.x (currently 4.2.11)
 * `4.1` - Omada Controller 4.1.x (currently 4.1.5)
 * `3.2` - Omada Controller 3.2.x (currently 3.2.14)
 * `3.1` - Omada Controller 3.1.x (currently 3.1.13)
@@ -14,13 +15,15 @@ docker image based off of ubuntu:18.04 for [TP-Link Omada Controller](https://ww
 
 ### Tags for `armv7l`
 
-* `latest-armv7l`, `4.2-armv7l` - Omada Controller 4.2.x (currently 4.2.11)
+* `latest-armv7l`, `4.3-armv7l` - Omada Controller 4.3.x (currently 4.3.5)
+* `4.2-armv7l` - Omada Controller 4.2.x (currently 4.2.11)
 * `4.1-armv7l` - Omada Controller 4.1.x (currently 4.1.5)
 * `3.2-armv7l` - Omada Controller 3.2.x (currently 3.2.14)
 
 ### Tags for `arm64`
 
-* `latest-arm64`, `4.2-arm64` - Omada Controller 4.2.x (currently 4.2.11)
+* `latest-arm64`, `4.3-arm64` - Omada Controller 4.3.x (currently 4.3.5)
+* `4.2-arm64` - Omada Controller 4.2.x (currently 4.2.11)
 * `4.1-arm64` - Omada Controller 4.1.x (currently 4.1.5)
 * `3.2-arm64` - Omada Controller 3.2.x (currently 3.2.14)
 
