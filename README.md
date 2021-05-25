@@ -280,13 +280,15 @@ docker run -d \
 
 ## Persistent Data and Permissions
 
-**Note**: This only applies to tags for `3.1.x` and `3.0.x` as the `3.2.x` and newer versions manage the permissions for you.
+**Note**: The permissions portion only applies to tags for `3.1.x` and `3.0.x` as the `3.2.x` and newer versions manage the permissions for you.
 
 If you utilize bind mounts instead of Docker named volumes (e.g. - `-v /path/to/data:/opt/tplink/EAPController/data`) in your run command, you will want to make sure that you have set the permissions appropriately on the filesystem otherwise you will run into permissions errors and the container will not run because it won't have the permissions to write data since this container uses a non-root user.  To resolve that, you need to `chown` the directory to `508:508` on the host as that is the UID and GID that we use inside the container.  For example:
 
 ```
 chown -R 508:508 /data/omada/data /data/omada/work /data/omada/logs
 ```
+
+In the examples, there are three directories where persistent data is stored: `data`, `work`, and `logs`.  The `data` directory is where the persistent database data is stored where all of your settings, app configuration, etc is stored.  The `work` directory is where the web application is extracted to and is just ephemeral data that is replaced on each run.  The `log` directory is where logs are written and stored.  I would suggest that you use a bind mounted volume for the `data` directory to ensure that your persistent data is directly under your control and of course take regular backups within the Omada Controller application itself.
 
 ## Custom Certificates
 
