@@ -34,7 +34,7 @@ RUN \
   mkdir /opt/tplink/EAPController/logs /opt/tplink/EAPController/work &&\
   chown -R omada:omada /opt/tplink/EAPController/data /opt/tplink/EAPController/logs /opt/tplink/EAPController/work
 
-COPY entrypoint-4.1.x.sh /entrypoint.sh
+COPY entrypoint-4.x.sh /entrypoint.sh
 COPY healthcheck.sh /healthcheck.sh
 
 WORKDIR /opt/tplink/EAPController/lib

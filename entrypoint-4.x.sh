@@ -14,6 +14,7 @@ SHOW_SERVER_LOGS="${SHOW_SERVER_LOGS:-true}"
 SHOW_MONGODB_LOGS="${SHOW_MONGODB_LOGS:-false}"
 SSL_CERT_NAME="${SSL_CERT_NAME:-tls.crt}"
 SSL_KEY_NAME="${SSL_KEY_NAME:-tls.key}"
+TLS_1_11_ENABLED="${TLS_1_11_ENABLED:-false}"
 
 # set default time zone and notify user of time zone
 echo "INFO: Time zone set to '${TZ}'"
@@ -112,6 +113,13 @@ then
     -srckeystore /opt/tplink/EAPController/keystore/cert.p12 \
     -srcstoretype PKCS12 \
     -srcstorepass tplink
+fi
+
+# re-enable disabled TLS versions 1.0 & 1.1
+if [ "${TLS_1_11_ENABLED}" = "true" ]
+then
+  echo "INFO: Re-enabling TLS 1.0 & 1.1"
+  sed -i 's#^jdk.tls.disabledAlgorithms=SSLv3, TLSv1, TLSv1.1,#jdk.tls.disabledAlgorithms=SSLv3,#' /etc/java-8-openjdk/security/java.security
 fi
 
 # see if any of these files exist; if so, do not start as they are from older versions
