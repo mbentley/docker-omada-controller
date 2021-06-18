@@ -35,7 +35,7 @@ RUN \
   mkdir /opt/tplink/EAPController/logs /opt/tplink/EAPController/work &&\
   chown -R omada:omada /opt/tplink/EAPController/data /opt/tplink/EAPController/logs /opt/tplink/EAPController/work
 
-COPY entrypoint.sh /entrypoint.sh
+COPY entrypoint-3.2.sh /entrypoint.sh
 
 WORKDIR /opt/tplink/EAPController
 EXPOSE 8088 8043 27001/udp 27002 29810/udp 29811 29812 29813

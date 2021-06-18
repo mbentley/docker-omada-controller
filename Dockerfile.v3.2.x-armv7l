@@ -42,7 +42,7 @@ RUN \
   echo "*** Fixing properties ***" &&\
   sed -i -e 's/ --nohttpinterface//g' /opt/tplink/EAPController/properties/mongodb.properties
 
-COPY entrypoint.sh /entrypoint.sh
+COPY entrypoint-3.2.sh /entrypoint.sh
 
 WORKDIR /opt/tplink/EAPController
 EXPOSE 8088 8043 27001/udp 27002 29810/udp 29811 29812 29813
