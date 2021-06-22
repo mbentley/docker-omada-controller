@@ -47,7 +47,7 @@ The upgrade to the 4.1.x version is not a seamless upgrade and can't be done in 
 
 ## Notes for 4.1
 
-1. **Ports** - Do not change the ports for the controller or portal in the UI to ports below 1024 unless you have adjusted the unprivileged ports; for ports < 1024, see [Unprivileged Ports](#unprivileged-ports).  If you change the default port for the management interface, you should also either disable the container health check or update it to the new port.
+1. **Ports** - Do not change the ports for the controller or portal in the UI to ports below 1024 unless you have adjusted the unprivileged ports; for ports < 1024, see [Unprivileged Ports](#unprivileged-ports).
 1. **SSL Certificates** - if you are installing your own SSL certificates, you should only manage them using one method - through the UI or by using the `/cert` volume as [described below](#custom-certificates).
 1. **Synology Users** - if you're using a Synology and are using the `latest` tag and update to 4.1, you will need to make sure to re-create the container due to the `CMD` changing from older versions to 4.1 as Synology retains the entrypoint and command from the container as it is defined and not from the image.
 
@@ -83,15 +83,22 @@ As of the Omada Controller version 4.2.x, the Dockerfiles have been simplified s
   ```
   docker build --build-arg ARCH="armv7l" --build-arg BASE="ubuntu:16.04" -f Dockerfile.v4.2.x -t mbentley/omada-controller:4.3-armv7l .
   ```
+
 </details>
 
 ## Example usage
 
 To run this Docker image and keep persistent data in named volumes:
 
+### Using non-default ports
+
+__tl;dr__: Always make sure the environment variables for the ports match any changes you have made in the web UI and you'll be fine.
+
+If you want to change the ports of your Omada Controller to something besides the defaults, there is some unexpected behavior that the controller exhibits.  There are two sets of ports: one for HTTP/HTTPS for the controller itself and another for HTTP/HTTPS for the captive portal, typically used for authentication to a guest network.  The controller's set of ports, which are set by the `MANAGE_*_PORT` environment variables, can only be modified using the environment variables on the first time the controller is started.  If persistent data exists, changing the controller's ports via environment variables will have no effect on the controller itself and can only be modified through the web UI.  On the other hand, the portal ports will always be set to whatever has been set in the environment variables, which are set by the `PORTAL_*_PORT` environment variables.
+
 ### Using port mapping
 
-*Note*: If you want to change the controller ports from the default mappings, you *absolutely must* update the port binding inside the container via the environment variables.  The ports exposed must match what is inside the container.  The Omada Controller software expects that the ports are the same inside the container and outside and will load a blank page if that is not done.  See [#99](https://github.com/mbentley/docker-omada-controller/issues/99#issuecomment-821243857) for details and and example of the behavior.
+__Warning__: If you want to change the controller ports from the default mappings, you *absolutely must* update the port binding inside the container via the environment variables.  The ports exposed must match what is inside the container.  The Omada Controller software expects that the ports are the same inside the container and outside and will load a blank page if that is not done.  See [#99](https://github.com/mbentley/docker-omada-controller/issues/99#issuecomment-821243857) for details and and example of the behavior.
 
 ```
 docker run -d \
@@ -201,6 +208,7 @@ docker run -d \
   -v omada-logs:/opt/tplink/EAPController/logs \
   mbentley/omada-controller:4.3-armv7l
 ```
+
 </details>
 
 <details>
@@ -259,8 +267,8 @@ docker run -d \
   -v omada-logs:/opt/tplink/EAPController/logs \
   mbentley/omada-controller:4.3-arm64
 ```
-</details>
 
+</details>
 
 ## Optional Variables
 
@@ -277,7 +285,6 @@ docker run -d \
 | `SSL_KEY_NAME` | `tls.key` | _any_ | Name of the private cert mounted to `/cert`; see [Custom Certificates](#custom-certificates) |
 | `TLS_1_11_ENABLED` | `false` | `[true\|false]` | Re-enables TLS 1.0 & 1.1 if set to `true` for 4.1.x and above |
 | `TZ` | `Etc/UTC` | _\<many\>_ | See [Time Zones](#time-zones) for more detail |
-
 
 ## Persistent Data and Permissions
 

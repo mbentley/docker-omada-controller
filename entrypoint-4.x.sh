@@ -30,17 +30,11 @@ set_port_property() {
   # check to see if we are trying to bind to privileged port
   if [ "${3}" -lt "1024" ] && [ "$(cat /proc/sys/net/ipv4/ip_unprivileged_port_start)" = "1024" ]
   then
-    echo "ERROR: Unable to set '${1}' to '${3}'; 'ip_unprivileged_port_start' has not been set.  See https://github.com/mbentley/docker-omada-controller#unprivileged-ports"
+    echo "ERROR: Unable to set '${1}' to ${3}; 'ip_unprivileged_port_start' has not been set.  See https://github.com/mbentley/docker-omada-controller#unprivileged-ports"
     exit 1
   fi
 
-  # check to see if we there is persistent data
-  if [ -f "/opt/tplink/EAPController/data/db/storage.bson" ]
-  then
-    echo "WARNING: port changes via env var can only be done on the first run. Verify the web UI settings match the environment variables (${1} to ${3})."
-  fi
-
-  echo "INFO: Setting '${1}' to ${3}"
+  echo "INFO: Setting '${1}' to ${3} in omada.properties"
   sed -i "s/^${1}=${2}$/${1}=${3}/g" /opt/tplink/EAPController/properties/omada.properties
 }
 
