@@ -2,9 +2,19 @@
 
 docker image based off of ubuntu:18.04 for [TP-Link Omada Controller](https://www.tp-link.com/us/business-networking/omada-sdn-controller/) to control [TP-Link Omada Hardware](https://www.tp-link.com/en/business-networking/all-omada/)
 
-## Tags
+## Image Tags
 
-### Tags for `amd64`
+### Multi-arch Tags
+
+The following tags have multi-arch support for `amd64`, `armv7l`, and `arm64` and will automatically pull the correct tag based on your system's architecture:
+
+`latest`, `4.4`, `4.3`, `4.2`, `4.1`, `3.2`
+
+### Explicit Architecture Tags
+
+These tags will explicitly pull the image for the listed architecture and are bit for bit identical to the multi-arch tags images.
+
+#### [`amd64`](https://hub.docker.com/repository/docker/mbentley/omada-controller/tags?page=1&ordering=last_updated&name=amd64)
 
 * `latest`, `4.4` - Omada Controller 4.4.x (currently 4.4.3)
 * `4.3` - Omada Controller 4.3.x (currently 4.3.5)
@@ -14,7 +24,7 @@ docker image based off of ubuntu:18.04 for [TP-Link Omada Controller](https://ww
 * `3.1` - Omada Controller 3.1.x (currently 3.1.13)
 * `3.0` - Omada Controller 3.0.x (currently 3.0.5)
 
-### Tags for `armv7l`
+#### [`armv7l`](https://hub.docker.com/repository/docker/mbentley/omada-controller/tags?page=1&ordering=last_updated&name=armv7l)
 
 * `latest-armv7l`, `4.4-armv7l` - Omada Controller 4.4.x (currently 4.4.3)
 * `4.3-armv7l` - Omada Controller 4.3.x (currently 4.3.5)
@@ -22,7 +32,7 @@ docker image based off of ubuntu:18.04 for [TP-Link Omada Controller](https://ww
 * `4.1-armv7l` - Omada Controller 4.1.x (currently 4.1.5)
 * `3.2-armv7l` - Omada Controller 3.2.x (currently 3.2.14)
 
-### Tags for `arm64`
+#### [`arm64`](https://hub.docker.com/repository/docker/mbentley/omada-controller/tags?page=1&ordering=last_updated&name=arm64)
 
 * `latest-arm64`, `4.4-arm64` - Omada Controller 4.4.x (currently 4.4.3)
 * `4.3-arm64` - Omada Controller 4.3.x (currently 4.3.5)
