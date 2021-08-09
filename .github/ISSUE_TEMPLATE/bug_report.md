@@ -1,9 +1,9 @@
 ---
 name: Bug report
-about: Create a report to help us improve
+about: For problems using this Docker image or found a bug in this Docker image?  Start here.  For the Omada Controller software, use the community forum link.
 title: ''
 labels: ''
-assignees: mbentley
+assignees:
 
 ---
 
@@ -22,10 +22,10 @@ Steps to reproduce the behavior:
 <!-- A clear and concise description of what you expected to happen. -->
 
 **How you're launching your container**
-Include your `docker run` or compose file to make analysis easier.
+<!-- Include your `docker run` or compose file to make analysis easier. -->
 
 **Container Logs**
-<!-- Collect logs by using something similar to `docker logs omada-controller >& output.log` if needed and attach them or copy out the relevant portions of the error.  When in doubt, do both -->
+<!-- Collect logs by using something similar to `docker logs omada-controller >& output.log` if needed and attach them or copy out the relevant portions of the error.  When in doubt, do both.  I can't help without logs! -->
 
 ```
 logs

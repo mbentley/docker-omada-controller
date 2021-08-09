@@ -1,6 +1,6 @@
 ---
 name: Feature request
-about: Suggest an idea for this project
+about: For feature request related to this Docker image only.  For the Omada Controller software, use the community forum link.
 title: ''
 labels: ''
 assignees: mbentley
