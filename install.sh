@@ -49,8 +49,8 @@ echo "**** Extract and Install Omada Controller ****"
 
 # in the 4.4.3 build, they removed the directory. this case statement will handle variations in the build
 case "${OMADA_VER}" in
-  4.4.3)
-    echo "version 4.4.3"
+  4.4.3|4.4.6)
+    echo "version ${OMADA_VER}"
     mkdir "Omada_SDN_Controller_${OMADA_VER}"
     cd "Omada_SDN_Controller_${OMADA_VER}"
     tar zxvf "../${OMADA_TAR}"
