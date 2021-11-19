@@ -77,6 +77,15 @@ do
   fi
 done
 
+# validate permissions on /tmp
+TMP_PERMISSIONS="$(stat -c '%a' /tmp)"
+if [ "${TMP_PERMISSIONS}" != "1777" ]
+then
+  echo "WARNING: permissions are not set correctly on '/tmp' (${TMP_PERMISSIONS})!"
+  echo "INFO: setting correct permissions (1777)"
+  chmod -v 1777 /tmp
+fi
+
 # check to see if there is a db directory; create it if it is missing
 if [ ! -d "/opt/tplink/EAPController/data/db" ]
 then
