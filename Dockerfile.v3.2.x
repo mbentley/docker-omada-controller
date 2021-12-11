@@ -35,6 +35,10 @@ RUN \
   mkdir /opt/tplink/EAPController/logs /opt/tplink/EAPController/work &&\
   chown -R omada:omada /opt/tplink/EAPController/data /opt/tplink/EAPController/logs /opt/tplink/EAPController/work
 
+# patch log4j vulnerability
+COPY log4j_patch.sh /log4j_patch.sh
+RUN /log4j_patch.sh
+
 COPY entrypoint-3.2.sh /entrypoint.sh
 
 WORKDIR /opt/tplink/EAPController

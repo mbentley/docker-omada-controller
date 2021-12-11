@@ -42,6 +42,10 @@ RUN \
   echo "*** Fixing properties ***" &&\
   sed -i -e 's/ --nohttpinterface//g' /opt/tplink/EAPController/properties/mongodb.properties
 
+# patch log4j vulnerability
+COPY log4j_patch.sh /log4j_patch.sh
+RUN /log4j_patch.sh
+
 COPY entrypoint-3.2.sh /entrypoint.sh
 
 WORKDIR /opt/tplink/EAPController
