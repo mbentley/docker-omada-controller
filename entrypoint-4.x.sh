@@ -98,24 +98,22 @@ fi
 # Import a cert from a possibly mounted secret or file at /cert
 if [ -f "/cert/${SSL_KEY_NAME}" ] && [ -f "/cert/${SSL_CERT_NAME}" ]
 then
-  echo "INFO: Importing Cert from /cert/tls.[key|crt]"
+  echo "INFO: Importing cert from /cert/tls.[key|crt]"
+  # delete the existing keystore
+  rm /opt/tplink/EAPController/keystore/eap.keystore
+
   # example certbot usage: ./certbot-auto certonly --standalone --preferred-challenges http -d mydomain.net
   openssl pkcs12 -export \
     -inkey "/cert/${SSL_KEY_NAME}" \
     -in "/cert/${SSL_CERT_NAME}" \
     -certfile "/cert/${SSL_CERT_NAME}" \
     -name eap \
-    -out /opt/tplink/EAPController/keystore/cert.p12 \
+    -out /opt/tplink/EAPController/keystore/eap.keystore \
     -passout pass:tplink
 
-  # delete the existing keystore
-  rm /opt/tplink/EAPController/keystore/eap.keystore
-  keytool -importkeystore \
-    -deststorepass tplink \
-    -destkeystore /opt/tplink/EAPController/keystore/eap.keystore \
-    -srckeystore /opt/tplink/EAPController/keystore/cert.p12 \
-    -srcstoretype PKCS12 \
-    -srcstorepass tplink
+  # set ownership/permission on keystore
+  chown omada:omada /opt/tplink/EAPController/keystore/eap.keystore
+  chmod 400 /opt/tplink/EAPController/keystore/eap.keystore
 fi
 
 # re-enable disabled TLS versions 1.0 & 1.1
