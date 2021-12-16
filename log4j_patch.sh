@@ -3,7 +3,7 @@
 set -e
 
 # set the new log4j version
-NEW_LOG4J_VERSION="2.15.0"
+NEW_LOG4J_VERSION="2.16.0"
 OMADA_LIB_PATH="/opt/tplink/EAPController/lib"
 
 # determine existing filenames of binaries to replace
@@ -25,7 +25,7 @@ echo -e "INFO: download of log4j (${NEW_LOG4J_VERSION}) complete!\n"
 
 # validate the archive against the sha
 echo "INFO: validating checksum of downloaded log4j binaries"
-tr '\n' ' ' < /tmp/apache-log4j-${NEW_LOG4J_VERSION}-bin.tar.gz.sha512 | tr -d ' ' | awk -F ':' '{ print $2 "\t" $1 }'| sha512sum -c -
+sha512sum -c /tmp/apache-log4j-${NEW_LOG4J_VERSION}-bin.tar.gz.sha512
 echo -e "INFO: checksum validation of downloaded log4j binaries complete!\n"
 
 # extract just the files we need
