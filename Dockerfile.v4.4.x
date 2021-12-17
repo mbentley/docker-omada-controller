@@ -14,10 +14,6 @@ COPY install.sh healthcheck.sh /
 # install omada controller (instructions taken from install.sh); then create a user & group and set the appropriate file system permissions
 RUN /install.sh && rm /install.sh
 
-# patch log4j vulnerability
-COPY log4j_patch.sh /log4j_patch.sh
-RUN /log4j_patch.sh
-
 COPY entrypoint-4.x.sh /entrypoint.sh
 
 WORKDIR /opt/tplink/EAPController/lib
