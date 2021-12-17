@@ -47,9 +47,9 @@ wget -nv "${OMADA_URL}"
 
 echo "**** Extract and Install Omada Controller ****"
 
-# in the 4.4.3 build, they removed the directory. this case statement will handle variations in the build
+# in the 4.4.3, 4.4.6, and 4.4.8 builds, they removed the directory. this case statement will handle variations in the build
 case "${OMADA_VER}" in
-  4.4.3|4.4.6)
+  4.4.3|4.4.6|4.4.8)
     echo "version ${OMADA_VER}"
     mkdir "Omada_SDN_Controller_${OMADA_VER}"
     cd "Omada_SDN_Controller_${OMADA_VER}"
@@ -57,7 +57,7 @@ case "${OMADA_VER}" in
     rm -f "../${OMADA_TAR}"
     ;;
   *)
-    echo "not version 4.4.3"
+    echo "not version 4.4.3/4.4.6/4.4.8"
     tar zxvf "${OMADA_TAR}"
     rm -f "${OMADA_TAR}"
     cd Omada_SDN_Controller_*
