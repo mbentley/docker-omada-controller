@@ -21,8 +21,6 @@ These tags will explicitly pull the image for the listed architecture and are bi
 * `4.2` - Omada Controller 4.2.x (currently 4.2.11)
 * `4.1` - Omada Controller 4.1.x (currently 4.1.5)
 * `3.2` - Omada Controller 3.2.x (currently 3.2.14)
-* `3.1` - Omada Controller 3.1.x (currently 3.1.13)
-* `3.0` - Omada Controller 3.0.x (currently 3.0.5)
 
 #### [`armv7l`](https://hub.docker.com/repository/docker/mbentley/omada-controller/tags?page=1&ordering=last_updated&name=armv7l)
 
@@ -39,6 +37,13 @@ These tags will explicitly pull the image for the listed architecture and are bi
 * `4.2-arm64` - Omada Controller 4.2.x (currently 4.2.11)
 * `4.1-arm64` - Omada Controller 4.1.x (currently 4.1.5)
 * `3.2-arm64` - Omada Controller 3.2.x (currently 3.2.14)
+
+## Archived Tags
+
+These images are still published on Docker Hub but are no longer regularly updated due to the controller software no longer being updated.  **Use with extreme caution as these images are likely to contain unpatched security vulnerabilities!**
+
+* `3.1` - Omada Controller 3.1.x (currently 3.1.13)
+* `3.0` - Omada Controller 3.0.x (currently 3.0.5)
 
 ## Issues
 
