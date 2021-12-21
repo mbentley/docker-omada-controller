@@ -23,7 +23,7 @@ RUN \
   cp lib /opt/tplink/EAPController -r &&\
   cp install.sh /opt/tplink/EAPController -r &&\
   cp uninstall.sh /opt/tplink/EAPController -r &&\
-  ln -sf $(which mongod) /opt/tplink/EAPController/bin/mongod &&\
+  ln -sf "$(which mongod)" /opt/tplink/EAPController/bin/mongod &&\
   chmod 755 /opt/tplink/EAPController/bin/* &&\
   echo "**** Cleanup ****" &&\
   cd /tmp &&\

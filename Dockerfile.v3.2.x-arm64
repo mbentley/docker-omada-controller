@@ -5,7 +5,7 @@ MAINTAINER Matt Bentley <mbentley@mbentley.net>
 RUN \
   echo "**** Install Dependencies ****" &&\
   apt-get update &&\
-  DEBIAN_FRONTEND="noninteractive" apt-get install -y gosu mongodb net-tools openjdk-8-jre-headless=8u162-b12-1 tzdata wget &&\
+  DEBIAN_FRONTEND="noninteractive" apt-get install -y gosu mongodb net-tools openjdk-8-jre-headless tzdata wget &&\
   rm -rf /var/lib/apt/lists/* &&\
   echo "**** Download Omada Controller ****" &&\
   cd /tmp &&\
