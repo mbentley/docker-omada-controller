@@ -1,4 +1,5 @@
-FROM ubuntu:18.04
+# rebased/repackaged base image that only updates existing packages
+FROM mbentley/ubuntu:18.04
 MAINTAINER Matt Bentley <mbentley@mbentley.net>
 
 # install omada controller (instructions taken from install.sh); then create a user & group and set the appropriate file system permissions
