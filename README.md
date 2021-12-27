@@ -335,3 +335,10 @@ By default, this image uses the `Etc/UTC` time zone.  You may update the time zo
 ## Unprivileged Ports
 
 This Docker image runs as a non-root user by default.  In order to bind unprivileged ports (ports < 1024 by default), you must include `--sysctl net.ipv4.ip_unprivileged_port_start=0` in your `docker run` command to allow ports below 1024 to be bound by non-root users.
+
+## Using Docker Compose
+
+```
+wget https://raw.githubusercontent.com/mbentley/docker-omada-controller/master/docker-compose.yml
+docker-compose up -d
+```
