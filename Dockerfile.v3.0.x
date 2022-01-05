@@ -1,6 +1,6 @@
 # rebased/repackaged base image that only updates existing packages
 FROM mbentley/ubuntu:18.04
-MAINTAINER Matt Bentley <mbentley@mbentley.net>
+LABEL maintainer="Matt Bentley <mbentley@mbentley.net>"
 
 # install runtime dependencies
 RUN apt-get update &&\
