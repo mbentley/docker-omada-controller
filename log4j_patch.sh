@@ -91,7 +91,7 @@ echo -e "INFO: ownership and permissions setting on patched log4j files complete
 
 # cleanup
 echo "INFO: cleaning up /tmp and removing jq & gnupg2"
-rm -rfv /tmp/apache-log4j-*
+rm -rfv /tmp/apache-log4j-* /root/.gnupg
 DEBIAN_FRONTEND=noninteractive apt-get purge -y jq gnupg2
 DEBIAN_FRONTEND=noninteractive apt-get autoremove -y
 echo -e "INFO: cleanup of /tmp and removal of jq complete!\n"
