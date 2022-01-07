@@ -8,7 +8,7 @@ docker image based off of ubuntu:18.04 for [TP-Link Omada Controller](https://ww
 
 The following tags have multi-arch support for `amd64`, `armv7l`, and `arm64` and will automatically pull the correct tag based on your system's architecture:
 
-`latest`, `4.4`, `4.3`, `4.2`, `4.1`, `3.2`
+`latest`, `5.0`, `4.4`, `4.3`, `4.2`, `4.1`, `3.2`
 
 ### Explicit Architecture Tags
 
@@ -16,7 +16,8 @@ These tags will explicitly pull the image for the listed architecture and are bi
 
 #### [`amd64`](https://hub.docker.com/repository/docker/mbentley/omada-controller/tags?page=1&ordering=last_updated&name=amd64)
 
-* `latest`, `4.4` - Omada Controller 4.4.x (currently 4.4.8)
+* `latest`, `5.0` - Omada Controller 5.0.x (currently 5.0.29)
+* `4.4` - Omada Controller 4.4.x (currently 4.4.8)
 * `4.3` - Omada Controller 4.3.x (currently 4.3.5)
 * `4.2` - Omada Controller 4.2.x (currently 4.2.11)
 * `4.1` - Omada Controller 4.1.x (currently 4.1.5)
@@ -24,7 +25,8 @@ These tags will explicitly pull the image for the listed architecture and are bi
 
 #### [`armv7l`](https://hub.docker.com/repository/docker/mbentley/omada-controller/tags?page=1&ordering=last_updated&name=armv7l)
 
-* `latest-armv7l`, `4.4-armv7l` - Omada Controller 4.4.x (currently 4.4.8)
+* `latest-armv7l`, `5.0-armv7l` - Omada Controller 5.0.x (currently 5.0.29)
+* `4.4-armv7l` - Omada Controller 4.4.x (currently 4.4.8)
 * `4.3-armv7l` - Omada Controller 4.3.x (currently 4.3.5)
 * `4.2-armv7l` - Omada Controller 4.2.x (currently 4.2.11)
 * `4.1-armv7l` - Omada Controller 4.1.x (currently 4.1.5)
@@ -32,7 +34,8 @@ These tags will explicitly pull the image for the listed architecture and are bi
 
 #### [`arm64`](https://hub.docker.com/repository/docker/mbentley/omada-controller/tags?page=1&ordering=last_updated&name=arm64)
 
-* `latest-arm64`, `4.4-arm64` - Omada Controller 4.4.x (currently 4.4.8)
+* `latest-arm64`, `5.0-arm64` - Omada Controller 5.0.x (currently 5.0.29)
+* `4.4-arm64` - Omada Controller 4.4.x (currently 4.4.8)
 * `4.3-arm64` - Omada Controller 4.3.x (currently 4.3.5)
 * `4.2-arm64` - Omada Controller 4.2.x (currently 4.2.11)
 * `4.1-arm64` - Omada Controller 4.1.x (currently 4.1.5)
@@ -49,12 +52,25 @@ These images are still published on Docker Hub but are no longer regularly updat
 
 If you have issues running the controller, feel free to [file an issue](https://github.com/mbentley/docker-omada-controller/issues/new) and I will help as I can.  If you are specifically having a problem that is related to the actual software, I would suggest filing an issue on the [TP-Link community forums](https://community.tp-link.com/en/business/forum/582) as I do not have access to source code to debug those issues.  If you're not sure where the problem might be, I can help determine if it is a running in Docker issue or a software issue.
 
+## Upgrading to 5.0.x from 4.1.x or above
+
+<details>
+<summary>Click to expand upgrade instructions and 5.0.x usage notes</summary>
+
+There are no specific upgrade steps required when upgrading to 5.0.x if you are already running at least 4.1.x.  For full details, please refer to the [TP-Link upgrade documentation](https://www.tp-link.com/en/omada-sdn/controller-upgrade/).
+
+There are, however, some differences in how you need to run the container if you are only exposing ports using port mapping as there are new ports that the controller is listening on. Starting with 5.0.x, the controller is also listening on `TCP port 29814` so you should add `-p 29814:29814` to your run command, compose file, or however you're running the container.
+
+As always, I would recommend taking a backup through the controller software as well as save a copy of the persistent data while the controller is not running when you do upgrade to simplify the rollback process, if required.
+
+</details>
+
 ## Upgrading to 4.1 from 3.2.10 or below
 
 <details>
 <summary>Click to expand upgrade instructions and 4.1 usage notes</summary>
 
-The upgrade to the 4.1.x version is not a seamless upgrade and can't be done in place.  You must be running at least 3.1.4 or greater before you can proceed.  Instructions are available from [TP-Link](https://www.tp-link.com/en/omada-sdn/controller-upgrade) but many of the steps will be different due to running in a docker container.  Here are the high level steps:
+The upgrade to the 4.1.x version is not a seamless upgrade and can't be done in place.  You must be running at least 3.1.4 or greater before you can proceed.  Instructions are available from [TP-Link](https://www.tp-link.com/en/omada-sdn/controller-upgrade/) but many of the steps will be different due to running in a docker container.  Here are the high level steps:
 
 1. Review the steps in the TP-Link instructions as some settings will not transfer to the new version.
 1. Take a backup of your controller as described in the [upgrade procedure](https://www.tp-link.com/en/omada-sdn/controller-upgrade/#content-5_1_1)
@@ -83,7 +99,7 @@ As of the Omada Controller version 4.2.x, the Dockerfiles have been simplified s
   No build args required; set for the default build-args
 
   ```
-  docker build -f Dockerfile.v4.2.x -t mbentley/omada-controller:4.4 .
+  docker build -f Dockerfile.v5.0.x -t mbentley/omada-controller:5.0 .
   ```
 
 ### `arm64`
@@ -91,7 +107,7 @@ As of the Omada Controller version 4.2.x, the Dockerfiles have been simplified s
   Only the `ARCH` build-arg is required
 
   ```
-  docker build --build-arg ARCH="arm64" -f Dockerfile.v4.2.x -t mbentley/omada-controller:4.4-arm64 .
+  docker build --build-arg ARCH="arm64" -f Dockerfile.v5.0.x -t mbentley/omada-controller:5.0-arm64 .
   ```
 
 ### `armv7l`
@@ -99,7 +115,7 @@ As of the Omada Controller version 4.2.x, the Dockerfiles have been simplified s
   Both the `ARCH` and `BASE` build-args are required
 
   ```
-  docker build --build-arg ARCH="armv7l" --build-arg BASE="ubuntu:16.04" -f Dockerfile.v4.2.x -t mbentley/omada-controller:4.4-armv7l .
+  docker build --build-arg ARCH="armv7l" --build-arg BASE="ubuntu:16.04" -f Dockerfile.v5.0.x -t mbentley/omada-controller:5.0-armv7l .
   ```
 
 </details>
@@ -133,6 +149,8 @@ docker run -d \
   -p 29812:29812/udp \
   -p 29813:29813 \
   -p 29813:29813/udp \
+  -p 29813:29814 \
+  -p 29813:29814/udp \
   -e MANAGE_HTTP_PORT=8088 \
   -e MANAGE_HTTPS_PORT=8043 \
   -e PORTAL_HTTP_PORT=8088 \
@@ -145,7 +163,7 @@ docker run -d \
   -v omada-data:/opt/tplink/EAPController/data \
   -v omada-work:/opt/tplink/EAPController/work \
   -v omada-logs:/opt/tplink/EAPController/logs \
-  mbentley/omada-controller:4.4
+  mbentley/omada-controller:5.0
 ```
 
 ### Using `net=host`
@@ -167,7 +185,7 @@ docker run -d \
   -v omada-data:/opt/tplink/EAPController/data \
   -v omada-work:/opt/tplink/EAPController/work \
   -v omada-logs:/opt/tplink/EAPController/logs \
-  mbentley/omada-controller:4.4
+  mbentley/omada-controller:5.0
 ```
 
 <details>
@@ -202,7 +220,7 @@ docker run -d \
   -v omada-data:/opt/tplink/EAPController/data \
   -v omada-work:/opt/tplink/EAPController/work \
   -v omada-logs:/opt/tplink/EAPController/logs \
-  mbentley/omada-controller:4.4-armv7l
+  mbentley/omada-controller:5.0-armv7l
 ```
 
 ### Using `net=host`
@@ -224,7 +242,7 @@ docker run -d \
   -v omada-data:/opt/tplink/EAPController/data \
   -v omada-work:/opt/tplink/EAPController/work \
   -v omada-logs:/opt/tplink/EAPController/logs \
-  mbentley/omada-controller:4.4-armv7l
+  mbentley/omada-controller:5.0-armv7l
 ```
 
 </details>
@@ -261,7 +279,7 @@ docker run -d \
   -v omada-data:/opt/tplink/EAPController/data \
   -v omada-work:/opt/tplink/EAPController/work \
   -v omada-logs:/opt/tplink/EAPController/logs \
-  mbentley/omada-controller:4.4-arm64
+  mbentley/omada-controller:5.0-arm64
 ```
 
 ### Using `net=host`
@@ -283,7 +301,7 @@ docker run -d \
   -v omada-data:/opt/tplink/EAPController/data \
   -v omada-work:/opt/tplink/EAPController/work \
   -v omada-logs:/opt/tplink/EAPController/logs \
-  mbentley/omada-controller:4.4-arm64
+  mbentley/omada-controller:5.0-arm64
 ```
 
 </details>
