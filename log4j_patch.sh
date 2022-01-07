@@ -2,9 +2,9 @@
 
 set -e
 
-# install jq
+# install jq & gnupg2
 apt-get update
-DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y jq
+DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y gnupg2 jq
 rm -rf /var/lib/apt/lists/*
 
 # get the new log4j version from the github tags
@@ -22,13 +22,36 @@ echo -e "INFO: patching log4j to ${NEW_LOG4J_VERSION}\n"
 # cd to tmp
 cd /tmp
 
-# download log4j tar & log4j tar's pgp signature file
+# download log4j tar, log4j tar's pgp signature & signature files, and signing keys
 echo "INFO: downloading log4j (${NEW_LOG4J_VERSION})"
 wget -O "/tmp/apache-log4j-${NEW_LOG4J_VERSION}-bin.tar.gz" "https://archive.apache.org/dist/logging/log4j/${NEW_LOG4J_VERSION}/apache-log4j-${NEW_LOG4J_VERSION}-bin.tar.gz"
 wget -O "/tmp/apache-log4j-${NEW_LOG4J_VERSION}-bin.tar.gz.sha512" "https://archive.apache.org/dist/logging/log4j/${NEW_LOG4J_VERSION}/apache-log4j-${NEW_LOG4J_VERSION}-bin.tar.gz.sha512"
+wget -O "/tmp/apache-log4j-${NEW_LOG4J_VERSION}-bin.tar.gz.asc" "https://archive.apache.org/dist/logging/log4j/${NEW_LOG4J_VERSION}/apache-log4j-${NEW_LOG4J_VERSION}-bin.tar.gz.asc"
+wget -O "/tmp/KEYS" "https://downloads.apache.org/logging/KEYS"
 echo -e "INFO: download of log4j (${NEW_LOG4J_VERSION}) complete!\n"
 
-# validate the archive against the sha
+# import the gpg signing keys for log4j
+echo "INFO: importing the signing keys of the log4j developers"
+gpg --import "/tmp/KEYS"
+echo -e "INFO: import of the signing keys of the log4j developers complete!\n"
+
+# validate the signature against the log4j binaries
+echo "INFO: validating signature of the downloaded log4j binaries"
+set +e
+# validate the signatures on the files
+SIGNATURE_TEST1="$(gpg --verify "/tmp/apache-log4j-${NEW_LOG4J_VERSION}-bin.tar.gz.asc" >/dev/null 2>&1; echo $?)"
+set -e
+
+# check results
+if [ "${SIGNATURE_TEST1}" = "0" ]
+then
+  echo -e "INFO: signature validation of downloaded log4j binaries complete!\n"
+else
+  echo -e "ERROR: signature validation of downloaded log4j binaries failed!"
+  exit 1
+fi
+
+## validate the archive against the sha512 file
 echo "INFO: validating checksum of downloaded log4j binaries"
 set +e
 # check sha512sum response; they're inconsistent with the output so check both ways
@@ -36,7 +59,7 @@ SHA512SUM_TEST1="$(tr '\n' ' ' < "/tmp/apache-log4j-${NEW_LOG4J_VERSION}-bin.tar
 SHA512SUM_TEST2="$(sha512sum -c "/tmp/apache-log4j-${NEW_LOG4J_VERSION}-bin.tar.gz.sha512" >/dev/null 2>&1; echo $?)"
 set -e
 
-# check results
+# check results of the checksum verification
 if [ "${SHA512SUM_TEST1}" = "0" ] || [ "${SHA512SUM_TEST2}" = "0" ]
 then
   echo -e "INFO: checksum validation of downloaded log4j binaries complete!\n"
@@ -67,9 +90,10 @@ chmod -v 755 "${LOG4J_API}" "${LOG4J_CORE}" "${LOG4J_SLF4J_IMPL}"
 echo -e "INFO: ownership and permissions setting on patched log4j files complete!\n"
 
 # cleanup
-echo "INFO: cleaning up /tmp and removing jq"
+echo "INFO: cleaning up /tmp and removing jq & gnupg2"
 rm -rfv /tmp/apache-log4j-*
-DEBIAN_FRONTEND=noninteractive apt-get purge -y jq
+DEBIAN_FRONTEND=noninteractive apt-get purge -y jq gnupg2
+DEBIAN_FRONTEND=noninteractive apt-get autoremove -y
 echo -e "INFO: cleanup of /tmp and removal of jq complete!\n"
 
 # output complete
