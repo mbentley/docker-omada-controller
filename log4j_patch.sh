@@ -51,16 +51,22 @@ else
   exit 1
 fi
 
-## validate the archive against the sha512 file
+## validate the archive against the sha512 file; they're inconsistent with the output so check multiple ways
 echo "INFO: validating checksum of downloaded log4j binaries"
 set +e
-# check sha512sum response; they're inconsistent with the output so check both ways
+# multi-line with wrapping
 SHA512SUM_TEST1="$(tr '\n' ' ' < "/tmp/apache-log4j-${NEW_LOG4J_VERSION}-bin.tar.gz.sha512" | tr -d ' ' | awk -F ':' '{ print $2 "\t" $1 }'| sha512sum -c - >/dev/null 2>&1; echo $?)"
+
+# standard linux formatted output
 SHA512SUM_TEST2="$(sha512sum -c "/tmp/apache-log4j-${NEW_LOG4J_VERSION}-bin.tar.gz.sha512" >/dev/null 2>&1; echo $?)"
+
+# create a checksum file by appending the filename in case it is missing & check it
+(cat apache-log4j-2.17.1-bin.tar.gz.sha512; echo " apache-log4j-2.17.1-bin.tar.gz") > apache-log4j-2.17.1-bin.tar.gz.sha512_test
+SHA512SUM_TEST3="$(sha512sum -c "/tmp/apache-log4j-${NEW_LOG4J_VERSION}-bin.tar.gz.sha512_test" >/dev/null 2>&1; echo $?)"
 set -e
 
 # check results of the checksum verification
-if [ "${SHA512SUM_TEST1}" = "0" ] || [ "${SHA512SUM_TEST2}" = "0" ]
+if [ "${SHA512SUM_TEST1}" = "0" ] || [ "${SHA512SUM_TEST2}" = "0" ] || [ "${SHA512SUM_TEST3}" = "0" ]
 then
   echo -e "INFO: checksum validation of downloaded log4j binaries complete!\n"
 else
