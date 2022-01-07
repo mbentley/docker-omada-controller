@@ -63,6 +63,10 @@ There are, however, some differences in how you need to run the container if you
 
 As always, I would recommend taking a backup through the controller software as well as save a copy of the persistent data while the controller is not running when you do upgrade to simplify the rollback process, if required.
 
+### Changes/Notes for 5.0.x
+
+* If using custom ports, they will _not_ persist across container re-creation starting in 5.0 unless you continue to set the enviornment variables.  This is due to adding `/opt/tplink/EAPController/properties` to the classpath starting in 5.0.  If you change the ports through the UI, you should still continue to also set the ports using the environment variables, matching the ports you have set in the UI.  For more detail, see [Using non-default ports](#using-non-default-ports).
+
 </details>
 
 ## Upgrading to 4.1 from 3.2.10 or below
@@ -79,7 +83,7 @@ The upgrade to the 4.1.x version is not a seamless upgrade and can't be done in 
 1. Start your controller with the new Docker image and proceed with at least the basic setup options
 1. Import your backup file to the 4.1 version of the controller
 
-## Notes for 4.1
+### Notes for 4.1
 
 1. **Ports** - Do not change the ports for the controller or portal in the UI to ports below 1024 unless you have adjusted the unprivileged ports; for ports < 1024, see [Unprivileged Ports](#unprivileged-ports).
 1. **SSL Certificates** - if you are installing your own SSL certificates, you should only manage them using one method - through the UI or by using the `/cert` volume as [described below](#custom-certificates).
