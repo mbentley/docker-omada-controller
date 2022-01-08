@@ -145,16 +145,11 @@ docker run -d \
   -p 8088:8088 \
   -p 8043:8043 \
   -p 8843:8843 \
-  -p 29810:29810 \
   -p 29810:29810/udp \
   -p 29811:29811 \
-  -p 29811:29811/udp \
   -p 29812:29812 \
-  -p 29812:29812/udp \
   -p 29813:29813 \
-  -p 29813:29813/udp \
   -p 29814:29814 \
-  -p 29814:29814/udp \
   -e MANAGE_HTTP_PORT=8088 \
   -e MANAGE_HTTPS_PORT=8043 \
   -e PORTAL_HTTP_PORT=8088 \
@@ -204,16 +199,11 @@ docker run -d \
   -p 8088:8088 \
   -p 8043:8043 \
   -p 8843:8843 \
-  -p 29810:29810 \
   -p 29810:29810/udp \
   -p 29811:29811 \
-  -p 29811:29811/udp \
   -p 29812:29812 \
-  -p 29812:29812/udp \
   -p 29813:29813 \
-  -p 29813:29813/udp \
   -p 29814:29814 \
-  -p 29814:29814/udp \
   -e MANAGE_HTTP_PORT=8088 \
   -e MANAGE_HTTPS_PORT=8043 \
   -e PORTAL_HTTP_PORT=8088 \
@@ -265,16 +255,11 @@ docker run -d \
   -p 8088:8088 \
   -p 8043:8043 \
   -p 8843:8843 \
-  -p 29810:29810 \
   -p 29810:29810/udp \
   -p 29811:29811 \
-  -p 29811:29811/udp \
   -p 29812:29812 \
-  -p 29812:29812/udp \
   -p 29813:29813 \
-  -p 29813:29813/udp \
   -p 29814:29814 \
-  -p 29814:29814/udp \
   -e MANAGE_HTTP_PORT=8088 \
   -e MANAGE_HTTPS_PORT=8043 \
   -e PORTAL_HTTP_PORT=8088 \
@@ -368,3 +353,9 @@ This Docker image runs as a non-root user by default.  In order to bind unprivil
 wget https://raw.githubusercontent.com/mbentley/docker-omada-controller/master/docker-compose.yml
 docker-compose up -d
 ```
+
+## Known Issues
+
+### Synology Users and Upgrade Issues
+
+* If update from 3.x to 4.x or 4.x to 5.x, you will need to make sure to re-create the container due to the CMD changing between the major releases as Synology retains the entrypoint and command from the container as it is defined and not from the image unless the container is re-created.
