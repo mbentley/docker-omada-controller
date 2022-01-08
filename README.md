@@ -153,8 +153,8 @@ docker run -d \
   -p 29812:29812/udp \
   -p 29813:29813 \
   -p 29813:29813/udp \
-  -p 29813:29814 \
-  -p 29813:29814/udp \
+  -p 29814:29814 \
+  -p 29814:29814/udp \
   -e MANAGE_HTTP_PORT=8088 \
   -e MANAGE_HTTPS_PORT=8043 \
   -e PORTAL_HTTP_PORT=8088 \
@@ -212,6 +212,8 @@ docker run -d \
   -p 29812:29812/udp \
   -p 29813:29813 \
   -p 29813:29813/udp \
+  -p 29814:29814 \
+  -p 29814:29814/udp \
   -e MANAGE_HTTP_PORT=8088 \
   -e MANAGE_HTTPS_PORT=8043 \
   -e PORTAL_HTTP_PORT=8088 \
@@ -271,6 +273,8 @@ docker run -d \
   -p 29812:29812/udp \
   -p 29813:29813 \
   -p 29813:29813/udp \
+  -p 29814:29814 \
+  -p 29814:29814/udp \
   -e MANAGE_HTTP_PORT=8088 \
   -e MANAGE_HTTPS_PORT=8043 \
   -e PORTAL_HTTP_PORT=8088 \
