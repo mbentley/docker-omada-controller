@@ -2,6 +2,32 @@
 
 docker image based off of ubuntu:18.04 for [TP-Link Omada Controller](https://www.tp-link.com/us/business-networking/omada-sdn-controller/) to control [TP-Link Omada Hardware](https://www.tp-link.com/en/business-networking/all-omada/)
 
+## Table of Contents
+
+* [Image Tags](#image-tags)
+  * [Multi-arch Tags](#multi-arch-tags)
+  * [Explicit Architecture Tags](#explicit-architecture-tags)
+  * [Archived Tags](#archived-tags)
+* [Reporting Issues](#reporting-issues)
+* [Upgrading to 5.0.x from 4.1.x or above](#upgrading-to-50x-from-41x-or-above)
+  * [Changes/Notes for 5.0.x](#changesnotes-for-50x)
+* [Upgrading to 4.1 from 3.2.10 or below](#upgrading-to-41-from-3210-or-below)
+  * [Notes for 4.1](#notes-for-41)
+* [Building Images](#building-images)
+* [Example Usage](#example-usage)
+  * [Using non-default ports](#using-non-default-ports)
+  * [Using port mapping](#using-port-mapping)
+  * [Using `net=host`](#using-nethost)
+* [Optional Variables](#optional-variables)
+* [Persistent Data and Permissions](#persistent-data-and-permissions)
+* [Custom Certificates](#custom-certificates)
+* [MongoDB Small Files](#mongodb-small-files)
+* [Time Zones](#time-zones)
+* [Unprivileged Ports](#unprivileged-ports)
+* [Using Docker Compose](#using-docker-compose)
+* [Known Issues](#known-issues)
+  * [Synology Users and Upgrade Issues](#synology-users-and-upgrade-issues)
+
 ## Image Tags
 
 ### Multi-arch Tags
@@ -48,7 +74,7 @@ These images are still published on Docker Hub but are no longer regularly updat
 * `3.1` - Omada Controller 3.1.x (currently 3.1.13)
 * `3.0` - Omada Controller 3.0.x (currently 3.0.5)
 
-## Issues
+## Reporting Issues
 
 If you have issues running the controller, feel free to [file an issue](https://github.com/mbentley/docker-omada-controller/issues/new) and I will help as I can.  If you are specifically having a problem that is related to the actual software, I would suggest filing an issue on the [TP-Link community forums](https://community.tp-link.com/en/business/forum/582) as I do not have access to source code to debug those issues.  If you're not sure where the problem might be, I can help determine if it is a running in Docker issue or a software issue.
 
@@ -113,7 +139,7 @@ As of the Omada Controller version 4.2.x, the Dockerfiles have been simplified s
 
 </details>
 
-## Example usage
+## Example Usage
 
 To run this Docker image and keep persistent data in named volumes:
 
@@ -322,7 +348,7 @@ By default, Omada software uses self-signed certificates. If however you want to
 
 **Warning** - As of the version 4.1, certificates can also be installed through the web UI.  You should not attempt to mix certificate management methods as installing certificates via the UI will store the certificates in MongoDB and then the `/cert` volume method will cease to function.
 
-## Small Files
+## MongoDB Small Files
 
 In Omada 3.2 and older, this image uses the default mongodb settings for journal files.  If disk space is an issue, you can set the `SMALL_FILES` variable to `true` which will add [`--smallfiles`](https://docs.mongodb.com/v3.6/core/journaling/#journaling-journal-files) to the startup arguments for MongoDB.
 
@@ -337,6 +363,8 @@ By default, this image uses the `Etc/UTC` time zone.  You may update the time zo
 This Docker image runs as a non-root user by default.  In order to bind unprivileged ports (ports < 1024 by default), you must include `--sysctl net.ipv4.ip_unprivileged_port_start=0` in your `docker run` command to allow ports below 1024 to be bound by non-root users.
 
 ## Using Docker Compose
+
+There is a [Docker Compose file](https://github.com/mbentley/docker-omada-controller/blob/master/docker-compose.yml) available for those who would like to use compose to manage the lifecycle of their container:
 
 ```
 wget https://raw.githubusercontent.com/mbentley/docker-omada-controller/master/docker-compose.yml
