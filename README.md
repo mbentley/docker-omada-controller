@@ -54,25 +54,16 @@ If you have issues running the controller, feel free to [file an issue](https://
 
 ## Upgrading to 5.0.x from 4.1.x or above
 
-<details>
-<summary>Click to expand upgrade instructions and 5.0.x usage notes</summary>
-
-There are no specific upgrade steps required when upgrading to 5.0.x if you are already running at least 4.1.x.  For full details, please refer to the [TP-Link upgrade documentation](https://www.tp-link.com/en/omada-sdn/controller-upgrade/).
-
-There are, however, some differences in how you need to run the container if you are only exposing ports using port mapping as there are new ports that the controller is listening on. Starting with 5.0.x, the controller is also listening on `TCP port 29814` so you should add `-p 29814:29814` to your run command, compose file, or however you're running the container.
+There are no manual upgrade steps directly related to the software itself required when upgrading to 5.0.x if you are already running at least 4.1.x.  For full details, please refer to the [TP-Link upgrade documentation](https://www.tp-link.com/en/omada-sdn/controller-upgrade/).
 
 As always, I would recommend taking a backup through the controller software as well as save a copy of the persistent data while the controller is not running when you do upgrade to simplify the rollback process, if required.
 
 ### Changes/Notes for 5.0.x
 
-* If using custom ports, they will _not_ persist across container re-creation starting in 5.0 unless you continue to set the enviornment variables.  This is due to adding `/opt/tplink/EAPController/properties` to the classpath starting in 5.0.  If you change the ports through the UI, you should still continue to also set the ports using the environment variables, matching the ports you have set in the UI.  For more detail, see [Using non-default ports](#using-non-default-ports).
-
-</details>
+* **Updated Ports** - If you are only exposing ports using port mapping as the list of ports required has been updated.  Starting with 5.0.x, the controller is also listening on `TCP port 29814` so you should add `-p 29814:29814` to your run command, compose file, or however you're running the container.  Some additional unnecessary ports are no longer required so the list is shorter now.
+* **Custom Ports** - If using custom ports from the defaults of 8088, 8043, and 8843, they will _not_ persist across container re-creation starting in 5.0 unless you **always** set the `MANAGE_*_PORT` enviornment variables.  This is due to adding `/opt/tplink/EAPController/properties` to the classpath starting in 5.0.  If you change the ports through the UI, you should still continue to also set the ports using the environment variables, matching the ports you have set in the UI.  For more detail, see [Using non-default ports](#using-non-default-ports).
 
 ## Upgrading to 4.1 from 3.2.10 or below
-
-<details>
-<summary>Click to expand upgrade instructions and 4.1 usage notes</summary>
 
 The upgrade to the 4.1.x version is not a seamless upgrade and can't be done in place.  You must be running at least 3.1.4 or greater before you can proceed.  Instructions are available from [TP-Link](https://www.tp-link.com/en/omada-sdn/controller-upgrade/) but many of the steps will be different due to running in a docker container.  Here are the high level steps:
 
@@ -88,8 +79,6 @@ The upgrade to the 4.1.x version is not a seamless upgrade and can't be done in 
 1. **Ports** - Do not change the ports for the controller or portal in the UI to ports below 1024 unless you have adjusted the unprivileged ports; for ports < 1024, see [Unprivileged Ports](#unprivileged-ports).
 1. **SSL Certificates** - if you are installing your own SSL certificates, you should only manage them using one method - through the UI or by using the `/cert` volume as [described below](#custom-certificates).
 1. **Synology Users** - if you're using a Synology and are using the `latest` tag and update to 4.1, you will need to make sure to re-create the container due to the `CMD` changing from older versions to 4.1 as Synology retains the entrypoint and command from the container as it is defined and not from the image.
-
-</details>
 
 ## Building images
 
