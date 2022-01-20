@@ -42,7 +42,7 @@ These tags will explicitly pull the image for the listed architecture and are bi
 
 #### [`amd64`](https://hub.docker.com/repository/docker/mbentley/omada-controller/tags?page=1&ordering=last_updated&name=amd64)
 
-* `latest`, `5.0` - Omada Controller 5.0.x (currently 5.0.29)
+* `latest`, `5.0` - Omada Controller 5.0.x (currently 5.0.30)
 * `4.4` - Omada Controller 4.4.x (currently 4.4.8)
 * `4.3` - Omada Controller 4.3.x (currently 4.3.5)
 * `4.2` - Omada Controller 4.2.x (currently 4.2.11)
@@ -51,7 +51,7 @@ These tags will explicitly pull the image for the listed architecture and are bi
 
 #### [`armv7l`](https://hub.docker.com/repository/docker/mbentley/omada-controller/tags?page=1&ordering=last_updated&name=armv7l)
 
-* `latest-armv7l`, `5.0-armv7l` - Omada Controller 5.0.x (currently 5.0.29)
+* `latest-armv7l`, `5.0-armv7l` - Omada Controller 5.0.x (currently 5.0.30)
 * `4.4-armv7l` - Omada Controller 4.4.x (currently 4.4.8)
 * `4.3-armv7l` - Omada Controller 4.3.x (currently 4.3.5)
 * `4.2-armv7l` - Omada Controller 4.2.x (currently 4.2.11)
@@ -60,7 +60,7 @@ These tags will explicitly pull the image for the listed architecture and are bi
 
 #### [`arm64`](https://hub.docker.com/repository/docker/mbentley/omada-controller/tags?page=1&ordering=last_updated&name=arm64)
 
-* `latest-arm64`, `5.0-arm64` - Omada Controller 5.0.x (currently 5.0.29)
+* `latest-arm64`, `5.0-arm64` - Omada Controller 5.0.x (currently 5.0.30)
 * `4.4-arm64` - Omada Controller 4.4.x (currently 4.4.8)
 * `4.3-arm64` - Omada Controller 4.3.x (currently 4.3.5)
 * `4.2-arm64` - Omada Controller 4.2.x (currently 4.2.11)
