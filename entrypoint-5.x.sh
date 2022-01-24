@@ -136,7 +136,7 @@ if [ "$(echo "${@}" | grep -q "com.tplink.omada.start.OmadaLinuxMain"; echo $?)"
 then
   echo -e "\n############################"
   echo "WARNING: CMD from 4.x detected!  It is likely that this container will fail to start properly with a \"Could not find or load main class com.tplink.omada.start.OmadaLinuxMain\" error!"
-  echo "  See the note on old CMDs at https://github.com/mbentley/docker-omada-controller#synology-users-and-upgrade-issues for details on why and how to resolve the issue."
+  echo "  See the note on old CMDs at https://github.com/mbentley/docker-omada-controller#upgrade-issues for details on why and how to resolve the issue."
   echo -e "############################\n"
 fi
 
