@@ -26,7 +26,7 @@ docker image based off of ubuntu:18.04 for [TP-Link Omada Controller](https://ww
 * [Unprivileged Ports](#unprivileged-ports)
 * [Using Docker Compose](#using-docker-compose)
 * [Known Issues](#known-issues)
-  * [Synology Users and Upgrade Issues](#synology-users-and-upgrade-issues)
+  * [Upgrade Issues](#upgrade-issues)
 
 ## Image Tags
 
@@ -373,6 +373,14 @@ docker-compose up -d
 
 ## Known Issues
 
-### Synology Users and Upgrade Issues
+### Upgrade Issues
 
-* If update from 3.x to 4.x or 4.x to 5.x, you will need to make sure to re-create the container due to the CMD changing between the major releases as Synology retains the entrypoint and command from the container as it is defined and not from the image unless the container is re-created.
+It has been reported that users of some NAS devices such as a Synology or users of a Docker management UI like Portainer have had issues with upgrades due to the CMD being retained between versions.  This normally does not happen with the Docker command line so it is a bit of an unexpected pattern but it can not be overwritten as it exists outside of the container.
+
+If updating from 3.x to 4.x or 4.x to 5.x, make sure to **completely** re-create the container otherwise the controller will not start. This is due to the CMD changing between the major releases as some web interfaces like Synology or Portainer retain the entrypoint and command explicitly instead of inheriting it from the image. To resolve the issue, do one of the following:
+
+* Re-create the container - remove the container, keeping your persistent data and create it again using whatever method you used to originally create it.
+* Update the CMD (command is all on one line):
+  * 4.x to 5.x - `/usr/bin/java -server -Xms128m -Xmx1024m -XX:MaxHeapFreeRatio=60 -XX:MinHeapFreeRatio=30 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/opt/tplink/EAPController/logs/java_heapdump.hprof -Djava.awt.headless=true -cp /opt/tplink/EAPController/lib/*::/opt/tplink/EAPController/properties: com.tplink.smb.omada.starter.OmadaLinuxMain`
+
+It should be noted that users of 3.x who wish to upgrade to 4.x must perform [specific upgrade steps](#upgrading-to-41-from-3210-or-below) to prevent data loss!
