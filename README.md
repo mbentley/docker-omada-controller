@@ -35,45 +35,60 @@ docker image based off of ubuntu:18.04 for [TP-Link Omada Controller](https://ww
 
 The following tags have multi-arch support for `amd64`, `armv7l`, and `arm64` and will automatically pull the correct tag based on your system's architecture:
 
-`latest`, `5.0`, `4.4`, `4.3`, `4.2`, `4.1`, `3.2`
+| Tag(s) | Major.Minor Release | Current Version |
+| :----- | ------------------- | --------------- |
+| `latest`, `5.0` | Omada Controller `5.0.x` | `5.0.30` |
+| `4.4` | Omada Controller `4.4.x` | `4.4.8` |
+| `4.3` | Omada Controller `4.3.x` | `4.3.5` |
+| `4.2` | Omada Controller `4.2.x` | `4.2.11` |
+| `4.1` | Omada Controller `4.1.x` | `4.1.5` |
+| `3.2` | Omada Controller `3.2.x` | `3.2.16` |
 
 ### Explicit Architecture Tags
 
-These tags will explicitly pull the image for the listed architecture and are bit for bit identical to the multi-arch tags images.
+These tags will explicitly pull the image for the listed architecture and are bit for bit identical to the multi-arch tags images. The current version of the software is identical across all architectures so they are identical to the table above.
 
-#### [`amd64`](https://hub.docker.com/repository/docker/mbentley/omada-controller/tags?page=1&ordering=last_updated&name=amd64)
+#### [`amd64`](https://hub.docker.com/repository/docker/mbentley/omada-controller/tags?page=1&ordering=last_updated&name=-amd64)
 
-* `latest-amd64`, `5.0-amd64` - Omada Controller 5.0.x (currently 5.0.30)
-* `4.4-amd64` - Omada Controller 4.4.x (currently 4.4.8)
-* `4.3-amd64` - Omada Controller 4.3.x (currently 4.3.5)
-* `4.2-amd64` - Omada Controller 4.2.x (currently 4.2.11)
-* `4.1-amd64` - Omada Controller 4.1.x (currently 4.1.5)
-* `3.2-amd64` - Omada Controller 3.2.x (currently 3.2.16)
+| Tag(s) for [`amd64`](https://hub.docker.com/repository/docker/mbentley/omada-controller/tags?page=1&ordering=last_updated&name=-amd64) | Major.Minor Release |
+| :----- | ------------------- |
+| `latest-amd64`, `5.0-amd64` | Omada Controller `5.0.x` |
+| `4.4-amd64` | Omada Controller `4.4.x` |
+| `4.3-amd64` | Omada Controller `4.3.x` |
+| `4.2-amd64` | Omada Controller `4.2.x` |
+| `4.1-amd64` | Omada Controller `4.1.x` |
+| `3.2-amd64` | Omada Controller `3.2.x` |
 
-#### [`armv7l`](https://hub.docker.com/repository/docker/mbentley/omada-controller/tags?page=1&ordering=last_updated&name=armv7l)
+#### [`armv7l`](https://hub.docker.com/repository/docker/mbentley/omada-controller/tags?page=1&ordering=last_updated&name=-armv7l)
 
-* `latest-armv7l`, `5.0-armv7l` - Omada Controller 5.0.x (currently 5.0.30)
-* `4.4-armv7l` - Omada Controller 4.4.x (currently 4.4.8)
-* `4.3-armv7l` - Omada Controller 4.3.x (currently 4.3.5)
-* `4.2-armv7l` - Omada Controller 4.2.x (currently 4.2.11)
-* `4.1-armv7l` - Omada Controller 4.1.x (currently 4.1.5)
-* `3.2-armv7l` - Omada Controller 3.2.x (currently 3.2.16)
+| Tag(s) for [`armv7l`](https://hub.docker.com/repository/docker/mbentley/omada-controller/tags?page=1&ordering=last_updated&name=-armv7l) | Major.Minor Release |
+| :----- | ------------------- |
+| `latest-armv7l`, `5.0-armv7l` | Omada Controller `5.0.x` |
+| `4.4-armv7l` | Omada Controller `4.4.x` |
+| `4.3-armv7l` | Omada Controller `4.3.x` |
+| `4.2-armv7l` | Omada Controller `4.2.x` |
+| `4.1-armv7l` | Omada Controller `4.1.x` |
+| `3.2-armv7l` | Omada Controller `3.2.x` |
 
-#### [`arm64`](https://hub.docker.com/repository/docker/mbentley/omada-controller/tags?page=1&ordering=last_updated&name=arm64)
+#### [`arm64`](https://hub.docker.com/repository/docker/mbentley/omada-controller/tags?page=1&ordering=last_updated&name=-arm64)
 
-* `latest-arm64`, `5.0-arm64` - Omada Controller 5.0.x (currently 5.0.30)
-* `4.4-arm64` - Omada Controller 4.4.x (currently 4.4.8)
-* `4.3-arm64` - Omada Controller 4.3.x (currently 4.3.5)
-* `4.2-arm64` - Omada Controller 4.2.x (currently 4.2.11)
-* `4.1-arm64` - Omada Controller 4.1.x (currently 4.1.5)
-* `3.2-arm64` - Omada Controller 3.2.x (currently 3.2.16)
+| Tag(s) for [`arm64`](https://hub.docker.com/repository/docker/mbentley/omada-controller/tags?page=1&ordering=last_updated&name=-arm64) | Major.Minor Release |
+| :----- | ------------------- |
+| `latest-arm64`, `5.0-arm64` | Omada Controller `5.0.x` |
+| `4.4-arm64` | Omada Controller `4.4.x` |
+| `4.3-arm64` | Omada Controller `4.3.x` |
+| `4.2-arm64` | Omada Controller `4.2.x` |
+| `4.1-arm64` | Omada Controller `4.1.x` |
+| `3.2-arm64` | Omada Controller `3.2.x` |
 
 ## Archived Tags
 
 These images are still published on Docker Hub but are no longer regularly updated due to the controller software no longer being updated. **Use with extreme caution as these images are likely to contain unpatched security vulnerabilities!**
 
-* `3.1` - Omada Controller 3.1.x (currently 3.1.13)
-* `3.0` - Omada Controller 3.0.x (currently 3.0.5)
+| Tag(s) | Major.Minor Release | Current Version |
+| :----- | ------------------- | ----------------|
+| `3.1` | Omada Controller `3.1.x` | `3.1.13` |
+| `3.0` | Omada Controller `3.0.x` | `3.0.5` |
 
 ## Reporting Issues
 
