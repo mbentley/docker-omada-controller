@@ -43,12 +43,12 @@ These tags will explicitly pull the image for the listed architecture and are bi
 
 #### [`amd64`](https://hub.docker.com/repository/docker/mbentley/omada-controller/tags?page=1&ordering=last_updated&name=amd64)
 
-* `latest`, `5.0` - Omada Controller 5.0.x (currently 5.0.30)
-* `4.4` - Omada Controller 4.4.x (currently 4.4.8)
-* `4.3` - Omada Controller 4.3.x (currently 4.3.5)
-* `4.2` - Omada Controller 4.2.x (currently 4.2.11)
-* `4.1` - Omada Controller 4.1.x (currently 4.1.5)
-* `3.2` - Omada Controller 3.2.x (currently 3.2.16)
+* `latest-amd64`, `5.0-amd64` - Omada Controller 5.0.x (currently 5.0.30)
+* `4.4-amd64` - Omada Controller 4.4.x (currently 4.4.8)
+* `4.3-amd64` - Omada Controller 4.3.x (currently 4.3.5)
+* `4.2-amd64` - Omada Controller 4.2.x (currently 4.2.11)
+* `4.1-amd64` - Omada Controller 4.1.x (currently 4.1.5)
+* `3.2-amd64` - Omada Controller 3.2.x (currently 3.2.16)
 
 #### [`armv7l`](https://hub.docker.com/repository/docker/mbentley/omada-controller/tags?page=1&ordering=last_updated&name=armv7l)
 
