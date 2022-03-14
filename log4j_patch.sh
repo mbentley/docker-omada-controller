@@ -32,14 +32,14 @@ echo -e "INFO: download of log4j (${NEW_LOG4J_VERSION}) complete!\n"
 
 # import the gpg signing keys for log4j
 echo "INFO: importing the signing keys of the log4j developers"
-gpg --import "/tmp/KEYS"
+gpg2 --import "/tmp/KEYS"
 echo -e "INFO: import of the signing keys of the log4j developers complete!\n"
 
 # validate the signature against the log4j binaries
 echo "INFO: validating signature of the downloaded log4j binaries"
 set +e
 # validate the signatures on the files
-SIGNATURE_TEST1="$(gpg --verify "/tmp/apache-log4j-${NEW_LOG4J_VERSION}-bin.tar.gz.asc" >/dev/null 2>&1; echo $?)"
+SIGNATURE_TEST1="$(gpg2 --verify "/tmp/apache-log4j-${NEW_LOG4J_VERSION}-bin.tar.gz.asc" >/dev/null 2>&1; echo $?)"
 set -e
 
 # check results
