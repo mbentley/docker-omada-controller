@@ -98,9 +98,28 @@ fi
 # Import a cert from a possibly mounted secret or file at /cert
 if [ -f "/cert/${SSL_KEY_NAME}" ] && [ -f "/cert/${SSL_CERT_NAME}" ]
 then
+  # see where the keystore directory is; check for old location first
+  if [ -d /opt/tplink/EAPController/keystore ]
+  then
+    # keystore in the parent folder before 5.3.1
+    KEYSTORE_DIR="/opt/tplink/EAPController/keystore"
+  else
+    # keystore directory moved to the data directory in 5.3.1
+    KEYSTORE_DIR="/opt/tplink/EAPController/data/keystore"
+
+    # check to see if the KEYSTORE_DIR exists (it won't on upgrade)
+    if [ ! -d "${KEYSTORE_DIR}" ]
+    then
+      echo "INFO: creating keystore directory (${KEYSTORE_DIR})"
+      mkdir "${KEYSTORE_DIR}"
+      echo "INFO: setting permissions on ${KEYSTORE_DIR}"
+      chown 508:508 "${KEYSTORE_DIR}"
+    fi
+  fi
+
   echo "INFO: Importing cert from /cert/tls.[key|crt]"
   # delete the existing keystore
-  rm /opt/tplink/EAPController/keystore/eap.keystore
+  rm -f "${KEYSTORE_DIR}/eap.keystore"
 
   # example certbot usage: ./certbot-auto certonly --standalone --preferred-challenges http -d mydomain.net
   openssl pkcs12 -export \
@@ -108,12 +127,12 @@ then
     -in "/cert/${SSL_CERT_NAME}" \
     -certfile "/cert/${SSL_CERT_NAME}" \
     -name eap \
-    -out /opt/tplink/EAPController/keystore/eap.keystore \
+    -out "${KEYSTORE_DIR}/eap.keystore" \
     -passout pass:tplink
 
   # set ownership/permission on keystore
-  chown omada:omada /opt/tplink/EAPController/keystore/eap.keystore
-  chmod 400 /opt/tplink/EAPController/keystore/eap.keystore
+  chown omada:omada "${KEYSTORE_DIR}/eap.keystore"
+  chmod 400 "${KEYSTORE_DIR}/eap.keystore"
 fi
 
 # re-enable disabled TLS versions 1.0 & 1.1
