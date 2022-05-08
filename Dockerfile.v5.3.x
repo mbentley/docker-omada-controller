@@ -1,5 +1,5 @@
 # rebased/repackaged base image that only updates existing packages
-ARG BASE=mbentley/ubuntu:18.04
+ARG BASE=mbentley/ubuntu:20.04
 FROM ${BASE}
 
 LABEL maintainer="Matt Bentley <mbentley@mbentley.net>"
