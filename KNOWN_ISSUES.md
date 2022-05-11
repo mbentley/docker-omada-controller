@@ -8,7 +8,7 @@ While MongoDB is fairly robust, the persistent data can become corrupt if a clea
 
 It has been reported that users of some NAS devices such as a Synology or users of a Docker management UI like Portainer have had issues with upgrades due to the CMD being retained between versions. This normally does not happen with the Docker command line so it is a bit of an unexpected pattern but it can not be overwritten as it exists outside of the container.
 
-If updating from 3.x to 4.x or 4.x to 5.x, make sure to **completely** re-create the container otherwise the controller will not start. This is due to the CMD changing between the major releases as some web interfaces like Synology or Portainer retain the entrypoint and command explicitly instead of inheriting it from the image. To resolve the issue, do one of the following:
+If updating from 3.x to 4.x or 4.x to 5.x, make sure to **completely** re-create the container (leaving your persistent data intact) otherwise the controller will not start. This is due to the CMD changing between the major releases as some web interfaces like Synology or Portainer retain the entrypoint and command explicitly instead of inheriting it from the image. To resolve the issue, do one of the following:
 
 * Re-create the container - remove the container, keeping your persistent data and create it again using whatever method you used to originally create it.
 * Update the CMD (command is all on one line):
