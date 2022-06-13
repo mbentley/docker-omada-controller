@@ -2,6 +2,9 @@
 
 set -e
 
+# omada controller dependency and package installer script for versions 4.x and 5.x
+
+# set default variables
 OMADA_DIR="/opt/tplink/EAPController"
 ARCH="${ARCH:-}"
 OMADA_VER="${OMADA_VER:-}"
@@ -15,21 +18,33 @@ die() { echo -e "$@" 2>&1; exit 1; }
 PKGS=(
   gosu
   net-tools
-  openjdk-8-jre-headless
   tzdata
   wget
 )
 
+# add specific packages for different versions and architectures
 case "${ARCH}" in
-amd64|arm64|"")
-  PKGS+=( mongodb-server-core )
-  ;;
-armv7l)
-  PKGS+=( mongodb )
-  ;;
-*)
-  die "${ARCH}: unsupported ARCH"
-  ;;
+  amd64|arm64|"")
+    # include the mongodb package
+    PKGS+=( mongodb-server-core )
+
+    # use openjdk-17 for v5; all others us openjdk-8
+    case "${OMADA_MAJOR_VER}" in
+      5)
+        PKGS+=( openjdk-17-jre-headless )
+        ;;
+      *)
+        PKGS+=( openjdk-8-jre-headless )
+        ;;
+    esac
+    ;;
+  armv7l)
+    # different mongodb package & use openjdk-8 for all since that is all that is available
+    PKGS+=( mongodb openjdk-8-jre-headless )
+    ;;
+  *)
+    die "${ARCH}: unsupported ARCH"
+    ;;
 esac
 
 echo "ARCH=${ARCH}"
