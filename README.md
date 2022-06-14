@@ -67,6 +67,8 @@ These tags will explicitly pull the image for the listed architecture and are bi
 
 #### [`armv7l`](https://hub.docker.com/repository/docker/mbentley/omada-controller/tags?page=1&ordering=last_updated&name=-armv7l)
 
+**Warning**: If you have an operating system that is 32 bit (`armv7l`/`armhf`), I strongly recommend you **DO NOT** run the Omada Controller on that device as it is running [an unsupported operating system and an unsupported MongoDB](KNOWN_ISSUES.md#notes-for-armv7l).
+
 | Tag(s) for [`armv7l`](https://hub.docker.com/repository/docker/mbentley/omada-controller/tags?page=1&ordering=last_updated&name=-armv7l) | Major.Minor Release | Base Image |
 | :----- | ------------------- | ---------- |
 | `latest-armv7l`, `5.3-armv7l` | Omada Controller `5.3.x` | `mbentley/ubuntu:16.04` |
