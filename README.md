@@ -197,8 +197,10 @@ docker run -d \
   -p 29814:29814 \
   -e MANAGE_HTTP_PORT=8088 \
   -e MANAGE_HTTPS_PORT=8043 \
+  -e PGID="508" \
   -e PORTAL_HTTP_PORT=8088 \
   -e PORTAL_HTTPS_PORT=8843 \
+  -e PUID="508" \
   -e SHOW_SERVER_LOGS=true \
   -e SHOW_MONGODB_LOGS=false \
   -e SSL_CERT_NAME="tls.crt" \
@@ -219,8 +221,10 @@ docker run -d \
   --net host \
   -e MANAGE_HTTP_PORT=8088 \
   -e MANAGE_HTTPS_PORT=8043 \
+  -e PGID="508" \
   -e PORTAL_HTTP_PORT=8088 \
   -e PORTAL_HTTPS_PORT=8843 \
+  -e PUID="508" \
   -e SHOW_SERVER_LOGS=true \
   -e SHOW_MONGODB_LOGS=false \
   -e SSL_CERT_NAME="tls.crt" \
@@ -251,8 +255,10 @@ docker run -d \
   -p 29814:29814 \
   -e MANAGE_HTTP_PORT=8088 \
   -e MANAGE_HTTPS_PORT=8043 \
+  -e PGID="508" \
   -e PORTAL_HTTP_PORT=8088 \
   -e PORTAL_HTTPS_PORT=8843 \
+  -e PUID="508" \
   -e SHOW_SERVER_LOGS=true \
   -e SHOW_MONGODB_LOGS=false \
   -e SSL_CERT_NAME="tls.crt" \
@@ -273,8 +279,10 @@ docker run -d \
   --net host \
   -e MANAGE_HTTP_PORT=8088 \
   -e MANAGE_HTTPS_PORT=8043 \
+  -e PGID="508" \
   -e PORTAL_HTTP_PORT=8088 \
   -e PORTAL_HTTPS_PORT=8843 \
+  -e PUID="508" \
   -e SHOW_SERVER_LOGS=true \
   -e SHOW_MONGODB_LOGS=false \
   -e SSL_CERT_NAME="tls.crt" \
@@ -307,8 +315,10 @@ docker run -d \
   -p 29814:29814 \
   -e MANAGE_HTTP_PORT=8088 \
   -e MANAGE_HTTPS_PORT=8043 \
+  -e PGID="508" \
   -e PORTAL_HTTP_PORT=8088 \
   -e PORTAL_HTTPS_PORT=8843 \
+  -e PUID="508" \
   -e SHOW_SERVER_LOGS=true \
   -e SHOW_MONGODB_LOGS=false \
   -e SSL_CERT_NAME="tls.crt" \
@@ -329,8 +339,10 @@ docker run -d \
   --net host \
   -e MANAGE_HTTP_PORT=8088 \
   -e MANAGE_HTTPS_PORT=8043 \
+  -e PGID="508" \
   -e PORTAL_HTTP_PORT=8088 \
   -e PORTAL_HTTPS_PORT=8843 \
+  -e PUID="508" \
   -e SHOW_SERVER_LOGS=true \
   -e SHOW_MONGODB_LOGS=false \
   -e SSL_CERT_NAME="tls.crt" \
@@ -350,8 +362,10 @@ docker run -d \
 | :------- | :------ | :----: | :---------- | :-------: |
 | `MANAGE_HTTP_PORT` | `8088` | `1024`-`65535` | Management portal HTTP port; for ports < 1024, see [Unprivileged Ports](#unprivileged-ports) | >= `3.2` |
 | `MANAGE_HTTPS_PORT` | `8043` | `1024`-`65535` | Management portal HTTPS port; for ports < 1024, see [Unprivileged Ports](#unprivileged-ports) | >= `3.2` |
+| `PGID` | `508` | _any_ | Set the `omada` process group ID ` | >= `3.2` |
 | `PORTAL_HTTP_PORT` | `8088` | `1024`-`65535` | User portal HTTP port; for ports < 1024, see [Unprivileged Ports](#unprivileged-ports) | >= `4.1` |
 | `PORTAL_HTTPS_PORT` | `8843` | `1024`-`65535` | User portal HTTPS port; for ports < 1024, see [Unprivileged Ports](#unprivileged-ports) | >= `4.1` |
+| `PUID` | `508` | _any_ | Set the `omada` process user ID ` | >= `3.2` |
 | `SHOW_SERVER_LOGS` | `true` | `[true\|false]` | Outputs Omada Controller logs to STDOUT at runtime | >= `4.1` |
 | `SHOW_MONGODB_LOGS` | `false` | `[true\|false]` | Outputs MongoDB logs to STDOUT at runtime | >= `4.1` |
 | `SMALL_FILES` | `false` | `[true\|false]` | See [Small Files](#small-files) for more detail; no effect in >= `4.1.x` | `3.2` only |

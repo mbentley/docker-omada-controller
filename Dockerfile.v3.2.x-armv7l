@@ -28,11 +28,6 @@ RUN \
   echo "**** Cleanup ****" &&\
   cd /tmp &&\
   rm -rf /tmp/Omada_Controller* &&\
-  echo "**** Setup omada User Account ****" &&\
-  groupadd -g 508 omada &&\
-  useradd -u 508 -g 508 -d /opt/tplink/EAPController omada &&\
-  mkdir /opt/tplink/EAPController/logs /opt/tplink/EAPController/work &&\
-  chown -R omada:omada /opt/tplink/EAPController/data /opt/tplink/EAPController/logs /opt/tplink/EAPController/work &&\
   echo "*** Replacing bundled versions ***" &&\
   rm -f /opt/tplink/EAPController/bin/mongod &&\
   ln -s /usr/bin/mongod /opt/tplink/EAPController/bin/mongod &&\

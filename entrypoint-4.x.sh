@@ -15,6 +15,63 @@ SHOW_MONGODB_LOGS="${SHOW_MONGODB_LOGS:-false}"
 SSL_CERT_NAME="${SSL_CERT_NAME:-tls.crt}"
 SSL_KEY_NAME="${SSL_KEY_NAME:-tls.key}"
 TLS_1_11_ENABLED="${TLS_1_11_ENABLED:-false}"
+PUID="${PUID:-508}"
+PGID="${PGID:-508}"
+
+# validate user/group exist with correct UID/GID
+echo "INFO: Validating user/group (omada:omada) exists with correct UID/GID (${PUID}:${PGID})"
+
+# check to see if group exists; if not, create it
+if grep -q -E "^omada:" /etc/group > /dev/null 2>&1
+then
+  # exiting group found; also make sure the omada user matches the GID
+  echo "INFO: Group (omada) exists; skipping creation"
+  EXISTING_GID="$(id -g omada)"
+  if [ "${EXISTING_GID}" != "${PGID}" ]
+  then
+    echo "ERROR: Group (omada) has an unexpected GID; was expecting '${PGID}' but found '${EXISTING_GID}'!"
+    exit 1
+  fi
+else
+  # make sure the group doesn't already exist with a different name
+  if awk -F ':' '{print $3}' /etc/group | grep -q "^${PGID}$"
+  then
+    # group ID exists but has a different group name
+    EXISTING_GROUP="$(grep ":${PGID}:" /etc/group | awk -F ':' '{print $1}')"
+    echo "INFO: Group (omada) already exists with a different name; renaming '${EXISTING_GROUP}' to 'omada'"
+    groupmod -n omada "${EXISTING_GROUP}"
+  else
+    # create the group
+    echo "INFO: Group (omada) doesn't exist; creating"
+    groupadd -g "${PGID}" omada
+  fi
+fi
+
+# check to see if user exists; if not, create it
+if id -u omada > /dev/null 2>&1
+then
+  # exiting user found; also make sure the omada user matches the UID
+  echo "INFO: User (omada) exists; skipping creation"
+  EXISTING_UID="$(id -u omada)"
+  if [ "${EXISTING_UID}" != "${PUID}" ]
+  then
+    echo "ERROR: User (omada) has an unexpected UID; was expecting '${PUID}' but found '${EXISTING_UID}'!"
+    exit 1
+  fi
+else
+  # make sure the user doesn't already exist with a different name
+  if awk -F ':' '{print $3}' /etc/passwd | grep -q "^${PUID}$"
+  then
+    # user ID exists but has a different user name
+    EXISTING_USER="$(grep ":${PUID}:" /etc/passwd | awk -F ':' '{print $1}')"
+    echo "INFO: User (omada) already exists with a different name; renaming '${EXISTING_USER}' to 'omada'"
+    usermod -g "${PGID}" -d /opt/tplink/EAPController/work -l omada -s /bin/sh -c "" "${EXISTING_USER}"
+  else
+    # create the user
+    echo "INFO: User (omada) doesn't exist; creating"
+    useradd -u "${PUID}" -g "${PGID}" -d /opt/tplink/EAPController/work -s /bin/sh -c "" omada
+  fi
+fi
 
 # set default time zone and notify user of time zone
 echo "INFO: Time zone set to '${TZ}'"
@@ -63,17 +120,16 @@ then
 fi
 
 # make sure permissions are set appropriately on each directory
-for DIR in data work logs
+for DIR in data logs work
 do
   OWNER="$(stat -c '%u' /opt/tplink/EAPController/${DIR})"
   GROUP="$(stat -c '%g' /opt/tplink/EAPController/${DIR})"
 
-  if [ "${OWNER}" != "508" ] || [ "${GROUP}" != "508" ]
+  if [ "${OWNER}" != "${PUID}" ] || [ "${GROUP}" != "${PGID}" ]
   then
     # notify user that uid:gid are not correct and fix them
-    echo "WARNING: owner or group (${OWNER}:${GROUP}) not set correctly on '/opt/tplink/EAPController/${DIR}'"
-    echo "INFO: setting correct permissions"
-    chown -R 508:508 "/opt/tplink/EAPController/${DIR}"
+    echo "WARN: ownership not set correctly on '/opt/tplink/EAPController/${DIR}'; setting correct ownership (omada:omada)"
+    chown -R omada:omada "/opt/tplink/EAPController/${DIR}"
   fi
 done
 
@@ -81,8 +137,7 @@ done
 TMP_PERMISSIONS="$(stat -c '%a' /tmp)"
 if [ "${TMP_PERMISSIONS}" != "1777" ]
 then
-  echo "WARNING: permissions are not set correctly on '/tmp' (${TMP_PERMISSIONS})!"
-  echo "INFO: setting correct permissions (1777)"
+  echo "WARN: permissions are not set correctly on '/tmp' (${TMP_PERMISSIONS}); setting correct permissions (1777)"
   chmod -v 1777 /tmp
 fi
 
@@ -91,7 +146,7 @@ if [ ! -d "/opt/tplink/EAPController/data/db" ]
 then
   echo "INFO: Database directory missing; creating '/opt/tplink/EAPController/data/db'"
   mkdir /opt/tplink/EAPController/data/db
-  chown 508:508 /opt/tplink/EAPController/data/db
+  chown omada:omada /opt/tplink/EAPController/data/db
   echo "done"
 fi
 

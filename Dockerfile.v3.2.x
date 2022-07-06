@@ -29,12 +29,7 @@ RUN \
   chmod 755 /opt/tplink/EAPController/jre/bin/* &&\
   echo "**** Cleanup ****" &&\
   cd /tmp &&\
-  rm -rf /tmp/Omada_Controller* &&\
-  echo "**** Setup omada User Account ****" &&\
-  groupadd -g 508 omada &&\
-  useradd -u 508 -g 508 -d /opt/tplink/EAPController omada &&\
-  mkdir /opt/tplink/EAPController/logs /opt/tplink/EAPController/work &&\
-  chown -R omada:omada /opt/tplink/EAPController/data /opt/tplink/EAPController/logs /opt/tplink/EAPController/work
+  rm -rf /tmp/Omada_Controller*
 
 # patch log4j vulnerability
 COPY log4j_patch.sh /log4j_patch.sh
