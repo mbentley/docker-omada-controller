@@ -138,11 +138,8 @@ done
 ln -sf "$(which mongod)" "${OMADA_DIR}/bin/mongod"
 chmod 755 "${OMADA_DIR}"/bin/*
 
-echo "**** Setup omada User Account ****"
-groupadd -g 508 omada
-useradd -u 508 -g 508 -d "${OMADA_DIR}" omada
+# create logs and work directories
 mkdir "${OMADA_DIR}/logs" "${OMADA_DIR}/work"
-chown -R omada:omada "${OMADA_DIR}/data" "${OMADA_DIR}/logs" "${OMADA_DIR}/work"
 
 echo "**** Cleanup ****"
 rm -rf /tmp/* /var/lib/apt/lists/*
