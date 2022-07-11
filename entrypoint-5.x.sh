@@ -119,6 +119,24 @@ then
   set_port_property portal.https.port 8843 "${PORTAL_HTTPS_PORT}"
 fi
 
+# make sure that the html directory exists
+if [ ! -d "/opt/tplink/EAPController/data/html" ]
+then
+  # missing directory; extract from original
+  echo "INFO: Report HTML directory missing; extracting backup to '/opt/tplink/EAPController/data/html'"
+  tar zxvf /opt/tplink/EAPController/data-html.tar.gz -C /opt/tplink/EAPController/data
+  chown -R omada:omada /opt/tplink/EAPController/data/html
+fi
+
+# make sure that the pdf directory exists
+if [ ! -d "/opt/tplink/EAPController/data/pdf" ]
+then
+  # missing directory; extract from original
+  echo "INFO: Report PDF directory missing; creating '/opt/tplink/EAPController/data/pdf'"
+  mkdir /opt/tplink/EAPController/data/pdf
+  chown -R omada:omada /opt/tplink/EAPController/data/pdf
+fi
+
 # make sure permissions are set appropriately on each directory
 for DIR in data logs work
 do
