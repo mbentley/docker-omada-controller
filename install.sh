@@ -141,9 +141,13 @@ chmod 755 "${OMADA_DIR}"/bin/*
 # create logs and work directories
 mkdir "${OMADA_DIR}/logs" "${OMADA_DIR}/work"
 
-# create backup of data/html directory in case it is missing (to be extracted at runtime)
-cd /opt/tplink/EAPController/data
-tar zcvf ../data-html.tar.gz html
+# for v5.1 & above, create backup of data/html directory in case it is missing (to be extracted at runtime)
+if [ -d /opt/tplink/EAPController/data/html ]
+then
+  # create backup
+  cd /opt/tplink/EAPController/data
+  tar zcvf ../data-html.tar.gz html
+fi
 
 echo "**** Cleanup ****"
 rm -rf /tmp/* /var/lib/apt/lists/*
