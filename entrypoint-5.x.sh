@@ -120,7 +120,7 @@ then
 fi
 
 # make sure that the html directory exists
-if [ ! -d "/opt/tplink/EAPController/data/html" ]
+if [ ! -d "/opt/tplink/EAPController/data/html" ] && [ -f "/opt/tplink/EAPController/data-html.tar.gz" ]
 then
   # missing directory; extract from original
   echo "INFO: Report HTML directory missing; extracting backup to '/opt/tplink/EAPController/data/html'"
