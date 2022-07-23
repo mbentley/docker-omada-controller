@@ -135,7 +135,7 @@ do
 done
 
 # symlink for mongod
-ln -sf "$(which mongod)" "${OMADA_DIR}/bin/mongod"
+ln -sf "$(command -v mongod)" "${OMADA_DIR}/bin/mongod"
 chmod 755 "${OMADA_DIR}"/bin/*
 
 # create logs and work directories
