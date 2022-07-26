@@ -146,7 +146,7 @@ As of the Omada Controller version 4.2.x, the Dockerfiles have been simplified s
   No build args required; set for the default build-args
 
   ```
-  docker build -f Dockerfile.v5.1.x -t mbentley/omada-controller:5.3 .
+  docker build -f Dockerfile.v5.3.x -t mbentley/omada-controller:5.3 .
   ```
 
 ### `arm64`
@@ -154,7 +154,7 @@ As of the Omada Controller version 4.2.x, the Dockerfiles have been simplified s
   Only the `ARCH` build-arg is required
 
   ```
-  docker build --build-arg ARCH="arm64" -f Dockerfile.v5.1.x -t mbentley/omada-controller:5.3-arm64 .
+  docker build --build-arg ARCH="arm64" -f Dockerfile.v5.3.x -t mbentley/omada-controller:5.3-arm64 .
   ```
 
 ### `armv7l`
@@ -162,7 +162,7 @@ As of the Omada Controller version 4.2.x, the Dockerfiles have been simplified s
   Both the `ARCH` and `BASE` build-args are required
 
   ```
-  docker build --build-arg ARCH="armv7l" --build-arg BASE="ubuntu:16.04" -f Dockerfile.v5.1.x -t mbentley/omada-controller:5.3-armv7l .
+  docker build --build-arg ARCH="armv7l" --build-arg BASE="ubuntu:16.04" -f Dockerfile.v5.3.x -t mbentley/omada-controller:5.3-armv7l .
   ```
 
 </details>
