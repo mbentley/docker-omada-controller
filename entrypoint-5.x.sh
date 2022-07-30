@@ -212,7 +212,18 @@ fi
 if [ "${TLS_1_11_ENABLED}" = "true" ]
 then
   echo "INFO: Re-enabling TLS 1.0 & 1.1"
-  sed -i 's#^jdk.tls.disabledAlgorithms=SSLv3, TLSv1, TLSv1.1,#jdk.tls.disabledAlgorithms=SSLv3,#' /etc/java-8-openjdk/security/java.security
+  if [ -f "/etc/java-8-openjdk/security/java.security" ]
+  then
+    # openjdk8
+    sed -i 's#^jdk.tls.disabledAlgorithms=SSLv3, TLSv1, TLSv1.1,#jdk.tls.disabledAlgorithms=SSLv3,#' /etc/java-8-openjdk/security/java.security
+  elif [ -f "/etc/java-17-openjdk/security/java.security" ]
+  then
+    # openjdk17
+    sed -i 's#^jdk.tls.disabledAlgorithms=SSLv3, TLSv1, TLSv1.1,#jdk.tls.disabledAlgorithms=SSLv3,#' /etc/java-17-openjdk/security/java.security
+  else
+    # not running openjdk8 or openjdk17
+    echo "WARN: unable to re-enable TLS 1.0 & 1.1; unable to detect openjdk version"
+  fi
 fi
 
 # see if any of these files exist; if so, do not start as they are from older versions
