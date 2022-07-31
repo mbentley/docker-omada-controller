@@ -3,19 +3,19 @@ ARG BASE=mbentley/ubuntu:18.04
 FROM ${BASE}
 LABEL maintainer="Matt Bentley <mbentley@mbentley.net>"
 
-COPY install.sh healthcheck.sh /
+COPY healthcheck.sh install.sh log4j_patch.sh /
 COPY entrypoint-4.x.sh /entrypoint.sh
 
 # valid values: amd64 (default) | arm64 | armv7l
 ARG ARCH=amd64
-ARG OMADA_URL="https://static.tp-link.com/2021/202102/20210209/Omada_SDN_Controller_v4.2.11_linux_x64.tar.gz"
 
-# install omada controller (instructions taken from install.sh); then create a user & group and set the appropriate file system permissions
-RUN /install.sh && rm /install.sh
+# install version (major.minor only); OMADA_URL set in install.sh
+ARG INSTALL_VER="4.4"
 
-# patch log4j vulnerability
-COPY log4j_patch.sh /
-RUN /log4j_patch.sh
+# install omada controller (instructions taken from install.sh) & patch log4j, if applicable
+RUN /install.sh &&\
+  /log4j_patch.sh &&\
+  rm /install.sh /log4j_patch.sh
 
 WORKDIR /opt/tplink/EAPController/lib
 EXPOSE 8088 8043 8843 27001/udp 27002 29810/udp 29811 29812 29813
