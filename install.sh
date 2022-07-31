@@ -7,14 +7,50 @@ set -e
 # set default variables
 OMADA_DIR="/opt/tplink/EAPController"
 ARCH="${ARCH:-}"
-OMADA_URL="${OMADA_URL:-}"
+INSTALL_VER="${INSTALL_VER:-}"
+
+# set URL based on the major.minor version requested to be installed; should be major.minor (e.g. - 4.1)
+case "${INSTALL_VER}" in
+  4.1)
+    OMADA_URL="https://static.tp-link.com/2020/202007/20200714/Omada_SDN_Controller_v4.1.5_linux_x64.tar.gz"
+    ;;
+  4.2)
+    OMADA_URL="https://static.tp-link.com/2021/202102/20210209/Omada_SDN_Controller_v4.2.11_linux_x64.tar.gz"
+    ;;
+  4.3)
+    OMADA_URL="https://static.tp-link.com/2021/202105/20210507/Omada_SDN_Controller_v4.3.5_linux_x64.tar.gz"
+    ;;
+  4.4)
+    OMADA_URL="https://static.tp-link.com/upload/software/2021/202112/20211217/Omada_SDN_Controller_v4.4.8_linux_x64.tar.gz"
+    ;;
+  5.0)
+    OMADA_URL="https://static.tp-link.com/upload/software/2022/202201/20220120/Omada_SDN_Controller_v5.0.30_linux_x64.tar.gz"
+    ;;
+  5.1)
+    OMADA_URL="https://static.tp-link.com/upload/software/2022/202203/20220322/Omada_SDN_Controller_v5.1.7_Linux_x64.tar.gz"
+    ;;
+  5.3)
+    OMADA_URL="https://static.tp-link.com/upload/software/2022/202205/20220507/Omada_SDN_Controller_v5.3.1_Linux_x64.tar.gz"
+    ;;
+  5.4)
+    OMADA_URL="https://static.tp-link.com/upload/software/2022/202207/20220729/Omada_SDN_Controller_v5.4.6_Linux_x64.tar.gz"
+    ;;
+  *)
+    echo "ERROR: INSTALL_VER (${INSTALL_VER}) is not a supported major.minor version; valid versions:"
+    echo "  4.1, 4.2, 4.3, 4.4"
+    echo "  5.0, 5.1, 5.3, 5.4"
+    exit 1
+    ;;
+esac
+
+# extract required data from the OMADA_URL
 OMADA_TAR="$(echo "${OMADA_URL}" | awk -F '/' '{print $NF}')"
 OMADA_VER="$(echo "${OMADA_TAR}" | awk -F '_v' '{print $2}' | awk -F '_' '{print $1}')"
 OMADA_MAJOR_VER="${OMADA_VER%.*.*}"
 OMADA_MAJOR_MINOR_VER="${OMADA_VER%.*}"
 
+# function to exit on error w/message
 die() { echo -e "$@" 2>&1; exit 1; }
-
 
 echo "**** Selecting packages based on the architecture and version ****"
 # common package dependencies
