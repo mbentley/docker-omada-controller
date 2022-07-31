@@ -7,9 +7,9 @@ set -e
 # set default variables
 OMADA_DIR="/opt/tplink/EAPController"
 ARCH="${ARCH:-}"
-OMADA_VER="${OMADA_VER:-}"
-OMADA_TAR="${OMADA_TAR:-}"
 OMADA_URL="${OMADA_URL:-}"
+OMADA_TAR="$(echo "${OMADA_URL}" | awk -F '/' '{print $NF}')"
+OMADA_VER="$(echo "${OMADA_TAR}" | awk -F '_v' '{print $2}' | awk -F '_' '{print $1}')"
 OMADA_MAJOR_VER="${OMADA_VER%.*.*}"
 OMADA_MAJOR_MINOR_VER="${OMADA_VER%.*}"
 
