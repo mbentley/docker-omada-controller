@@ -79,8 +79,8 @@ echo "INFO: Time zone set to '${TZ}'"
 # append smallfiles if set to true
 if [ "${SMALL_FILES}" = "true" ]
 then
-  echo "WARNING: smallfiles was passed but is not supported in >= 4.1 with the WiredTiger engine in use by MongoDB"
-  echo "INFO: skipping setting smallfiles option"
+  echo "WARN: smallfiles was passed but is not supported in >= 4.1 with the WiredTiger engine in use by MongoDB"
+  echo "INFO: Skipping setting smallfiles option"
 fi
 
 set_port_property() {
@@ -128,7 +128,7 @@ do
   if [ "${OWNER}" != "${PUID}" ] || [ "${GROUP}" != "${PGID}" ]
   then
     # notify user that uid:gid are not correct and fix them
-    echo "WARN: ownership not set correctly on '/opt/tplink/EAPController/${DIR}'; setting correct ownership (omada:omada)"
+    echo "WARN: Ownership not set correctly on '/opt/tplink/EAPController/${DIR}'; setting correct ownership (omada:omada)"
     chown -R omada:omada "/opt/tplink/EAPController/${DIR}"
   fi
 done
@@ -137,7 +137,7 @@ done
 TMP_PERMISSIONS="$(stat -c '%a' /tmp)"
 if [ "${TMP_PERMISSIONS}" != "1777" ]
 then
-  echo "WARN: permissions are not set correctly on '/tmp' (${TMP_PERMISSIONS}); setting correct permissions (1777)"
+  echo "WARN: Permissions are not set correctly on '/tmp' (${TMP_PERMISSIONS}); setting correct permissions (1777)"
   chmod -v 1777 /tmp
 fi
 
@@ -181,9 +181,41 @@ fi
 # see if any of these files exist; if so, do not start as they are from older versions
 if [ -f /opt/tplink/EAPController/data/db/tpeap.0 ] || [ -f /opt/tplink/EAPController/data/db/tpeap.1 ] || [ -f /opt/tplink/EAPController/data/db/tpeap.ns ]
 then
-  echo "ERROR: the data volume mounted to /opt/tplink/EAPController/data appears to have data from a previous version!"
+  echo "ERROR: The data volume mounted to /opt/tplink/EAPController/data appears to have data from a previous version!"
   echo "  Follow the upgrade instructions at https://github.com/mbentley/docker-omada-controller#upgrading-to-41"
   exit 1
+fi
+
+# compare version from the image to the version stored in the persistent data (last ran version)
+if [ -f "/opt/tplink/EAPController/IMAGE_OMADA_VER.txt" ]
+then
+  # file found; read the version that is in the image
+  IMAGE_OMADA_VER="$(cat /opt/tplink/EAPController/IMAGE_OMADA_VER.txt)"
+else
+  echo "ERROR: Missing image version file (/opt/tplink/EAPController/IMAGE_OMADA_VER.txt); this should never happen!"
+  exit 1
+fi
+
+# load LAST_RAN_OMADA_VER, if file present
+if [ -f "/opt/tplink/EAPController/data/LAST_RAN_OMADA_VER.txt" ]
+then
+  # file found; read the version that was last recorded
+  LAST_RAN_OMADA_VER="$(cat /opt/tplink/EAPController/data/LAST_RAN_OMADA_VER.txt)"
+else
+  # no file found; set version to 0.0.0 as we don't know the last version
+  LAST_RAN_OMADA_VER="0.0.0"
+fi
+
+# use sort to check which version is newer; should sort the newest version to the top
+if [ "$(printf '%s\n' "${IMAGE_OMADA_VER}" "${LAST_RAN_OMADA_VER}" | sort -rV | head -n1)" != "${IMAGE_OMADA_VER}" ]
+then
+  # version in the image is didn't match newest image version; this means we are trying to start and older version
+  echo "ERROR: The version from the image (${IMAGE_OMADA_VER}) is older than the last version executed (${LAST_RAN_OMADA_VER})!  Refusing to start to prevent data loss!"
+  echo "  To bypass this check, remove /opt/tplink/EAPController/data/LAST_RAN_OMADA_VER.txt only if you REALLY know what you're doing!"
+  exit 1
+else
+  echo "INFO: Version check passed; image version (${IMAGE_OMADA_VER}) >= the last version ran (${LAST_RAN_OMADA_VER}); writing image version to last ran file..."
+  echo "${IMAGE_OMADA_VER}" > /opt/tplink/EAPController/data/LAST_RAN_OMADA_VER.txt
 fi
 
 echo "INFO: Starting Omada Controller as user omada"
