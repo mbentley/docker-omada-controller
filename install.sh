@@ -173,8 +173,17 @@ done
 ln -sf "$(command -v mongod)" "${OMADA_DIR}/bin/mongod"
 chmod 755 "${OMADA_DIR}"/bin/*
 
-# create logs and work directories
-mkdir "${OMADA_DIR}/logs" "${OMADA_DIR}/work"
+# starting with 5.0.x, the work directory is no longer needed
+case "${OMADA_MAJOR_VER}" in
+  5)
+    # create logs directory
+    mkdir "${OMADA_DIR}/logs"
+    ;;
+  *)
+    # create logs and work directories
+    mkdir "${OMADA_DIR}/logs" "${OMADA_DIR}/work"
+    ;;
+esac
 
 # for v5.1 & above, create backup of data/html directory in case it is missing (to be extracted at runtime)
 if [ -d /opt/tplink/EAPController/data/html ]
