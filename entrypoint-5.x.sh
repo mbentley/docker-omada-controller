@@ -65,11 +65,11 @@ else
     # user ID exists but has a different user name
     EXISTING_USER="$(grep ":${PUID}:" /etc/passwd | awk -F ':' '{print $1}')"
     echo "INFO: User (omada) already exists with a different name; renaming '${EXISTING_USER}' to 'omada'"
-    usermod -g "${PGID}" -d /opt/tplink/EAPController/work -l omada -s /bin/sh -c "" "${EXISTING_USER}"
+    usermod -g "${PGID}" -d /opt/tplink/EAPController/data -l omada -s /bin/sh -c "" "${EXISTING_USER}"
   else
     # create the user
     echo "INFO: User (omada) doesn't exist; creating"
-    useradd -u "${PUID}" -g "${PGID}" -d /opt/tplink/EAPController/work -s /bin/sh -c "" omada
+    useradd -u "${PUID}" -g "${PGID}" -d /opt/tplink/EAPController/data -s /bin/sh -c "" omada
   fi
 fi
 
@@ -138,7 +138,7 @@ then
 fi
 
 # make sure permissions are set appropriately on each directory
-for DIR in data logs work
+for DIR in data logs
 do
   OWNER="$(stat -c '%u' /opt/tplink/EAPController/${DIR})"
   GROUP="$(stat -c '%g' /opt/tplink/EAPController/${DIR})"

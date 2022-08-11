@@ -112,7 +112,7 @@ If you have issues running the controller, feel free to [file an issue](https://
 
 ## Upgrading to 5.0.x from 4.1.x or above
 
-There are no manual upgrade steps directly related to the software itself required when upgrading to 5.0.x if you are already running at least 4.1.x. For full details, please refer to the [TP-Link upgrade documentation](https://www.tp-link.com/en/omada-sdn/controller-upgrade/).
+There are no manual upgrade steps directly related to the software itself required when upgrading to 5.0.x if you are already running at least 4.1.x. The only thing to note is that the `work` volume is no longer required as the application is no longer extracted before it is run in the move to Spring Boot. If you do nothing, there will be no impact except for an extra directory sitting around. For full details, please refer to the [TP-Link upgrade documentation](https://www.tp-link.com/en/omada-sdn/controller-upgrade/).
 
 As always, I would recommend taking a backup through the controller software as well as save a copy of the persistent data while the controller is not running when you do upgrade to simplify the rollback process, if required.
 
@@ -223,7 +223,6 @@ docker run -d \
   -e SSL_KEY_NAME="tls.key" \
   -e TZ=Etc/UTC \
   -v omada-data:/opt/tplink/EAPController/data \
-  -v omada-work:/opt/tplink/EAPController/work \
   -v omada-logs:/opt/tplink/EAPController/logs \
   mbentley/omada-controller:5.4
 ```
@@ -247,7 +246,6 @@ docker run -d \
   -e SSL_KEY_NAME="tls.key" \
   -e TZ=Etc/UTC \
   -v omada-data:/opt/tplink/EAPController/data \
-  -v omada-work:/opt/tplink/EAPController/work \
   -v omada-logs:/opt/tplink/EAPController/logs \
   mbentley/omada-controller:5.4
 ```
@@ -281,7 +279,6 @@ docker run -d \
   -e SSL_KEY_NAME="tls.key" \
   -e TZ=Etc/UTC \
   -v omada-data:/opt/tplink/EAPController/data \
-  -v omada-work:/opt/tplink/EAPController/work \
   -v omada-logs:/opt/tplink/EAPController/logs \
   mbentley/omada-controller:5.4-armv7l
 ```
@@ -305,7 +302,6 @@ docker run -d \
   -e SSL_KEY_NAME="tls.key" \
   -e TZ=Etc/UTC \
   -v omada-data:/opt/tplink/EAPController/data \
-  -v omada-work:/opt/tplink/EAPController/work \
   -v omada-logs:/opt/tplink/EAPController/logs \
   mbentley/omada-controller:5.4-armv7l
 ```
@@ -341,7 +337,6 @@ docker run -d \
   -e SSL_KEY_NAME="tls.key" \
   -e TZ=Etc/UTC \
   -v omada-data:/opt/tplink/EAPController/data \
-  -v omada-work:/opt/tplink/EAPController/work \
   -v omada-logs:/opt/tplink/EAPController/logs \
   mbentley/omada-controller:5.4-arm64
 ```
@@ -365,7 +360,6 @@ docker run -d \
   -e SSL_KEY_NAME="tls.key" \
   -e TZ=Etc/UTC \
   -v omada-data:/opt/tplink/EAPController/data \
-  -v omada-work:/opt/tplink/EAPController/work \
   -v omada-logs:/opt/tplink/EAPController/logs \
   mbentley/omada-controller:5.4-arm64
 ```
@@ -397,10 +391,10 @@ docker run -d \
 If you utilize bind mounts instead of Docker named volumes (e.g. - `-v /path/to/data:/opt/tplink/EAPController/data`) in your run command, you will want to make sure that you have set the permissions appropriately on the filesystem otherwise you will run into permissions errors and the container will not run because it won't have the permissions to write data since this container uses a non-root user. To resolve that, you need to `chown` the directory to `508:508` on the host as that is the UID and GID that we use inside the container. For example:
 
 ```
-chown -R 508:508 /data/omada/data /data/omada/work /data/omada/logs
+chown -R 508:508 /data/omada/data /data/omada/logs
 ```
 
-In the examples, there are three directories where persistent data is stored: `data`, `work`, and `logs`. The `data` directory is where the persistent database data is stored where all of your settings, app configuration, etc is stored. The `work` directory is where the web application is extracted to and is just ephemeral data that is replaced on each run. The `log` directory is where logs are written and stored. I would suggest that you use a bind mounted volume for the `data` directory to ensure that your persistent data is directly under your control and of course take regular backups within the Omada Controller application itself.
+In the examples, there are two directories where persistent data is stored: `data` and `logs`. The `data` directory is where the persistent database data is stored where all of your settings, app configuration, etc is stored.  The `log` directory is where logs are written and stored. I would suggest that you use a bind mounted volume for the `data` directory to ensure that your persistent data is directly under your control and of course take regular backups within the Omada Controller application itself.
 
 ## Custom Certificates
 
