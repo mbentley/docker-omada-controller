@@ -37,8 +37,7 @@ case "${INSTALL_VER}" in
     ;;
   *)
     echo "ERROR: INSTALL_VER (${INSTALL_VER}) is not a supported major.minor version; valid versions:"
-    echo "  4.1, 4.2, 4.3, 4.4"
-    echo "  5.0, 5.1, 5.3, 5.4"
+    echo "  4.1, 4.2, 4.3, 4.4, 5.0, 5.1, 5.3, 5.4"
     exit 1
     ;;
 esac
@@ -187,3 +186,6 @@ fi
 
 echo "**** Cleanup ****"
 rm -rf /tmp/* /var/lib/apt/lists/*
+
+# write installed version to a file
+echo "${OMADA_VER}" > "${OMADA_DIR}/IMAGE_OMADA_VER.txt"

@@ -4,7 +4,6 @@ FROM ${BASE}
 LABEL maintainer="Matt Bentley <mbentley@mbentley.net>"
 
 COPY healthcheck.sh install.sh log4j_patch.sh /
-COPY entrypoint-5.x.sh /entrypoint.sh
 
 # valid values: amd64 (default) | arm64 | armv7l
 ARG ARCH=amd64
@@ -16,6 +15,8 @@ ARG INSTALL_VER="5.4"
 RUN /install.sh &&\
   /log4j_patch.sh &&\
   rm /install.sh /log4j_patch.sh
+
+COPY entrypoint-5.x.sh /entrypoint.sh
 
 WORKDIR /opt/tplink/EAPController/lib
 EXPOSE 8088 8043 8843 29810/udp 29811 29812 29813 29814
