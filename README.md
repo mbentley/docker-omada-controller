@@ -112,13 +112,14 @@ If you have issues running the controller, feel free to [file an issue](https://
 
 ## Upgrading to 5.0.x from 4.1.x or above
 
-There are no manual upgrade steps directly related to the software itself required when upgrading to 5.0.x if you are already running at least 4.1.x. The only thing to note is that the `work` volume is no longer required as the application is no longer extracted before it is run in the move to Spring Boot. If you do nothing, there will be no impact except for an extra directory sitting around. For full details, please refer to the [TP-Link upgrade documentation](https://www.tp-link.com/en/omada-sdn/controller-upgrade/).
+There are no manual upgrade steps directly related to the software itself required when upgrading to 5.0.x if you are already running at least 4.1.x. For full details, please refer to the [TP-Link upgrade documentation](https://www.tp-link.com/en/omada-sdn/controller-upgrade/).
 
 As always, I would recommend taking a backup through the controller software as well as save a copy of the persistent data while the controller is not running when you do upgrade to simplify the rollback process, if required.
 
 ### Changes/Notes for 5.0.x
 
 * **Updated Ports** - If you are only exposing ports using port mapping as the list of ports required has been updated. Starting with 5.0.x, the controller is also listening on `TCP port 29814` so you should add `-p 29814:29814` to your run command, compose file, or however you're running the container. Some additional unnecessary ports are no longer required so the list is shorter now.
+* **Volume Updates** - Starting with 5.0.x, the controller software is now built using Spring Boot. This version no longer uses the `work` volume as the application is no longer extracted to a temporary directory. If you do nothing, there will be no impact except for an extra directory sitting around.
 * **Custom Ports** - If using custom ports from the defaults of 8088, 8043, and 8843, they will _not_ persist across container re-creation starting in 5.0 unless you **always** set the `MANAGE_*_PORT` enviornment variables. This is due to adding `/opt/tplink/EAPController/properties` to the classpath starting in 5.0. If you change the ports through the UI, you should still continue to also set the ports using the environment variables, matching the ports you have set in the UI. For more detail, see [Using non-default ports](#using-non-default-ports).
 
 ## Upgrading to 4.1 from 3.2.10 or below
