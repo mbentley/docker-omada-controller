@@ -47,7 +47,7 @@ The following tags have multi-arch support for `amd64`, `armv7l`, and `arm64` an
 | `4.3` | Omada Controller `4.3.x` | `4.3.5` |
 | `4.2` | Omada Controller `4.2.x` | `4.2.11` |
 | `4.1` | Omada Controller `4.1.x` | `4.1.5` |
-| `3.2` | Omada Controller `3.2.x` | `3.2.16` |
+| `3.2` | Omada Controller `3.2.x` | `3.2.17` |
 
 ### Explicit Architecture Tags
 
@@ -228,33 +228,10 @@ docker run -d \
   mbentley/omada-controller:5.4
 ```
 
-### Using `net=host`
-
-```
-docker run -d \
-  --name omada-controller \
-  --restart unless-stopped \
-  --net host \
-  -e MANAGE_HTTP_PORT=8088 \
-  -e MANAGE_HTTPS_PORT=8043 \
-  -e PGID="508" \
-  -e PORTAL_HTTP_PORT=8088 \
-  -e PORTAL_HTTPS_PORT=8843 \
-  -e PUID="508" \
-  -e SHOW_SERVER_LOGS=true \
-  -e SHOW_MONGODB_LOGS=false \
-  -e SSL_CERT_NAME="tls.crt" \
-  -e SSL_KEY_NAME="tls.key" \
-  -e TZ=Etc/UTC \
-  -v omada-data:/opt/tplink/EAPController/data \
-  -v omada-logs:/opt/tplink/EAPController/logs \
-  mbentley/omada-controller:5.4
-```
-
 <details>
-<summary>Example usage for armv7l</summary>
+<summary>Example usage for 3.2</summary>
 
-### Using port mapping
+The below example can be used with 3.2. The port and volume mappings have changed in newer versions.
 
 ```
 docker run -d \
@@ -270,27 +247,45 @@ docker run -d \
   -p 29814:29814 \
   -e MANAGE_HTTP_PORT=8088 \
   -e MANAGE_HTTPS_PORT=8043 \
-  -e PGID="508" \
-  -e PORTAL_HTTP_PORT=8088 \
-  -e PORTAL_HTTPS_PORT=8843 \
-  -e PUID="508" \
-  -e SHOW_SERVER_LOGS=true \
-  -e SHOW_MONGODB_LOGS=false \
+  -e SMALL_FILES=false \
   -e SSL_CERT_NAME="tls.crt" \
   -e SSL_KEY_NAME="tls.key" \
   -e TZ=Etc/UTC \
   -v omada-data:/opt/tplink/EAPController/data \
+  -v omada-work:/opt/tplink/EAPController/work \
   -v omada-logs:/opt/tplink/EAPController/logs \
-  mbentley/omada-controller:5.4-armv7l
+  mbentley/omada-controller:3.2
 ```
 
+</details>
+
 ### Using `net=host`
+
+In order to use the host's network namespace, you must first ensure that there are not any port conflicts. The `docker run` command is the same except for that all of the published ports should be removed and `--net host` should be added. Technically it will still work if you have the ports included, but Docker will just silently drop them. Here is a snippet of what the above should be modified to look like:
+
+```
+...
+  --restart unless-stopped \
+  --net host \
+  -e MANAGE_HTTP_PORT=8088 \
+...
+```
+
+<details>
+<summary>Example usage for armv7l</summary>
 
 ```
 docker run -d \
   --name omada-controller \
   --restart unless-stopped \
-  --net host \
+  -p 8088:8088 \
+  -p 8043:8043 \
+  -p 8843:8843 \
+  -p 29810:29810/udp \
+  -p 29811:29811 \
+  -p 29812:29812 \
+  -p 29813:29813 \
+  -p 29814:29814 \
   -e MANAGE_HTTP_PORT=8088 \
   -e MANAGE_HTTPS_PORT=8043 \
   -e PGID="508" \
@@ -312,8 +307,6 @@ docker run -d \
 <details>
 <summary>Example usage for arm64</summary>
 
-### Using port mapping
-
 ```
 docker run -d \
   --name omada-controller \
@@ -326,29 +319,6 @@ docker run -d \
   -p 29812:29812 \
   -p 29813:29813 \
   -p 29814:29814 \
-  -e MANAGE_HTTP_PORT=8088 \
-  -e MANAGE_HTTPS_PORT=8043 \
-  -e PGID="508" \
-  -e PORTAL_HTTP_PORT=8088 \
-  -e PORTAL_HTTPS_PORT=8843 \
-  -e PUID="508" \
-  -e SHOW_SERVER_LOGS=true \
-  -e SHOW_MONGODB_LOGS=false \
-  -e SSL_CERT_NAME="tls.crt" \
-  -e SSL_KEY_NAME="tls.key" \
-  -e TZ=Etc/UTC \
-  -v omada-data:/opt/tplink/EAPController/data \
-  -v omada-logs:/opt/tplink/EAPController/logs \
-  mbentley/omada-controller:5.4-arm64
-```
-
-### Using `net=host`
-
-```
-docker run -d \
-  --name omada-controller \
-  --restart unless-stopped \
-  --net host \
   -e MANAGE_HTTP_PORT=8088 \
   -e MANAGE_HTTPS_PORT=8043 \
   -e PGID="508" \
