@@ -1,0 +1,36 @@
+name: Feature Request
+description: For feature requests related to this Docker image only.
+title: '[Feature]: '
+assignees:
+  - mbentley
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Read Me First!
+
+        Thanks for using my image! Hopefully it's helpful to you. You are about to file a feature request related to the packaging or function of this Docker image, not the Controller software itself. If you have a feature request for the software that is not related to this Docker image, file an issue on the [TP-Link community forums](https://community.tp-link.com/en/business/forum/582). If you're not sure if it is a feature request related to the Docker image or the software, file an issue here and I can assist in determining where the responsibility lies.
+  - type: textarea
+    id: feature-problem
+    attributes:
+      label: What problem are you looking to solve?
+      description: |
+        A clear and concise description of what the problem or challenge is that you'd like to be addressed.
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Describe the solution that you have in mind
+      description: |
+        A clear and concise description of what you want to happen or a proposed method to solving the problem. If you have expectations around how the problem would be solved from a user experience perspective, add that information here.
+    validations:
+      required: false
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: |
+        Add any other context about the feature here.
+    validations:
+      required: false
