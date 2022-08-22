@@ -1,6 +1,9 @@
-ARG BASE_VER=5.4
+ARG BASE_VER=5.5
 FROM mbentley/omada-controller:${BASE_VER}
 
 RUN apt-get update &&\
-  DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends chromium-browser &&\
+  apt-get install -y --no-install-recommends software-properties-common &&\
+  add-apt-repository ppa:system76/pop &&\
+  apt-get update &&\
+  DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends chromium &&\
   rm -rf /var/lib/apt/lists/*
