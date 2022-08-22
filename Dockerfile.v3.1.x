@@ -34,7 +34,8 @@ RUN cd /tmp &&\
 
 # patch log4j vulnerability
 COPY log4j_patch.sh /log4j_patch.sh
-RUN /log4j_patch.sh
+RUN /log4j_patch.sh &&\
+  rm /log4j_patch.sh
 
 USER omada
 WORKDIR /opt/tplink/EAPController
