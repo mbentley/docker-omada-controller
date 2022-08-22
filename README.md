@@ -1,4 +1,4 @@
-# mbentley/omada-controller
+5# mbentley/omada-controller
 
 Docker image for [TP-Link Omada Controller](https://www.tp-link.com/us/business-networking/omada-sdn-controller/) to control [TP-Link Omada Hardware](https://www.tp-link.com/en/business-networking/all-omada/)
 
@@ -40,7 +40,8 @@ The following tags have multi-arch support for `amd64`, `armv7l`, and `arm64` an
 
 | Tag(s) | Major.Minor Release | Current Version |
 | :----- | ------------------- | --------------- |
-| `latest`, `5.4` | Omada Controller `5.4.x` | `5.4.6` |
+| `latest`, `5.5` | Omada Controller `5.5.x` | `5.5.6` |
+| `5.4` | Omada Controller `5.4.x` | `5.4.6` |
 | `5.3` | Omada Controller `5.3.x` | `5.3.1` |
 | `5.1` | Omada Controller `5.1.x` | `5.1.7` |
 | `5.0` | Omada Controller `5.0.x` | `5.0.30` |
@@ -56,7 +57,8 @@ These tags will explicitly pull the image for the listed architecture and are bi
 
 | Tag(s) for [`amd64`](https://hub.docker.com/repository/docker/mbentley/omada-controller/tags?page=1&ordering=last_updated&name=-amd64) | Major.Minor Release | Base Image |
 | :----- | ------------------- | ---------- |
-| `latest-amd64`, `5.4-amd64` | Omada Controller `5.4.x` | `mbentley/ubuntu:20.04` |
+| `latest-amd64`, `5.5-amd64` | Omada Controller `5.5.x` | `mbentley/ubuntu:20.04` |
+| `5.4-amd64` | Omada Controller `5.4.x` | `mbentley/ubuntu:20.04` |
 | `5.3-amd64` | Omada Controller `5.3.x` | `mbentley/ubuntu:20.04` |
 | `5.1-amd64` | Omada Controller `5.1.x` | `mbentley/ubuntu:20.04` |
 | `5.0-amd64` | Omada Controller `5.0.x` | `mbentley/ubuntu:20.04` |
@@ -70,7 +72,8 @@ These tags will explicitly pull the image for the listed architecture and are bi
 
 | Tag(s) for [`armv7l`](https://hub.docker.com/repository/docker/mbentley/omada-controller/tags?page=1&ordering=last_updated&name=-armv7l) | Major.Minor Release | Base Image |
 | :----- | ------------------- | ---------- |
-| `latest-armv7l`, `5.4-armv7l` | Omada Controller `5.4.x` | `mbentley/ubuntu:16.04` |
+| `latest-armv7l`, `5.5-armv7l` | Omada Controller `5.5.x` | `mbentley/ubuntu:16.04` |
+| `5.4-armv7l` | Omada Controller `5.4.x` | `mbentley/ubuntu:16.04` |
 | `5.3-armv7l` | Omada Controller `5.3.x` | `mbentley/ubuntu:16.04` |
 | `5.1-armv7l` | Omada Controller `5.1.x` | `mbentley/ubuntu:16.04` |
 | `5.0-armv7l` | Omada Controller `5.0.x` | `mbentley/ubuntu:16.04` |
@@ -82,7 +85,8 @@ These tags will explicitly pull the image for the listed architecture and are bi
 
 | Tag(s) for [`arm64`](https://hub.docker.com/repository/docker/mbentley/omada-controller/tags?page=1&ordering=last_updated&name=-arm64) | Major.Minor Release | Base Image |
 | :----- | ------------------- | ---------- |
-| `latest-arm64`, `5.4-arm64` | Omada Controller `5.4.x` | `mbentley/ubuntu:20.04` |
+| `latest-arm64`, `5.5-arm64` | Omada Controller `5.5.x` | `mbentley/ubuntu:20.04` |
+| `5.4-arm64` | Omada Controller `5.4.x` | `mbentley/ubuntu:20.04` |
 | `5.3-arm64` | Omada Controller `5.3.x` | `mbentley/ubuntu:20.04` |
 | `5.1-arm64` | Omada Controller `5.1.x` | `mbentley/ubuntu:20.04` |
 | `5.0-arm64` | Omada Controller `5.0.x` | `mbentley/ubuntu:20.04` |
@@ -156,9 +160,9 @@ As of the Omada Controller version 4.x, the Dockerfiles have been simplified so 
 
   ```
   docker build \
-    --build-arg INSTALL_VER="5.4" \
+    --build-arg INSTALL_VER="5.5" \
     -f Dockerfile.v5.x \
-    -t mbentley/omada-controller:5.4 .
+    -t mbentley/omada-controller:5.5 .
   ```
 
 ### `arm64`
@@ -167,10 +171,10 @@ As of the Omada Controller version 4.x, the Dockerfiles have been simplified so 
 
   ```
   docker build \
-    --build-arg INSTALL_VER="5.4" \
+    --build-arg INSTALL_VER="5.5" \
     --build-arg ARCH="arm64" \
-    -f Dockerfile.v5.4.x \
-    -t mbentley/omada-controller:5.4-arm64 .
+    -f Dockerfile.v5.x \
+    -t mbentley/omada-controller:5.5-arm64 .
   ```
 
 ### `armv7l`
@@ -179,11 +183,11 @@ As of the Omada Controller version 4.x, the Dockerfiles have been simplified so 
 
   ```
   docker build \
-    --build-arg INSTALL_VER="5.4" \
+    --build-arg INSTALL_VER="5.5" \
     --build-arg ARCH="armv7l" \
     --build-arg BASE="ubuntu:16.04" \
-    -f Dockerfile.v5.4.x \
-    -t mbentley/omada-controller:5.4-armv7l .
+    -f Dockerfile.v5.x \
+    -t mbentley/omada-controller:5.5-armv7l .
   ```
 
 </details>
@@ -229,7 +233,7 @@ docker run -d \
   -e TZ=Etc/UTC \
   -v omada-data:/opt/tplink/EAPController/data \
   -v omada-logs:/opt/tplink/EAPController/logs \
-  mbentley/omada-controller:5.4
+  mbentley/omada-controller:5.5
 ```
 
 <details>
@@ -303,7 +307,7 @@ docker run -d \
   -e TZ=Etc/UTC \
   -v omada-data:/opt/tplink/EAPController/data \
   -v omada-logs:/opt/tplink/EAPController/logs \
-  mbentley/omada-controller:5.4-armv7l
+  mbentley/omada-controller:5.5-armv7l
 ```
 
 </details>
@@ -336,7 +340,7 @@ docker run -d \
   -e TZ=Etc/UTC \
   -v omada-data:/opt/tplink/EAPController/data \
   -v omada-logs:/opt/tplink/EAPController/logs \
-  mbentley/omada-controller:5.4-arm64
+  mbentley/omada-controller:5.5-arm64
 ```
 
 </details>
