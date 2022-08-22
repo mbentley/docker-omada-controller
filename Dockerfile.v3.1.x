@@ -2,6 +2,8 @@
 FROM mbentley/ubuntu:18.04
 LABEL maintainer="Matt Bentley <mbentley@mbentley.net>"
 
+ARG INSTALL_VER=3.1
+
 # install runtime dependencies
 RUN apt-get update &&\
   apt-get install -y libcap-dev net-tools wget &&\
