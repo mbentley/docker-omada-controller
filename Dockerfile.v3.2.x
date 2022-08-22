@@ -2,6 +2,8 @@
 FROM mbentley/ubuntu:18.04
 LABEL maintainer="Matt Bentley <mbentley@mbentley.net>"
 
+ARG INSTALL_VER=3.2
+
 # install omada controller (instructions taken from install.sh); then create a user & group and set the appropriate file system permissions
 RUN \
   echo "**** Install Dependencies ****" &&\
