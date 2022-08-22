@@ -32,8 +32,9 @@ RUN \
   rm -rf /tmp/Omada_Controller*
 
 # patch log4j vulnerability
-#COPY log4j_patch.sh /log4j_patch.sh
-#RUN /log4j_patch.sh
+COPY log4j_patch.sh /log4j_patch.sh
+RUN /log4j_patch.sh &&\
+  rm /log4j_patch.sh
 
 COPY entrypoint-3.2.sh /entrypoint.sh
 COPY healthcheck.sh /healthcheck.sh
