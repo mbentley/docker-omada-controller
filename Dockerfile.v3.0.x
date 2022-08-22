@@ -9,7 +9,7 @@ RUN apt-get update &&\
 
 # install omada controller (instructions taken from install.sh); then create a user & group and set the appropriate file system permissions
 RUN cd /tmp &&\
-  wget https://static.tp-link.com/2018/201811/20181108/Omada_Controller_v3.0.5_linux_x64.tar.gz.zip &&\
+  wget -nv "https://static.tp-link.com/2018/201811/20181108/Omada_Controller_v3.0.5_linux_x64.tar.gz.zip" &&\
   unzip Omada_Controller_v3.0.5_linux_x64.tar.gz.zip &&\
   rm Omada_Controller_v3.0.5_linux_x64.tar.gz.zip &&\
   tar zxvf Omada_Controller_v3.0.5_linux_x64.tar.gz &&\

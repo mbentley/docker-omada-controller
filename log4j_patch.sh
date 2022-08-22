@@ -3,30 +3,27 @@
 set -e
 
 # set variables to get version info
-OMADA_URL="${OMADA_URL:-}"
-OMADA_TAR="$(echo "${OMADA_URL}" | awk -F '/' '{print $NF}')"
-OMADA_VER="$(echo "${OMADA_TAR}" | awk -F '_v' '{print $2}' | awk -F '_' '{print $1}')"
-OMADA_MAJOR_VER="${OMADA_VER%.*.*}"
-OMADA_MAJOR_MINOR_VER="${OMADA_VER%.*}"
+if [ -n "${INSTALL_VER}" ]
+then
+  # INSTALL_VER was not empty
+  OMADA_MAJOR_MINOR_VER="${INSTALL_VER}"  # output example: 5.5
+else
+  # INSTALL_VER was empty
+  echo "ERROR: INSTALL_VER value is empty! This should be passed to the build using '--build-arg INSTALL_VER=5.5'"
+  exit 1
+fi
 
 main() {
   # check the version of the controller
-  case "${OMADA_MAJOR_VER}" in
-    5)
-      # patch only 5.0.x
-      if [ "${OMADA_MAJOR_MINOR_VER#*.}" -eq 0 ]
-      then
-        # 5.0.x
-        patch_log4j
-      else
-        # other 5.x versions already have patched version of log4j
-        echo "INFO: log4j patching not required for ${OMADA_VER}; skipping applying updated versions"
-        exit 0
-      fi
+  case "${OMADA_MAJOR_MINOR_VER}" in
+    3.0|3.1|4.1|4.2|4.3)
+      # this version needs log4j patched (as detected using grype)
+      patch_log4j
       ;;
     *)
-      # patch all other versions
-      patch_log4j
+      # all other versions do not
+      echo "INFO: log4j patching not required for ${OMADA_MAJOR_MINOR_VER}; skipping applying updated versions"
+      exit 0
       ;;
   esac
 }
