@@ -44,8 +44,6 @@ The following tags have multi-arch support for `amd64`, `armv7l`, and `arm64` an
 | `5.1` | Omada Controller `5.1.x` | `5.1.7` |
 | `5.0` | Omada Controller `5.0.x` | `5.0.30` |
 | `4.4` | Omada Controller `4.4.x` | `4.4.8` |
-| `4.3` | Omada Controller `4.3.x` | `4.3.5` |
-| `4.2` | Omada Controller `4.2.x` | `4.2.11` |
 | `4.1` | Omada Controller `4.1.x` | `4.1.5` |
 | `3.2` | Omada Controller `3.2.x` | `3.2.17` |
 
@@ -62,8 +60,6 @@ These tags will explicitly pull the image for the listed architecture and are bi
 | `5.1-amd64` | Omada Controller `5.1.x` | `mbentley/ubuntu:20.04` |
 | `5.0-amd64` | Omada Controller `5.0.x` | `mbentley/ubuntu:20.04` |
 | `4.4-amd64` | Omada Controller `4.4.x` | `mbentley/ubuntu:18.04` |
-| `4.3-amd64` | Omada Controller `4.3.x` | `mbentley/ubuntu:18.04` |
-| `4.2-amd64` | Omada Controller `4.2.x` | `mbentley/ubuntu:18.04` |
 | `4.1-amd64` | Omada Controller `4.1.x` | `mbentley/ubuntu:18.04` |
 | `3.2-amd64` | Omada Controller `3.2.x` | `mbentley/ubuntu:18.04` |
 
@@ -78,8 +74,6 @@ These tags will explicitly pull the image for the listed architecture and are bi
 | `5.1-armv7l` | Omada Controller `5.1.x` | `mbentley/ubuntu:16.04` |
 | `5.0-armv7l` | Omada Controller `5.0.x` | `mbentley/ubuntu:16.04` |
 | `4.4-armv7l` | Omada Controller `4.4.x` | `mbentley/ubuntu:16.04` |
-| `4.3-armv7l` | Omada Controller `4.3.x` | `mbentley/ubuntu:16.04` |
-| `4.2-armv7l` | Omada Controller `4.2.x` | `mbentley/ubuntu:16.04` |
 | `4.1-armv7l` | Omada Controller `4.1.x` | `mbentley/ubuntu:16.04` |
 | `3.2-armv7l` | Omada Controller `3.2.x` | `mbentley/ubuntu:16.04` |
 
@@ -92,8 +86,6 @@ These tags will explicitly pull the image for the listed architecture and are bi
 | `5.1-arm64` | Omada Controller `5.1.x` | `mbentley/ubuntu:20.04` |
 | `5.0-arm64` | Omada Controller `5.0.x` | `mbentley/ubuntu:20.04` |
 | `4.4-arm64` | Omada Controller `4.4.x` | `mbentley/ubuntu:18.04` |
-| `4.3-arm64` | Omada Controller `4.3.x` | `mbentley/ubuntu:18.04` |
-| `4.2-arm64` | Omada Controller `4.2.x` | `mbentley/ubuntu:18.04` |
 | `4.1-arm64` | Omada Controller `4.1.x` | `mbentley/ubuntu:18.04` |
 | `3.2-arm64` | Omada Controller `3.2.x` | `mbentley/ubuntu:18.04` |
 
@@ -103,6 +95,8 @@ These images are still published on Docker Hub but are no longer regularly updat
 
 | Tag(s) | Major.Minor Release | Current Version |
 | :----- | ------------------- | ----------------|
+| `4.3` | Omada Controller `4.3.x` | `4.3.5` |
+| `4.2` | Omada Controller `4.2.x` | `4.2.11` |
 | `3.1` | Omada Controller `3.1.x` | `3.1.13` |
 | `3.0` | Omada Controller `3.0.x` | `3.0.5` |
 
@@ -144,7 +138,7 @@ The upgrade to the 4.1.x version is not a seamless upgrade and can't be done in 
 <details>
 <summary>Click to expand docker build instructions</summary>
 
-As of the Omada Controller version 4.2.x, the Dockerfiles have been simplified so that there is a unified Dockerfile. There are some differences between the build steps for `amd64`, `arm64`, and `armv7l`. These changes will happen automatically if you use the following build-args:
+As of the Omada Controller version 4.x, the Dockerfiles have been simplified so that there is a unified Dockerfile. There are some differences between the build steps for `amd64`, `arm64`, and `armv7l`. These changes will happen automatically if you use the following build-args:
 
 ### `amd64`
 
@@ -192,7 +186,7 @@ To run this Docker image and keep persistent data in named volumes:
 
 __tl;dr__: Always make sure the environment variables for the ports match any changes you have made in the web UI and you'll be fine.
 
-**Note**: The `3.2` version of the controller only supports the `MANAGE_HTTP_PORT` and `MANAGE_HTTPS_PORT` variables for modifying the controller's admin web interface ports.  This means that setting `PORTAL_HTTP_PORT` and `PORTAL_HTTPS_PORT` will not have any effect in `3.2`.  Versions `4.2` or greater support all of the `MANAGE_*_PORT` and `PORTAL_*_PORT` variables as described in the [Optional Variables](#optional-variables) section.
+**Note**: The `3.2` version of the controller only supports the `MANAGE_HTTP_PORT` and `MANAGE_HTTPS_PORT` variables for modifying the controller's admin web interface ports.  This means that setting `PORTAL_HTTP_PORT` and `PORTAL_HTTPS_PORT` will not have any effect in `3.2`.  Versions `4.x` or greater support all of the `MANAGE_*_PORT` and `PORTAL_*_PORT` variables as described in the [Optional Variables](#optional-variables) section.
 
 If you want to change the ports of your Omada Controller to something besides the defaults, there is some unexpected behavior that the controller exhibits. There are two sets of ports: one for HTTP/HTTPS for the controller itself and another for HTTP/HTTPS for the captive portal, typically used for authentication to a guest network. The controller's set of ports, which are set by the `MANAGE_*_PORT` environment variables, can only be modified using the environment variables on the first time the controller is started. If persistent data exists, changing the controller's ports via environment variables will have no effect on the controller itself and can only be modified through the web UI. On the other hand, the portal ports will always be set to whatever has been set in the environment variables, which are set by the `PORTAL_*_PORT` environment variables.
 
