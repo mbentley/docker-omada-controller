@@ -1,4 +1,4 @@
-5# mbentley/omada-controller
+# mbentley/omada-controller
 
 Docker image for [TP-Link Omada Controller](https://www.tp-link.com/us/business-networking/omada-sdn-controller/) to control [TP-Link Omada Hardware](https://www.tp-link.com/en/business-networking/all-omada/)
 
@@ -48,6 +48,17 @@ The following tags have multi-arch support for `amd64`, `armv7l`, and `arm64` an
 | `4.4` | Omada Controller `4.4.x` | `4.4.8` |
 | `4.1` | Omada Controller `4.1.x` | `4.1.5` |
 | `3.2` | Omada Controller `3.2.x` | `3.2.17` |
+
+### Tags with Chromium
+
+**Note**: These are currently published for the `amd64` architecture only. These tags extend the tags above to add Chromium which is required to generate reports from the controller.
+
+| Tag(s) | Major.Minor Release |
+| :----- | ------------------- |
+| `latest-chromium`, `5.5-chromium` | Omada Controller `5.5.x` |
+| `5.4-chromium` | Omada Controller `5.4.x` |
+| `5.3-chromium` | Omada Controller `5.3.x` |
+| `5.1-chromium` | Omada Controller `5.1.x` |
 
 ### Explicit Architecture Tags
 
