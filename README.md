@@ -226,6 +226,7 @@ docker run -d \
   -p 8088:8088 \
   -p 8043:8043 \
   -p 8843:8843 \
+  -p 27001:27001 \
   -p 29810:29810/udp \
   -p 29811:29811 \
   -p 29812:29812 \
@@ -236,6 +237,12 @@ docker run -d \
   -e PGID="508" \
   -e PORTAL_HTTP_PORT=8088 \
   -e PORTAL_HTTPS_PORT=8843 \
+  -e PORT_ADOPT_V1=29812 \
+  -e PORT_APP_DISCOVERY=27001 \
+  -e PORT_DISCOVERY=29810 \
+  -e PORT_MANAGER_V1=29811 \
+  -e PORT_MANAGER_V2=29814 \
+  -e PORT_UPGRADE_V1=29813 \
   -e PUID="508" \
   -e SHOW_SERVER_LOGS=true \
   -e SHOW_MONGODB_LOGS=false \
@@ -244,6 +251,7 @@ docker run -d \
   -e TZ=Etc/UTC \
   -v omada-data:/opt/tplink/EAPController/data \
   -v omada-logs:/opt/tplink/EAPController/logs \
+  -v ./omada-properties:/opt/tplink/EAPController/properties \
   mbentley/omada-controller:5.5
 ```
 
@@ -300,6 +308,7 @@ docker run -d \
   -p 8088:8088 \
   -p 8043:8043 \
   -p 8843:8843 \
+  -p 27001:27001 \
   -p 29810:29810/udp \
   -p 29811:29811 \
   -p 29812:29812 \
@@ -310,6 +319,12 @@ docker run -d \
   -e PGID="508" \
   -e PORTAL_HTTP_PORT=8088 \
   -e PORTAL_HTTPS_PORT=8843 \
+  -e PORT_ADOPT_V1=29812 \
+  -e PORT_APP_DISCOVERY=27001 \
+  -e PORT_DISCOVERY=29810 \
+  -e PORT_MANAGER_V1=29811 \
+  -e PORT_MANAGER_V2=29814 \
+  -e PORT_UPGRADE_V1=29813 \
   -e PUID="508" \
   -e SHOW_SERVER_LOGS=true \
   -e SHOW_MONGODB_LOGS=false \
@@ -318,6 +333,7 @@ docker run -d \
   -e TZ=Etc/UTC \
   -v omada-data:/opt/tplink/EAPController/data \
   -v omada-logs:/opt/tplink/EAPController/logs \
+  -v ./omada-properties:/opt/tplink/EAPController/properties \
   mbentley/omada-controller:5.5-armv7l
 ```
 
@@ -333,6 +349,7 @@ docker run -d \
   -p 8088:8088 \
   -p 8043:8043 \
   -p 8843:8843 \
+  -p 27001:27001 \
   -p 29810:29810/udp \
   -p 29811:29811 \
   -p 29812:29812 \
@@ -340,6 +357,12 @@ docker run -d \
   -p 29814:29814 \
   -e MANAGE_HTTP_PORT=8088 \
   -e MANAGE_HTTPS_PORT=8043 \
+  -e PORT_ADOPT_V1=29812 \
+  -e PORT_APP_DISCOVERY=27001 \
+  -e PORT_DISCOVERY=29810 \
+  -e PORT_MANAGER_V1=29811 \
+  -e PORT_MANAGER_V2=29814 \
+  -e PORT_UPGRADE_V1=29813 \
   -e PGID="508" \
   -e PORTAL_HTTP_PORT=8088 \
   -e PORTAL_HTTPS_PORT=8843 \
@@ -351,6 +374,7 @@ docker run -d \
   -e TZ=Etc/UTC \
   -v omada-data:/opt/tplink/EAPController/data \
   -v omada-logs:/opt/tplink/EAPController/logs \
+  -v ./omada-properties:/opt/tplink/EAPController/properties \
   mbentley/omada-controller:5.5-arm64
 ```
 
@@ -365,6 +389,12 @@ docker run -d \
 | `PGID` | `508` | _any_ | Set the `omada` process group ID ` | >= `3.2` |
 | `PORTAL_HTTP_PORT` | `8088` | `1024`-`65535` | User portal HTTP port; for ports < 1024, see [Unprivileged Ports](#unprivileged-ports) | >= `4.1` |
 | `PORTAL_HTTPS_PORT` | `8843` | `1024`-`65535` | User portal HTTPS port; for ports < 1024, see [Unprivileged Ports](#unprivileged-ports) | >= `4.1` |
+| `PORT_ADOPT_V1` | `29812` | `1024`-`65535` | Omada Controller and Omada Discovery Utility manage the Omada devices running firmware fully adapted to Omada Controller v4* | >= `5.x` |
+| `PORT_APP_DISCOVERY` | `27001` | `1024`-`65535` | Omada Controller can be discovered by the Omada APP within the same network through this port | >= `5.x` |
+| `PORT_DISCOVERY` | `29810` | `1024`-`65535` | Omada Controller and Omada Discovery Utility discover Omada devices | >= `5.x` |
+| `PORT_MANAGER_V1` | `29811` | `1024`-`65535` | Omada Controller and Omada Discovery Utility manage the Omada devices running firmware fully adapted to Omada Controller v4* | >= `5.x` |
+| `PORT_MANAGER_V2` | `29814` | `1024`-`65535` | Omada Controller and Omada Discovery Utility manage the Omada devices running firmware fully adapted to Omada Controller v5* | >= `5.x` |
+| `PORT_UPGRADE_V1` | `29813` | `1024`-`65535` | When upgrading the firmware for the Omada devices running firmware fully adapted to Omada Controller v4*. | >= `5.x` |
 | `PUID` | `508` | _any_ | Set the `omada` process user ID ` | >= `3.2` |
 | `SHOW_SERVER_LOGS` | `true` | `[true\|false]` | Outputs Omada Controller logs to STDOUT at runtime | >= `4.1` |
 | `SHOW_MONGODB_LOGS` | `false` | `[true\|false]` | Outputs MongoDB logs to STDOUT at runtime | >= `4.1` |

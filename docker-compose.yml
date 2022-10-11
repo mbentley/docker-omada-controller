@@ -13,13 +13,14 @@ services:
       - MANAGE_HTTP_PORT=8088
       - MANAGE_HTTPS_PORT=8043
       - PORTAL_HTTP_PORT=8088
-      - PORTAL_HTTPS_PORT=8043
+      - PORTAL_HTTPS_PORT=8843
 
-      - ADDOPT_V1_PORT=29812
-      - UPGRADE_V1_PORT=29813
-      - MANAGER_V1_PORT=29811
-      - MANAGER_V2_PORT=29814
-      - DISCOVERY_PORT=29810
+      - PORT_APP_DISCOVERY=27001
+      - PORT_ADOPT_V1=29812
+      - PORT_UPGRADE_V1=29813
+      - PORT_MANAGER_V1=29811
+      - PORT_MANAGER_V2=29814
+      - PORT_DISCOVERY=29810
 
       - SHOW_SERVER_LOGS=true
       - SHOW_MONGODB_LOGS=false
@@ -29,11 +30,8 @@ services:
     volumes:
       - omada-data:/opt/tplink/EAPController/data
       - omada-logs:/opt/tplink/EAPController/logs
-      - omada-work:/opt/tplink/EAPController/work
-      - omada-properties:/opt/tplink/EAPController/properties
+      #- ./omada-properties:/opt/tplink/EAPController/properties
 
 volumes:
   omada-data:
   omada-logs:
-  omada-work:
-  omada-properties:

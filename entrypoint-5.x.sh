@@ -9,24 +9,15 @@ SMALL_FILES="${SMALL_FILES:-false}"
 
 # PORTS CONFIGURATION
 MANAGE_HTTP_PORT="${MANAGE_HTTP_PORT:-8088}"
-MANAGE_HTTP_PORT_PROP="manage.http.port"
 MANAGE_HTTPS_PORT="${MANAGE_HTTPS_PORT:-8043}"
-MANAGE_HTTPS_PORT_PROP="manage.https.port"
 PORTAL_HTTP_PORT="${PORTAL_HTTP_PORT:-8088}"
-PORTAL_HTTP_PORT_PROP="portal.http.port"
 PORTAL_HTTPS_PORT="${PORTAL_HTTPS_PORT:-8843}"
-PORTAL_HTTPS_PORT_PROP="portal.https.port"
-
-ADDOPT_V1_PORT="${ADDOPT_V1_PORT:-29812}"
-ADDOPT_V1_PORT_PROP="port.adopt.v1"
-UPGRADE_V1_PORT="${UPGRADE_V1_PORT:-29813}"
-UPGRADE_V1_PORT_PROP="port.upgrade.v1"
-MANAGER_V1_PORT="${MANAGER_V1_PORT:-29811}"
-MANAGER_V1_PORT_PROP="port.manager.v1"
-MANAGER_V2_PORT="${MANAGER_V2_PORT:-29814}"
-MANAGER_V2_PORT_PROP="port.manager.v2"
-DISCOVERY_PORT="${DISCOVERY_PORT:-29810}"
-DISCOVERY_PORT_PROP="port.discovery"
+PORT_ADOPT_V1="${PORT_ADOPT_V1:-29812}"
+PORT_APP_DISCOVERY="${PORT_APP_DISCOVERY:-27001}"
+PORT_UPGRADE_V1="${PORT_UPGRADE_V1:-29813}"
+PORT_MANAGER_V1="${PORT_MANAGER_V1:-29811}"
+PORT_MANAGER_V2="${PORT_MANAGER_V2:-29814}"
+PORT_DISCOVERY="${PORT_DISCOVERY:-29810}"
 # END PORTS CONFIGURATION
 
 SHOW_SERVER_LOGS="${SHOW_SERVER_LOGS:-true}"
@@ -122,16 +113,22 @@ set_port_property() {
   sed -i "s/^${1}=${2}$/${1}=${3}/g" /opt/tplink/EAPController/properties/omada.properties
 }
 
+
 # update stored ports when different of enviroment defined ports
-for ELEM in MANAGE_HTTP_PORT MANAGE_HTTPS_PORT PORTAL_HTTP_PORT PORTAL_HTTPS_PORT ADDOPT_V1_PORT UPGRADE_V1_PORT MANAGER_V1_PORT MANAGER_V2_PORT DISCOVERY_PORT
+for ELEM in MANAGE_HTTP_PORT MANAGE_HTTPS_PORT PORTAL_HTTP_PORT PORTAL_HTTPS_PORT PORT_ADOPT_V1 PORT_APP_DISCOVERY PORT_UPGRADE_V1 PORT_MANAGER_V1 PORT_MANAGER_V2 PORT_DISCOVERY
 do
-  KEY="${ELEM}_PROP"
-  KEY=${!KEY}
+  # convert element to key name
+  KEY="$(echo "${ELEM}" | tr '[:upper:]' '[:lower:]' | tr '_' '.')"
+
+  # get value we want to set from the element
   END_VAL=${!ELEM}
+
+  # get the current value from the omada.properties file
   STORED_PROP_VAL=$(grep -Po "(?<=${KEY}=)([0-9]+)" /opt/tplink/EAPController/properties/omada.properties)
+
+  # check to see if we need to set the value
   if [ "${STORED_PROP_VAL}" != "${END_VAL}" ]
   then
-    echo "UPDATING: ${KEY} value ${STORED_PROP_VAL} to ${END_VAL}"
     set_port_property "${KEY}" "${STORED_PROP_VAL}" "${END_VAL}"
   fi
 done
@@ -155,7 +152,7 @@ then
 fi
 
 # make sure permissions are set appropriately on each directory
-for DIR in data work logs properties
+for DIR in data logs properties
 do
   OWNER="$(stat -c '%u' /opt/tplink/EAPController/${DIR})"
   GROUP="$(stat -c '%g' /opt/tplink/EAPController/${DIR})"
