@@ -226,7 +226,7 @@ docker run -d \
   -p 8088:8088 \
   -p 8043:8043 \
   -p 8843:8843 \
-  -p 27001:27001 \
+  -p 27001:27001/udp \
   -p 29810:29810/udp \
   -p 29811:29811 \
   -p 29812:29812 \
@@ -251,7 +251,6 @@ docker run -d \
   -e TZ=Etc/UTC \
   -v omada-data:/opt/tplink/EAPController/data \
   -v omada-logs:/opt/tplink/EAPController/logs \
-  -v ./omada-properties:/opt/tplink/EAPController/properties \
   mbentley/omada-controller:5.5
 ```
 
@@ -308,7 +307,7 @@ docker run -d \
   -p 8088:8088 \
   -p 8043:8043 \
   -p 8843:8843 \
-  -p 27001:27001 \
+  -p 27001:27001/udp \
   -p 29810:29810/udp \
   -p 29811:29811 \
   -p 29812:29812 \
@@ -333,7 +332,6 @@ docker run -d \
   -e TZ=Etc/UTC \
   -v omada-data:/opt/tplink/EAPController/data \
   -v omada-logs:/opt/tplink/EAPController/logs \
-  -v ./omada-properties:/opt/tplink/EAPController/properties \
   mbentley/omada-controller:5.5-armv7l
 ```
 
@@ -349,7 +347,7 @@ docker run -d \
   -p 8088:8088 \
   -p 8043:8043 \
   -p 8843:8843 \
-  -p 27001:27001 \
+  -p 27001:27001/udp \
   -p 29810:29810/udp \
   -p 29811:29811 \
   -p 29812:29812 \
@@ -374,7 +372,6 @@ docker run -d \
   -e TZ=Etc/UTC \
   -v omada-data:/opt/tplink/EAPController/data \
   -v omada-logs:/opt/tplink/EAPController/logs \
-  -v ./omada-properties:/opt/tplink/EAPController/properties \
   mbentley/omada-controller:5.5-arm64
 ```
 

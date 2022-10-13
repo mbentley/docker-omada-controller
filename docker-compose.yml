@@ -30,7 +30,6 @@ services:
     volumes:
       - omada-data:/opt/tplink/EAPController/data
       - omada-logs:/opt/tplink/EAPController/logs
-      #- ./omada-properties:/opt/tplink/EAPController/properties
 
 volumes:
   omada-data:

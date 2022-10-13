@@ -85,13 +85,13 @@ fi
 
 # check if properties file exists; create it if it is mising
 DEFAULT_FILES="/opt/tplink/EAPController/properties.defaults/*"
-for FILE in $DEFAULT_FILES
+for FILE in ${DEFAULT_FILES}
 do
   BASENAME=$(basename "${FILE}")
   if [ ! -f "/opt/tplink/EAPController/properties/${BASENAME}" ]
   then
-    echo "${BASENAME} missed, restoring default..."
-    cp $FILE "/opt/tplink/EAPController/properties/${BASENAME}"
+    echo "INFO: Properties file ${BASENAME} missing, restoring default file..."
+    cp ${FILE} "/opt/tplink/EAPController/properties/${BASENAME}"
     chown omada:omada "/opt/tplink/EAPController/properties/${BASENAME}"
   fi
 done
