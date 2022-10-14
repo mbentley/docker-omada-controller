@@ -90,8 +90,8 @@ do
   BASENAME=$(basename "${FILE}")
   if [ ! -f "/opt/tplink/EAPController/properties/${BASENAME}" ]
   then
-    echo "INFO: Properties file ${BASENAME} missing, restoring default file..."
-    cp ${FILE} "/opt/tplink/EAPController/properties/${BASENAME}"
+    echo "INFO: Properties file '${BASENAME}' missing, restoring default file..."
+    cp "${FILE}" "/opt/tplink/EAPController/properties/${BASENAME}"
     chown omada:omada "/opt/tplink/EAPController/properties/${BASENAME}"
   fi
 done
