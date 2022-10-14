@@ -83,7 +83,7 @@ else
   fi
 fi
 
-# check if properties file exists; create it if it is mising
+# check if properties file exists; create it if it is missing
 DEFAULT_FILES="/opt/tplink/EAPController/properties.defaults/*"
 for FILE in ${DEFAULT_FILES}
 do
@@ -106,19 +106,6 @@ then
   echo "INFO: Skipping setting smallfiles option"
 fi
 
-set_port_property() {
-  # check to see if we are trying to bind to privileged port
-  if [ "${3}" -lt "1024" ] && [ "$(cat /proc/sys/net/ipv4/ip_unprivileged_port_start)" = "1024" ]
-  then
-    echo "ERROR: Unable to set '${1}' to ${3}; 'ip_unprivileged_port_start' has not been set.  See https://github.com/mbentley/docker-omada-controller#unprivileged-ports"
-    exit 1
-  fi
-
-  echo "INFO: Setting '${1}' to ${3} in omada.properties"
-  sed -i "s/^${1}=${2}$/${1}=${3}/g" /opt/tplink/EAPController/properties/omada.properties
-}
-
-
 # update stored ports when different of enviroment defined ports
 for ELEM in MANAGE_HTTP_PORT MANAGE_HTTPS_PORT PORTAL_HTTP_PORT PORTAL_HTTPS_PORT PORT_ADOPT_V1 PORT_APP_DISCOVERY PORT_UPGRADE_V1 PORT_MANAGER_V1 PORT_MANAGER_V2 PORT_DISCOVERY
 do
@@ -134,7 +121,19 @@ do
   # check to see if we need to set the value
   if [ "${STORED_PROP_VAL}" != "${END_VAL}" ]
   then
-    set_port_property "${KEY}" "${STORED_PROP_VAL}" "${END_VAL}"
+    # check to see if we are trying to bind to privileged port
+    if [ "${END_VAL}" -lt "1024" ] && [ "$(cat /proc/sys/net/ipv4/ip_unprivileged_port_start)" = "1024" ]
+    then
+      echo "ERROR: Unable to set '${KEY}' to ${END_VAL}; 'ip_unprivileged_port_start' has not been set.  See https://github.com/mbentley/docker-omada-controller#unprivileged-ports"
+      exit 1
+    fi
+
+    # update the key-value pair
+    echo "INFO: Setting '${KEY}' to ${END_VAL} in omada.properties"
+    sed -i "s/^${KEY}=${STORED_PROP_VAL}$/${KEY}=${END_VAL}/g" /opt/tplink/EAPController/properties/omada.properties
+  else
+    # values already match; nothing to change
+    echo "INFO: Value of '${KEY}' already set to ${END_VAL} in omada.properties"
   fi
 done
 
