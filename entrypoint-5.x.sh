@@ -6,10 +6,20 @@ set -e
 export TZ
 TZ="${TZ:-Etc/UTC}"
 SMALL_FILES="${SMALL_FILES:-false}"
+
+# PORTS CONFIGURATION
 MANAGE_HTTP_PORT="${MANAGE_HTTP_PORT:-8088}"
 MANAGE_HTTPS_PORT="${MANAGE_HTTPS_PORT:-8043}"
 PORTAL_HTTP_PORT="${PORTAL_HTTP_PORT:-8088}"
 PORTAL_HTTPS_PORT="${PORTAL_HTTPS_PORT:-8843}"
+PORT_ADOPT_V1="${PORT_ADOPT_V1:-29812}"
+PORT_APP_DISCOVERY="${PORT_APP_DISCOVERY:-27001}"
+PORT_UPGRADE_V1="${PORT_UPGRADE_V1:-29813}"
+PORT_MANAGER_V1="${PORT_MANAGER_V1:-29811}"
+PORT_MANAGER_V2="${PORT_MANAGER_V2:-29814}"
+PORT_DISCOVERY="${PORT_DISCOVERY:-29810}"
+# END PORTS CONFIGURATION
+
 SHOW_SERVER_LOGS="${SHOW_SERVER_LOGS:-true}"
 SHOW_MONGODB_LOGS="${SHOW_MONGODB_LOGS:-false}"
 SSL_CERT_NAME="${SSL_CERT_NAME:-tls.crt}"
@@ -73,6 +83,19 @@ else
   fi
 fi
 
+# check if properties file exists; create it if it is mising
+DEFAULT_FILES="/opt/tplink/EAPController/properties.defaults/*"
+for FILE in ${DEFAULT_FILES}
+do
+  BASENAME=$(basename "${FILE}")
+  if [ ! -f "/opt/tplink/EAPController/properties/${BASENAME}" ]
+  then
+    echo "INFO: Properties file '${BASENAME}' missing, restoring default file..."
+    cp "${FILE}" "/opt/tplink/EAPController/properties/${BASENAME}"
+    chown omada:omada "/opt/tplink/EAPController/properties/${BASENAME}"
+  fi
+done
+
 # set default time zone and notify user of time zone
 echo "INFO: Time zone set to '${TZ}'"
 
@@ -95,29 +118,25 @@ set_port_property() {
   sed -i "s/^${1}=${2}$/${1}=${3}/g" /opt/tplink/EAPController/properties/omada.properties
 }
 
-# replace MANAGE_HTTP_PORT if not the default
-if [ "${MANAGE_HTTP_PORT}" != "8088" ]
-then
-  set_port_property manage.http.port 8088 "${MANAGE_HTTP_PORT}"
-fi
 
-# replace MANAGE_HTTPS_PORT if not the default
-if [ "${MANAGE_HTTPS_PORT}" != "8043" ]
-then
-  set_port_property manage.https.port 8043 "${MANAGE_HTTPS_PORT}"
-fi
+# update stored ports when different of enviroment defined ports
+for ELEM in MANAGE_HTTP_PORT MANAGE_HTTPS_PORT PORTAL_HTTP_PORT PORTAL_HTTPS_PORT PORT_ADOPT_V1 PORT_APP_DISCOVERY PORT_UPGRADE_V1 PORT_MANAGER_V1 PORT_MANAGER_V2 PORT_DISCOVERY
+do
+  # convert element to key name
+  KEY="$(echo "${ELEM}" | tr '[:upper:]' '[:lower:]' | tr '_' '.')"
 
-# replace PORTAL_HTTP_PORT if not the default
-if [ "${PORTAL_HTTP_PORT}" != "8088" ]
-then
-  set_port_property portal.http.port 8088 "${PORTAL_HTTP_PORT}"
-fi
+  # get value we want to set from the element
+  END_VAL=${!ELEM}
 
-# replace PORTAL_HTTPS_PORT if not the default
-if [ "${PORTAL_HTTPS_PORT}" != "8843" ]
-then
-  set_port_property portal.https.port 8843 "${PORTAL_HTTPS_PORT}"
-fi
+  # get the current value from the omada.properties file
+  STORED_PROP_VAL=$(grep -Po "(?<=${KEY}=)([0-9]+)" /opt/tplink/EAPController/properties/omada.properties)
+
+  # check to see if we need to set the value
+  if [ "${STORED_PROP_VAL}" != "${END_VAL}" ]
+  then
+    set_port_property "${KEY}" "${STORED_PROP_VAL}" "${END_VAL}"
+  fi
+done
 
 # make sure that the html directory exists
 if [ ! -d "/opt/tplink/EAPController/data/html" ] && [ -f "/opt/tplink/EAPController/data-html.tar.gz" ]
@@ -138,7 +157,7 @@ then
 fi
 
 # make sure permissions are set appropriately on each directory
-for DIR in data logs
+for DIR in data logs properties
 do
   OWNER="$(stat -c '%u' /opt/tplink/EAPController/${DIR})"
   GROUP="$(stat -c '%g' /opt/tplink/EAPController/${DIR})"

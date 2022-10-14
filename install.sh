@@ -172,6 +172,9 @@ do
   cp "${NAME}" "${OMADA_DIR}" -r
 done
 
+# copy omada default properties for can be used when properties is mounted as volume
+cp -r properties/ "${OMADA_DIR}/properties.defaults"
+
 # symlink for mongod
 ln -sf "$(command -v mongod)" "${OMADA_DIR}/bin/mongod"
 chmod 755 "${OMADA_DIR}"/bin/*
