@@ -183,7 +183,7 @@ As of the Omada Controller version 4.x, the Dockerfiles have been simplified so 
   docker build \
     --build-arg INSTALL_VER="5.7" \
     -f Dockerfile.v5.x \
-    -t mbentley/omada-controller:5.6 .
+    -t mbentley/omada-controller:5.7 .
   ```
 
 ### `arm64`
@@ -195,7 +195,7 @@ As of the Omada Controller version 4.x, the Dockerfiles have been simplified so 
     --build-arg INSTALL_VER="5.7" \
     --build-arg ARCH="arm64" \
     -f Dockerfile.v5.x \
-    -t mbentley/omada-controller:5.6-arm64 .
+    -t mbentley/omada-controller:5.7-arm64 .
   ```
 
 ### `armv7l`
@@ -208,7 +208,7 @@ As of the Omada Controller version 4.x, the Dockerfiles have been simplified so 
     --build-arg ARCH="armv7l" \
     --build-arg BASE="ubuntu:16.04" \
     -f Dockerfile.v5.x \
-    -t mbentley/omada-controller:5.6-armv7l .
+    -t mbentley/omada-controller:5.7-armv7l .
   ```
 
 </details>
@@ -261,7 +261,7 @@ docker run -d \
   -e TZ=Etc/UTC \
   -v omada-data:/opt/tplink/EAPController/data \
   -v omada-logs:/opt/tplink/EAPController/logs \
-  mbentley/omada-controller:5.6
+  mbentley/omada-controller:5.7
 ```
 
 <details>
