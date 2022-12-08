@@ -15,7 +15,7 @@ body:
     attributes:
       label: What problem are you looking to solve?
       description: |
-        A clear and concise description of what the problem or challenge is that you'd like to be addressed.
+        A clear and concise description of what the problem or challenge is that you'd like to be addressed. If this is specific to a version of the Omada Controller, please provide the applicable version number.
     validations:
       required: true
   - type: textarea

@@ -40,6 +40,17 @@ body:
     validations:
       required: true
   - type: textarea
+    id: controller-version
+    attributes:
+      label: Controller Version
+      description: |
+        What is the version of the Omada Controller that you're running? This can be found in the hamburger menu (three dots) in the upper right hand corner of the main screen and under 'About' or in the container startup logs. This is *not* the image tag (i.e. - not `latest`)
+      placeholder: |
+        v5.7.4
+      render: plain
+    validations:
+      required: true
+  - type: textarea
     id: docker-run
     attributes:
       label: How You're Launching the Container
