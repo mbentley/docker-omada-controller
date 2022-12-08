@@ -10,6 +10,15 @@ body:
         ## Read Me First!
 
         Thanks for using my image! Hopefully it's helpful to you. You are about to report a bug you found related to the packaging or function of this Docker image, not the Controller software itself. If you have a problem with the software that is not related to this Docker image, file an issue on the [TP-Link community forums](https://community.tp-link.com/en/business/forum/582). If you're not sure if it is a problem with the Docker image or the software, file an issue here and I can assist in determining where the responsibility lies.
+  - type: input
+    id: controller-version
+    attributes:
+      label: Controller Version
+      description: |
+        What is the version of the Omada Controller that you're running? This can be found in the hamburger menu (three dots) in the upper right hand corner of the main screen and under 'About' or in the container startup logs. This is *not* the image tag (i.e. - not `latest`)
+      placeholder: v5.7.4
+    validations:
+      required: true
   - type: textarea
     id: description
     attributes:
@@ -37,15 +46,6 @@ body:
         2.
         3.
         4.
-    validations:
-      required: true
-  - type: input
-    id: controller-version
-    attributes:
-      label: Controller Version
-      description: |
-        What is the version of the Omada Controller that you're running? This can be found in the hamburger menu (three dots) in the upper right hand corner of the main screen and under 'About' or in the container startup logs. This is *not* the image tag (i.e. - not `latest`)
-      placeholder: v5.7.4
     validations:
       required: true
   - type: textarea
