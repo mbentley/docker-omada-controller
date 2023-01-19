@@ -1,4 +1,4 @@
-ARG BASE_VER=5.5
+ARG BASE_VER=latest
 FROM mbentley/omada-controller:${BASE_VER}
 
 RUN apt-get update &&\
