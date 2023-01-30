@@ -40,7 +40,8 @@ The following tags have multi-arch support for `amd64`, `armv7l`, and `arm64` an
 
 | Tag(s) | Major.Minor Release | Current Version |
 | :----- | ------------------- | --------------- |
-| `latest`, `5.7` | Omada Controller `5.7.x` | `5.7.4` |
+| `latest`, `5.8` | Omada Controller `5.8.x` | `5.8.4` |
+| `5.7` | Omada Controller `5.6.x` | `5.7.4` |
 | `5.6` | Omada Controller `5.6.x` | `5.6.3` |
 | `5.5` | Omada Controller `5.5.x` | `5.5.6` |
 | `5.4` | Omada Controller `5.4.x` | `5.4.6` |
@@ -57,7 +58,8 @@ The following tags have multi-arch support for `amd64`, `armv7l`, and `arm64` an
 
 | Tag(s) | Major.Minor Release |
 | :----- | ------------------- |
-| `latest-chromium`, `5.7-chromium` | Omada Controller `5.7.x` |
+| `latest-chromium`, `5.8-chromium` | Omada Controller `5.8.x` |
+| `5.7-chromium` | Omada Controller `5.7.x` |
 | `5.6-chromium` | Omada Controller `5.6.x` |
 | `5.5-chromium` | Omada Controller `5.5.x` |
 | `5.4-chromium` | Omada Controller `5.4.x` |
@@ -72,7 +74,8 @@ These tags will explicitly pull the image for the listed architecture and are bi
 
 | Tag(s) for [`amd64`](https://hub.docker.com/repository/docker/mbentley/omada-controller/tags?page=1&ordering=last_updated&name=-amd64) | Major.Minor Release | Base Image |
 | :----- | ------------------- | ---------- |
-| `latest-amd64`, `5.7-amd64` | Omada Controller `5.7.x` | `mbentley/ubuntu:20.04` |
+| `latest-amd64`, `5.8-amd64` | Omada Controller `5.8.x` | `mbentley/ubuntu:20.04` |
+| `5.7-amd64` | Omada Controller `5.7.x` | `mbentley/ubuntu:20.04` |
 | `5.6-amd64` | Omada Controller `5.6.x` | `mbentley/ubuntu:20.04` |
 | `5.5-amd64` | Omada Controller `5.5.x` | `mbentley/ubuntu:20.04` |
 | `5.4-amd64` | Omada Controller `5.4.x` | `mbentley/ubuntu:20.04` |
@@ -83,28 +86,12 @@ These tags will explicitly pull the image for the listed architecture and are bi
 | `4.1-amd64` | Omada Controller `4.1.x` | `mbentley/ubuntu:18.04` |
 | `3.2-amd64` | Omada Controller `3.2.x` | `mbentley/ubuntu:18.04` |
 
-#### [`armv7l`](https://hub.docker.com/repository/docker/mbentley/omada-controller/tags?page=1&ordering=last_updated&name=-armv7l)
-
-**Warning**: If you have an operating system that is 32 bit (`armv7l`/`armhf`), I strongly recommend you **DO NOT** run the Omada Controller on that device as it is running [an unsupported operating system and an unsupported MongoDB](KNOWN_ISSUES.md#notes-for-armv7l).
-
-| Tag(s) for [`armv7l`](https://hub.docker.com/repository/docker/mbentley/omada-controller/tags?page=1&ordering=last_updated&name=-armv7l) | Major.Minor Release | Base Image |
-| :----- | ------------------- | ---------- |
-| `latest-armv7l`, `5.7-armv7l` | Omada Controller `5.7.x` | `mbentley/ubuntu:16.04` |
-| `5.6-armv7l` | Omada Controller `5.6.x` | `mbentley/ubuntu:16.04` |
-| `5.5-armv7l` | Omada Controller `5.5.x` | `mbentley/ubuntu:16.04` |
-| `5.4-armv7l` | Omada Controller `5.4.x` | `mbentley/ubuntu:16.04` |
-| `5.3-armv7l` | Omada Controller `5.3.x` | `mbentley/ubuntu:16.04` |
-| `5.1-armv7l` | Omada Controller `5.1.x` | `mbentley/ubuntu:16.04` |
-| `5.0-armv7l` | Omada Controller `5.0.x` | `mbentley/ubuntu:16.04` |
-| `4.4-armv7l` | Omada Controller `4.4.x` | `mbentley/ubuntu:16.04` |
-| `4.1-armv7l` | Omada Controller `4.1.x` | `mbentley/ubuntu:16.04` |
-| `3.2-armv7l` | Omada Controller `3.2.x` | `mbentley/ubuntu:16.04` |
-
 #### [`arm64`](https://hub.docker.com/repository/docker/mbentley/omada-controller/tags?page=1&ordering=last_updated&name=-arm64)
 
 | Tag(s) for [`arm64`](https://hub.docker.com/repository/docker/mbentley/omada-controller/tags?page=1&ordering=last_updated&name=-arm64) | Major.Minor Release | Base Image |
 | :----- | ------------------- | ---------- |
-| `latest-arm64`, `5.7-arm64` | Omada Controller `5.7.x` | `mbentley/ubuntu:20.04` |
+| `latest-arm64`, `5.8-arm64` | Omada Controller `5.8.x` | `mbentley/ubuntu:20.04` |
+| `5.7-arm64` | Omada Controller `5.7.x` | `mbentley/ubuntu:20.04` |
 | `5.6-arm64` | Omada Controller `5.6.x` | `mbentley/ubuntu:20.04` |
 | `5.5-arm64` | Omada Controller `5.5.x` | `mbentley/ubuntu:20.04` |
 | `5.4-arm64` | Omada Controller `5.4.x` | `mbentley/ubuntu:20.04` |
@@ -114,6 +101,24 @@ These tags will explicitly pull the image for the listed architecture and are bi
 | `4.4-arm64` | Omada Controller `4.4.x` | `mbentley/ubuntu:18.04` |
 | `4.1-arm64` | Omada Controller `4.1.x` | `mbentley/ubuntu:18.04` |
 | `3.2-arm64` | Omada Controller `3.2.x` | `mbentley/ubuntu:18.04` |
+
+#### [`armv7l`](https://hub.docker.com/repository/docker/mbentley/omada-controller/tags?page=1&ordering=last_updated&name=-armv7l)
+
+**Warning**: If you have an operating system that is 32 bit (`armv7l`/`armhf`), I strongly recommend you **DO NOT** run the Omada Controller on that device as it is running [an unsupported operating system and an unsupported MongoDB](KNOWN_ISSUES.md#notes-for-armv7l).
+
+| Tag(s) for [`armv7l`](https://hub.docker.com/repository/docker/mbentley/omada-controller/tags?page=1&ordering=last_updated&name=-armv7l) | Major.Minor Release | Base Image |
+| :----- | ------------------- | ---------- |
+| `latest-armv7l`, `5.8-armv7l` | Omada Controller `5.8.x` | `mbentley/ubuntu:16.04` |
+| `5.7-armv7l` | Omada Controller `5.7.x` | `mbentley/ubuntu:16.04` |
+| `5.6-armv7l` | Omada Controller `5.6.x` | `mbentley/ubuntu:16.04` |
+| `5.5-armv7l` | Omada Controller `5.5.x` | `mbentley/ubuntu:16.04` |
+| `5.4-armv7l` | Omada Controller `5.4.x` | `mbentley/ubuntu:16.04` |
+| `5.3-armv7l` | Omada Controller `5.3.x` | `mbentley/ubuntu:16.04` |
+| `5.1-armv7l` | Omada Controller `5.1.x` | `mbentley/ubuntu:16.04` |
+| `5.0-armv7l` | Omada Controller `5.0.x` | `mbentley/ubuntu:16.04` |
+| `4.4-armv7l` | Omada Controller `4.4.x` | `mbentley/ubuntu:16.04` |
+| `4.1-armv7l` | Omada Controller `4.1.x` | `mbentley/ubuntu:16.04` |
+| `3.2-armv7l` | Omada Controller `3.2.x` | `mbentley/ubuntu:16.04` |
 
 ## Archived Tags
 
@@ -181,9 +186,9 @@ As of the Omada Controller version 4.x, the Dockerfiles have been simplified so 
 
   ```
   docker build \
-    --build-arg INSTALL_VER="5.7" \
+    --build-arg INSTALL_VER="5.8" \
     -f Dockerfile.v5.x \
-    -t mbentley/omada-controller:5.7 .
+    -t mbentley/omada-controller:5.8 .
   ```
 
 ### `arm64`
@@ -192,10 +197,10 @@ As of the Omada Controller version 4.x, the Dockerfiles have been simplified so 
 
   ```
   docker build \
-    --build-arg INSTALL_VER="5.7" \
+    --build-arg INSTALL_VER="5.8" \
     --build-arg ARCH="arm64" \
     -f Dockerfile.v5.x \
-    -t mbentley/omada-controller:5.7-arm64 .
+    -t mbentley/omada-controller:5.8-arm64 .
   ```
 
 ### `armv7l`
@@ -204,11 +209,11 @@ As of the Omada Controller version 4.x, the Dockerfiles have been simplified so 
 
   ```
   docker build \
-    --build-arg INSTALL_VER="5.7" \
+    --build-arg INSTALL_VER="5.8" \
     --build-arg ARCH="armv7l" \
     --build-arg BASE="ubuntu:16.04" \
     -f Dockerfile.v5.x \
-    -t mbentley/omada-controller:5.7-armv7l .
+    -t mbentley/omada-controller:5.8-armv7l .
   ```
 
 </details>
@@ -261,7 +266,7 @@ docker run -d \
   -e TZ=Etc/UTC \
   -v omada-data:/opt/tplink/EAPController/data \
   -v omada-logs:/opt/tplink/EAPController/logs \
-  mbentley/omada-controller:5.7
+  mbentley/omada-controller:5.8
 ```
 
 <details>
