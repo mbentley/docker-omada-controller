@@ -30,6 +30,8 @@ Docker image for [TP-Link Omada Controller](https://www.tp-link.com/us/business-
 * [Known Issues](#known-issues)
   * [MongoDB Corruption](KNOWN_ISSUES.md#mongodb-corruption)
   * [Upgrade Issues](KNOWN_ISSUES.md#upgrade-issues)
+    * [5.8 - 404s and Blank Pages](KNOWN_ISSUES.md#58---404s-and-blank-pages)
+    * [Incorrect CMD](KNOWN_ISSUES.md#incorrect-cmd)
   * [Notes for armv7l](KNOWN_ISSUES.md#notes-for-armv7l)
 
 ## Image Tags

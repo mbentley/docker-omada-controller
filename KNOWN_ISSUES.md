@@ -6,6 +6,12 @@ While MongoDB is fairly robust, the persistent data can become corrupt if a clea
 
 ## Upgrade Issues
 
+### 5.8 - 404s and Blank Pages
+
+It has been reported that a number of users are seeing 404s or blank pages after upgrading to version 5.8. This can be resolved by either force-reloading the page or by clearing your browser's cache.
+
+### Incorrect CMD
+
 It has been reported that users of some NAS devices such as a Synology or users of a Docker management UI like Portainer have had issues with upgrades due to the CMD being retained between versions. This normally does not happen with the Docker command line so it is a bit of an unexpected pattern but it can not be overwritten as it exists outside of the container.
 
 If updating from 3.x to 4.x or 4.x to 5.x, make sure to **completely** re-create the container (leaving your persistent data intact) otherwise the controller will not start. This is due to the CMD changing between the major releases as some web interfaces like Synology or Portainer retain the entrypoint and command explicitly instead of inheriting it from the image. To resolve the issue, do one of the following:
