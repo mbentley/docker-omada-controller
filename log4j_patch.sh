@@ -88,7 +88,7 @@ patch_log4j() {
   SHA512SUM_TEST2="$(sha512sum -c "/tmp/apache-log4j-${NEW_LOG4J_VERSION}-bin.tar.gz.sha512" >/dev/null 2>&1; echo $?)"
 
   # create a checksum file by appending the filename in case it is missing & check it
-  (cat apache-log4j-2.17.1-bin.tar.gz.sha512; echo " apache-log4j-2.17.1-bin.tar.gz") > apache-log4j-2.17.1-bin.tar.gz.sha512_test
+  (cat "apache-log4j-${NEW_LOG4J_VERSION}-bin.tar.gz.sha512"; echo " apache-log4j-${NEW_LOG4J_VERSION}-bin.tar.gz") > "apache-log4j-${NEW_LOG4J_VERSION}-bin.tar.gz.sha512_test"
   SHA512SUM_TEST3="$(sha512sum -c "/tmp/apache-log4j-${NEW_LOG4J_VERSION}-bin.tar.gz.sha512_test" >/dev/null 2>&1; echo $?)"
   set -e
 
