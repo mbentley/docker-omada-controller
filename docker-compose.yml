@@ -5,6 +5,10 @@ services:
     container_name: omada-controller
     image: mbentley/omada-controller:5.9
     restart: unless-stopped
+    ulimits:
+      nofile:
+        soft: 4096
+        hard: 8192
     stop_grace_period: 60s
     network_mode: host
     environment:

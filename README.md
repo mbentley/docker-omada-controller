@@ -245,6 +245,7 @@ __Warning__: If you want to change the controller ports from the default mapping
 docker run -d \
   --name omada-controller \
   --restart unless-stopped \
+  --ulimit nofile=4096:8192 \
   -p 8088:8088 \
   -p 8043:8043 \
   -p 8843:8843 \
@@ -285,6 +286,7 @@ The below example can be used with 3.2. The port and volume mappings have change
 docker run -d \
   --name omada-controller \
   --restart unless-stopped \
+  --ulimit nofile=4096:8192 \
   -p 8088:8088 \
   -p 8043:8043 \
   -p 8843:8843 \
