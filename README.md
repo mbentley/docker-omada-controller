@@ -336,7 +336,7 @@ docker-compose up -d
 
 ## Omada Controller API Documentation
 
-If you are interested in using the Omada Controller APIs to retrieve data from the controller, the latest version of the API documentation that I have found is available from the [community forums in this post](https://community.tp-link.com/en/business/forum/topic/253944?replyId=1045246). I'm not able to provide support for the APIs but I've found them to be helpful for my own usage and they weren't easy to find.
+If you are interested in using the Omada Controller APIs to retrieve data from the controller, the latest version of the API documentation that I have found is available from the [community forums in this post](https://community.tp-link.com/en/business/forum/topic/590430). I'm not able to provide support for the APIs but I've found them to be helpful for my own usage and they weren't easy to find.
 
 ## Known Issues
 
