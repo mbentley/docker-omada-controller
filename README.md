@@ -9,7 +9,7 @@ Docker image for [TP-Link Omada Controller](https://www.tp-link.com/us/business-
   * [Explicit Architecture Tags](#explicit-architecture-tags)
   * [Archived Tags](#archived-tags)
 * [Reporting Issues](#reporting-issues)
-* [Upgrade Path](#upgrade-path)
+* [Controller Upgrades](#controller-upgrades)
 * [Upgrading to 5.0.x from 4.1.x or above](#upgrading-to-50x-from-41x-or-above)
   * [Changes/Notes for 5.0.x](#changesnotes-for-50x)
 * [Upgrading to 4.1 from 3.2.10 or below](#upgrading-to-41-from-3210-or-below)
@@ -89,7 +89,15 @@ These images are still published on Docker Hub but are no longer regularly updat
 
 If you have issues running the controller, feel free to [file an issue](https://github.com/mbentley/docker-omada-controller/issues/new) and I will help as I can. If you are specifically having a problem that is related to the actual software, I would suggest filing an issue on the [TP-Link community forums](https://community.tp-link.com/en/business/forum/582) as I do not have access to source code to debug those issues. If you're not sure where the problem might be, I can help determine if it is a running in Docker issue or a software issue.
 
-## Upgrade Path
+## Controller Upgrades
+
+Controller upgrades are done by stopping the existing container gracefully (see the [note below](#preventing-database-corruption) on this topic), removing the existing container, and running a new container with the new version of the controller. This can be done manually, with compose, or with manby other 3rd party tools which auto-update containers.
+
+### Preventing database corruption
+
+When stopping your container in order to upgrade the controller, make sure to allow the MongoDB enough time to safely shutdown. This is done using `docker stop -t <value>` where `<value>` is a number in seconds, such as 60, which should allow the controller to cleanly shutdown. Database corruption has been observed when not cleanly shut down. The compose example now includes a default `stop_grace_period` of 60s.
+
+### Upgrade Path
 
 As always, take backups and read the documentation but the quick explanation of the upgrade path is:
 
@@ -180,7 +188,7 @@ To run this Docker image and keep persistent data in named volumes:
 
 __tl;dr__: Always make sure the environment variables for the ports match any changes you have made in the web UI and you'll be fine.
 
-**Note**: The `3.2` version of the controller only supports the `MANAGE_HTTP_PORT` and `MANAGE_HTTPS_PORT` variables for modifying the controller's admin web interface ports.  This means that setting `PORTAL_HTTP_PORT` and `PORTAL_HTTPS_PORT` will not have any effect in `3.2`.  Versions `4.x` or greater support all of the `MANAGE_*_PORT` and `PORTAL_*_PORT` variables as described in the [Optional Variables](#optional-variables) section.
+**Note**: The `3.2` version of the controller only supports the `MANAGE_HTTP_PORT` and `MANAGE_HTTPS_PORT` variables for modifying the controller's admin web interface ports. This means that setting `PORTAL_HTTP_PORT` and `PORTAL_HTTPS_PORT` will not have any effect in `3.2`. Versions `4.x` or greater support all of the `MANAGE_*_PORT` and `PORTAL_*_PORT` variables as described in the [Optional Variables](#optional-variables) section.
 
 If you want to change the ports of your Omada Controller to something besides the defaults, there is some unexpected behavior that the controller exhibits. There are two sets of ports: one for HTTP/HTTPS for the controller itself and another for HTTP/HTTPS for the captive portal, typically used for authentication to a guest network. The controller's set of ports, which are set by the `MANAGE_*_PORT` environment variables, can only be modified using the environment variables on the first time the controller is started. If persistent data exists, changing the controller's ports via environment variables will have no effect on the controller itself and can only be modified through the web UI. On the other hand, the portal ports will always be set to whatever has been set in the environment variables, which are set by the `PORTAL_*_PORT` environment variables.
 
@@ -303,7 +311,7 @@ If you utilize bind mounts instead of Docker named volumes (e.g. - `-v /path/to/
 chown -R 508:508 /data/omada/data /data/omada/logs
 ```
 
-In the examples, there are two directories where persistent data is stored: `data` and `logs`. The `data` directory is where the persistent database data is stored where all of your settings, app configuration, etc is stored.  The `log` directory is where logs are written and stored. I would suggest that you use a bind mounted volume for the `data` directory to ensure that your persistent data is directly under your control and of course take regular backups within the Omada Controller application itself.
+In the examples, there are two directories where persistent data is stored: `data` and `logs`. The `data` directory is where the persistent database data is stored where all of your settings, app configuration, etc is stored. The `log` directory is where logs are written and stored. I would suggest that you use a bind mounted volume for the `data` directory to ensure that your persistent data is directly under your control and of course take regular backups within the Omada Controller application itself.
 
 ## Custom Certificates
 
