@@ -5,7 +5,6 @@ services:
     container_name: omada-controller
     image: mbentley/omada-controller:5.9
     restart: unless-stopped
-    stop_grace_period: 60s
     ulimits:
       nofile:
         soft: 4096
