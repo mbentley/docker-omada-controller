@@ -296,6 +296,7 @@ In order to use the host's network namespace, you must first ensure that there a
 | `PUID` | `508` | _any_ | Set the `omada` process user ID ` | >= `3.2` |
 | `SHOW_SERVER_LOGS` | `true` | `[true\|false]` | Outputs Omada Controller logs to STDOUT at runtime | >= `4.1` |
 | `SHOW_MONGODB_LOGS` | `false` | `[true\|false]` | Outputs MongoDB logs to STDOUT at runtime | >= `4.1` |
+| `SKIP_USERLAND_KERNEL_CHECK` | `false` | `[true\|false]` | When set to `true`, skips the userland/kernel match check for `armv7l` & `arm64` |
 | `SMALL_FILES` | `false` | `[true\|false]` | See [Small Files](#small-files) for more detail; no effect in >= `4.1.x` | `3.2` only |
 | `SSL_CERT_NAME` | `tls.crt` | _any_ | Name of the public cert chain mounted to `/cert`; see [Custom Certificates](#custom-certificates) | >= `3.2` |
 | `SSL_KEY_NAME` | `tls.key` | _any_ | Name of the private cert mounted to `/cert`; see [Custom Certificates](#custom-certificates) | >= `3.2` |

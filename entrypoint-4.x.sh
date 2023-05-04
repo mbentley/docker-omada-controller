@@ -17,6 +17,7 @@ SSL_KEY_NAME="${SSL_KEY_NAME:-tls.key}"
 TLS_1_11_ENABLED="${TLS_1_11_ENABLED:-false}"
 PUID="${PUID:-508}"
 PGID="${PGID:-508}"
+SKIP_USERLAND_KERNEL_CHECK="${SKIP_USERLAND_KERNEL_CHECK:-false}"
 
 # validate user/group exist with correct UID/GID
 echo "INFO: Validating user/group (omada:omada) exists with correct UID/GID (${PUID}:${PGID})"
@@ -219,7 +220,7 @@ else
 fi
 
 # check to see if we are in a bad situation with a 32 bit userland and 64 bit kernel (fails to start MongoDB on a Raspberry Pi)
-if [ "$(dpkg --print-architecture)" = "armhf" ] && [ "$(uname -m)" = "aarch64" ]
+if [ "$(dpkg --print-architecture)" = "armhf" ] && [ "$(uname -m)" = "aarch64" ] && [ "${SKIP_USERLAND_KERNEL_CHECK}" = "false" ]
 then
   echo "##############################################################################"
   echo "##############################################################################"
