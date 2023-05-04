@@ -29,6 +29,7 @@ Docker image for [TP-Link Omada Controller](https://www.tp-link.com/us/business-
 * [Omada Controller API Documentation](#omada-controller-api-documentation)
 * [Known Issues](#known-issues)
   * [MongoDB Corruption](KNOWN_ISSUES.md#mongodb-corruption)
+  * [Raspberry Pi 4 Issues](KNOWN_ISSUES.md#raspberry-pi-4-issues)
   * [Upgrade Issues](KNOWN_ISSUES.md#upgrade-issues)
     * [5.8 - 404s and Blank Pages](KNOWN_ISSUES.md#58---404s-and-blank-pages)
     * [Incorrect CMD](KNOWN_ISSUES.md#incorrect-cmd)
@@ -295,6 +296,7 @@ In order to use the host's network namespace, you must first ensure that there a
 | `PUID` | `508` | _any_ | Set the `omada` process user ID ` | >= `3.2` |
 | `SHOW_SERVER_LOGS` | `true` | `[true\|false]` | Outputs Omada Controller logs to STDOUT at runtime | >= `4.1` |
 | `SHOW_MONGODB_LOGS` | `false` | `[true\|false]` | Outputs MongoDB logs to STDOUT at runtime | >= `4.1` |
+| `SKIP_USERLAND_KERNEL_CHECK` | `false` | `[true\|false]` | When set to `true`, skips the userland/kernel match check for `armv7l` & `arm64` |
 | `SMALL_FILES` | `false` | `[true\|false]` | See [Small Files](#small-files) for more detail; no effect in >= `4.1.x` | `3.2` only |
 | `SSL_CERT_NAME` | `tls.crt` | _any_ | Name of the public cert chain mounted to `/cert`; see [Custom Certificates](#custom-certificates) | >= `3.2` |
 | `SSL_KEY_NAME` | `tls.key` | _any_ | Name of the private cert mounted to `/cert`; see [Custom Certificates](#custom-certificates) | >= `3.2` |

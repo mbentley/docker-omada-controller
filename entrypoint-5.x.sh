@@ -27,6 +27,7 @@ SSL_KEY_NAME="${SSL_KEY_NAME:-tls.key}"
 TLS_1_11_ENABLED="${TLS_1_11_ENABLED:-false}"
 PUID="${PUID:-508}"
 PGID="${PGID:-508}"
+SKIP_USERLAND_KERNEL_CHECK="${SKIP_USERLAND_KERNEL_CHECK:-false}"
 
 # validate user/group exist with correct UID/GID
 echo "INFO: Validating user/group (omada:omada) exists with correct UID/GID (${PUID}:${PGID})"
@@ -291,6 +292,21 @@ then
 else
   echo "INFO: Version check passed; image version (${IMAGE_OMADA_VER}) >= the last version ran (${LAST_RAN_OMADA_VER}); writing image version to last ran file..."
   echo "${IMAGE_OMADA_VER}" > /opt/tplink/EAPController/data/LAST_RAN_OMADA_VER.txt
+fi
+
+# check to see if we are in a bad situation with a 32 bit userland and 64 bit kernel (fails to start MongoDB on a Raspberry Pi)
+if [ "$(dpkg --print-architecture)" = "armhf" ] && [ "$(uname -m)" = "aarch64" ] && [ "${SKIP_USERLAND_KERNEL_CHECK}" = "false" ]
+then
+  echo "##############################################################################"
+  echo "##############################################################################"
+  echo "ERROR: 32 bit userspace with 64 bit kernel detected!  MongoDB will NOT start!"
+  echo "  See https://github.com/mbentley/docker-omada-controller/blob/master/KNOWN_ISSUES.md#mismatched-userland-and-kernel for how to fix the issue"
+  echo "##############################################################################"
+  echo "##############################################################################"
+
+  exit 1
+else
+  echo "INFO: userland/kernel check passed"
 fi
 
 echo "INFO: Starting Omada Controller as user omada"
