@@ -29,6 +29,7 @@ Docker image for [TP-Link Omada Controller](https://www.tp-link.com/us/business-
 * [Omada Controller API Documentation](#omada-controller-api-documentation)
 * [Known Issues](#known-issues)
   * [MongoDB Corruption](KNOWN_ISSUES.md#mongodb-corruption)
+  * [Raspberry Pi 4 Issues](KNOWN_ISSUES.md#raspberry-pi-4-issues)
   * [Upgrade Issues](KNOWN_ISSUES.md#upgrade-issues)
     * [5.8 - 404s and Blank Pages](KNOWN_ISSUES.md#58---404s-and-blank-pages)
     * [Incorrect CMD](KNOWN_ISSUES.md#incorrect-cmd)
