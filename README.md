@@ -8,7 +8,7 @@ Docker image for [TP-Link Omada Controller](https://www.tp-link.com/us/business-
   * [Multi-arch Tags](#multi-arch-tags)
   * [Explicit Architecture Tags](#explicit-architecture-tags)
   * [Archived Tags](#archived-tags)
-* [Reporting Issues](#reporting-issues)
+* [Getting Help & Reporting Issues](#getting-help--reporting-issues)
 * [Controller Upgrades](#controller-upgrades)
 * [Upgrading to 5.0.x from 4.1.x or above](#upgrading-to-50x-from-41x-or-above)
   * [Changes/Notes for 5.0.x](#changesnotes-for-50x)
@@ -86,9 +86,9 @@ These images are still published on Docker Hub but are no longer regularly updat
 | `3.1` | Omada Controller `3.1.x` | `3.1.13` |
 | `3.0` | Omada Controller `3.0.x` | `3.0.5` |
 
-## Reporting Issues
+## Getting Help & Reporting Issues
 
-If you have issues running the controller, feel free to [file an issue](https://github.com/mbentley/docker-omada-controller/issues/new) and I will help as I can. If you are specifically having a problem that is related to the actual software, I would suggest filing an issue on the [TP-Link community forums](https://community.tp-link.com/en/business/forum/582) as I do not have access to source code to debug those issues. If you're not sure where the problem might be, I can help determine if it is a running in Docker issue or a software issue.
+If you have issues running the controller, feel free to [create a Help discussion](https://github.com/mbentley/docker-omada-controller/discussions/categories/help) and I will help as I can. If you are specifically having a problem that is related to the actual software, I would suggest filing an issue on the [TP-Link community forums](https://community.tp-link.com/en/business/forum/582) as I do not have access to source code to debug those issues. If you're not sure where the problem might be, I can help determine if it is a running in Docker issue or a software issue. If you're certain you have found a bug, create a [Bug Report Issue](https://github.com/mbentley/docker-omada-controller/issues/new/choose).
 
 ## Controller Upgrades
 
