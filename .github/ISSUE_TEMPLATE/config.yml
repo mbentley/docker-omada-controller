@@ -1,5 +1,8 @@
 blank_issues_enabled: false
 contact_links:
+  - name: mbentley/omada-controller Discussions
+    url: https://github.com/mbentley/docker-omada-controller/discussions
+    about: Do you have problems or questions about how you use this container image and need help? Start a discussion and members of the community will help you out.
   - name: TP-Link Forums
     url: https://community.tp-link.com/en/business/forum/582
-    about: For issues related to the Omada Controller software, use the forums!  I am not a developer of the Omada Controller software and do not have access to the source code.
+    about: For issues related to the Omada Controller software itself, use the forums! I am not a developer of the Omada Controller software and do not have access to the source code.
