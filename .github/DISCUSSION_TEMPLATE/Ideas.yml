@@ -1,0 +1,25 @@
+title: "[Idea]: "
+labels: ["Idea"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Read Me First!
+
+        Thanks for using my image! Hopefully it's helpful to you. If you have an idea for a new feature or enhancement that is related to the packaging or function of this Docker image, you're in the right place. If you have a feature request or enhancement with the software that is not related to this Docker image, file an issue on the [TP-Link community forums](https://community.tp-link.com/en/business/forum/582). If you want to report a bug in the packaging or function of this image, go ahead and create a [Bug Report Issue](https://github.com/mbentley/docker-omada-controller/issues/new/choose). In order to have a better discussion about the feature/enhancement/idea, it would be great if you can provide as much information as you can below.
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the Feature/Enhancement/Idea
+      description: |
+        Please provide a clear and concise description of what you'd like to see in this image. If you have an idea of how you would propose to solve the problem, include that here!
+    validations:
+      required: true
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: |
+        Add any other context about the idea here.
+    validations:
+      required: false
