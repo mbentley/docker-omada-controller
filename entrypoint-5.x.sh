@@ -37,7 +37,7 @@ echo "INFO: Validating user/group (${PUSERNAME}:${PGROUP}) exists with correct U
 # check to see if group exists; if not, create it
 if grep -q -E "^${PGROUP}:" /etc/group > /dev/null 2>&1
 then
-  # exiting group found; also make sure the omada user matches the GID
+  # existing group found; also make sure the omada group matches the GID
   echo "INFO: Group (${PGROUP}) exists; skipping creation"
   EXISTING_GID="$(id -g "${PGROUP}")"
   if [ "${EXISTING_GID}" != "${PGID}" ]
