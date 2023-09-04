@@ -12,7 +12,7 @@ INSTALL_VER="${INSTALL_VER:-}"
 # install wget
 export DEBIAN_FRONTEND=noninteractive
 apt-get update
-apt-get install --no-install-recommends -y ca-certificates wget
+apt-get install --no-install-recommends -y ca-certificates unzip wget
 
 # get URL to package based on major.minor version; for information on this url API, see https://github.com/mbentley/docker-omada-controller-url
 OMADA_URL="$(wget -q -O - "https://omada-controller-url.mbentley.net/hooks/omada_ver_to_url?omada-ver=${INSTALL_VER}")"
@@ -104,6 +104,18 @@ wget -nv "${OMADA_URL}"
 
 echo "**** Extract and Install Omada Controller ****"
 
+# the beta version is a tar.gz inside of a zip so let's pre-unzip it
+if [ "${INSTALL_VER}" = "beta" ]
+then
+  echo "INFO: this is a beta version; unzipping..."
+  # unzip the file
+  unzip "${OMADA_TAR}"
+  rm -f "${OMADA_TAR}"
+
+  # now that we have unzipped, let's get the tar name
+  OMADA_TAR="$(ls -- *.tar.gz)"
+fi
+
 # in the 4.4.3, 4.4.6, and 4.4.8 builds, they removed the directory. this case statement will handle variations in the build
 case "${OMADA_VER}" in
   4.4.3|4.4.6|4.4.8)
@@ -131,7 +143,7 @@ case "${OMADA_MAJOR_VER}" in
     if [ "${OMADA_MAJOR_MINOR_VER#*.}" -ge 3 ]
     then
       # 5.3.1 and above moved the keystore directory to be a subdir of data
-      NAMES=( bin data properties lib install.sh uninstall.sh )
+      NAMES=( bin data lib properties install.sh uninstall.sh )
     else
       # is less than 5.3
       NAMES=( bin data properties keystore lib install.sh uninstall.sh )
