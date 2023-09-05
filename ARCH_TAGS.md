@@ -7,6 +7,7 @@ These tags will explicitly pull the image for the listed architecture and are bi
 | Tag(s) for [`amd64`](https://hub.docker.com/repository/docker/mbentley/omada-controller/tags?page=1&ordering=last_updated&name=-amd64) | Major.Minor Release | Base Image |
 | :----- | ------------------- | ---------- |
 | `latest-amd64`, `5.9-amd64` | Omada Controller `5.9.x` | `mbentley/ubuntu:20.04` |
+| `beta-amd64` | Omada Controller `beta` | `mbentley/ubuntu:20.04` |
 | `5.8-amd64` | Omada Controller `5.8.x` | `mbentley/ubuntu:20.04` |
 | `5.7-amd64` | Omada Controller `5.7.x` | `mbentley/ubuntu:20.04` |
 | `5.6-amd64` | Omada Controller `5.6.x` | `mbentley/ubuntu:20.04` |
@@ -24,6 +25,7 @@ These tags will explicitly pull the image for the listed architecture and are bi
 | Tag(s) for [`arm64`](https://hub.docker.com/repository/docker/mbentley/omada-controller/tags?page=1&ordering=last_updated&name=-arm64) | Major.Minor Release | Base Image |
 | :----- | ------------------- | ---------- |
 | `latest-arm64`, `5.9-arm64` | Omada Controller `5.9.x` | `mbentley/ubuntu:20.04` |
+| `beta-arm64` | Omada Controller `beta` | `mbentley/ubuntu:20.04` |
 | `5.8-arm64` | Omada Controller `5.8.x` | `mbentley/ubuntu:20.04` |
 | `5.7-arm64` | Omada Controller `5.7.x` | `mbentley/ubuntu:20.04` |
 | `5.6-arm64` | Omada Controller `5.6.x` | `mbentley/ubuntu:20.04` |
@@ -43,7 +45,7 @@ These tags will explicitly pull the image for the listed architecture and are bi
 | Tag(s) for [`armv7l`](https://hub.docker.com/repository/docker/mbentley/omada-controller/tags?page=1&ordering=last_updated&name=-armv7l) | Major.Minor Release | Base Image |
 | :----- | ------------------- | ---------- |
 | `latest-armv7l`, `5.9-armv7l` | Omada Controller `5.9.x` | `mbentley/ubuntu:16.04` |
-| `5.8-armv7l` | Omada Controller `5.8.x` | `mbentley/ubuntu:16.04` |
+| `beta-armv7l` | Omada Controller `beta` | `mbentley/ubuntu:16.04` |
 | `5.7-armv7l` | Omada Controller `5.7.x` | `mbentley/ubuntu:16.04` |
 | `5.6-armv7l` | Omada Controller `5.6.x` | `mbentley/ubuntu:16.04` |
 | `5.5-armv7l` | Omada Controller `5.5.x` | `mbentley/ubuntu:16.04` |
