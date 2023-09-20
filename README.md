@@ -5,20 +5,20 @@ Docker image for [TP-Link Omada Controller](https://www.tp-link.com/us/business-
 ## Table of Contents
 
 * [Image Tags](#image-tags)
-  * [Multi-arch Tags](#multi-arch-tags)
-  * [Explicit Architecture Tags](#explicit-architecture-tags)
-  * [Archived Tags](#archived-tags)
+    * [Multi-arch Tags](#multi-arch-tags)
+    * [Explicit Architecture Tags](#explicit-architecture-tags)
+    * [Archived Tags](#archived-tags)
 * [Getting Help & Reporting Issues](#getting-help--reporting-issues)
 * [Controller Upgrades](#controller-upgrades)
 * [Upgrading to 5.0.x from 4.1.x or above](#upgrading-to-50x-from-41x-or-above)
-  * [Changes/Notes for 5.0.x](#changesnotes-for-50x)
+    * [Changes/Notes for 5.0.x](#changesnotes-for-50x)
 * [Upgrading to 4.1 from 3.2.10 or below](#upgrading-to-41-from-3210-or-below)
-  * [Notes for 4.1](#notes-for-41)
+    * [Notes for 4.1](#notes-for-41)
 * [Building Images](#building-images)
 * [Example Usage](#example-usage)
-  * [Using non-default ports](#using-non-default-ports)
-  * [Using port mapping](#using-port-mapping)
-  * [Using `net=host`](#using-nethost)
+    * [Using non-default ports](#using-non-default-ports)
+    * [Using port mapping](#using-port-mapping)
+    * [Using `net=host`](#using-nethost)
 * [Optional Variables](#optional-variables)
 * [Persistent Data and Permissions](#persistent-data-and-permissions)
 * [Custom Certificates](#custom-certificates)
@@ -28,12 +28,12 @@ Docker image for [TP-Link Omada Controller](https://www.tp-link.com/us/business-
 * [Using Docker Compose](#using-docker-compose)
 * [Omada Controller API Documentation](#omada-controller-api-documentation)
 * [Known Issues](#known-issues)
-  * [MongoDB Corruption](KNOWN_ISSUES.md#mongodb-corruption)
-  * [Raspberry Pi 4 Issues](KNOWN_ISSUES.md#raspberry-pi-4-issues)
-  * [Upgrade Issues](KNOWN_ISSUES.md#upgrade-issues)
-    * [5.8 - 404s and Blank Pages](KNOWN_ISSUES.md#58---404s-and-blank-pages)
-    * [Incorrect CMD](KNOWN_ISSUES.md#incorrect-cmd)
-  * [Notes for armv7l](KNOWN_ISSUES.md#notes-for-armv7l)
+    * [MongoDB Corruption](KNOWN_ISSUES.md#mongodb-corruption)
+    * [Raspberry Pi 4 Issues](KNOWN_ISSUES.md#raspberry-pi-4-issues)
+    * [Upgrade Issues](KNOWN_ISSUES.md#upgrade-issues)
+        * [5.8 - 404s and Blank Pages](KNOWN_ISSUES.md#58---404s-and-blank-pages)
+        * [Incorrect CMD](KNOWN_ISSUES.md#incorrect-cmd)
+    * [Notes for armv7l](KNOWN_ISSUES.md#notes-for-armv7l)
 
 ## Image Tags
 
@@ -43,8 +43,9 @@ The following tags have multi-arch support for `amd64`, `armv7l`, and `arm64` an
 
 | Tag(s) | Major.Minor Release | Current Version |
 | :----- | ------------------- | --------------- |
-| `latest`, `5.9` | Omada Controller `5.9.x` | `5.9.31` |
+| `latest`, `5.12` | Omada Controller `5.12.x` | `5.12.7` |
 | `beta` | Omada Controller `beta` | `5.12.6` |
+| `5.9` | Omada Controller `5.9.x` | `5.9.31` |
 | `5.8` | Omada Controller `5.8.x` | `5.8.4` |
 | `5.7` | Omada Controller `5.7.x` | `5.7.4` |
 | `5.6` | Omada Controller `5.6.x` | `5.6.3` |
@@ -63,8 +64,9 @@ The following tags have multi-arch support for `amd64`, `armv7l`, and `arm64` an
 
 | Tag(s) | Major.Minor Release |
 | :----- | ------------------- |
-| `latest-chromium`, `5.9-chromium` | Omada Controller `5.9.x` |
+| `latest-chromium`, `5.12-chromium` | Omada Controller `5.12.x` |
 | `beta-chromium`, | Omada Controller `beta` |
+| `5.9-chromium` | Omada Controller `5.9.x` |
 | `5.8-chromium` | Omada Controller `5.8.x` |
 | `5.7-chromium` | Omada Controller `5.7.x` |
 | `5.6-chromium` | Omada Controller `5.6.x` |
@@ -105,9 +107,9 @@ When stopping your container in order to upgrade the controller, make sure to al
 As always, take backups and read the documentation but the quick explanation of the upgrade path is:
 
 * `3.2` -> `4.1`
-  * This is a manual upgrade. See [Upgrading to 4.1 from 3.2.10 or below](#upgrading-to-41-from-3210-or-below).
+    * This is a manual upgrade. See [Upgrading to 4.1 from 3.2.10 or below](#upgrading-to-41-from-3210-or-below).
 * `4.1` -> `5.x` (latest)
-  * These are automatic upgrades that take place by updating the image tag.
+    * These are automatic upgrades that take place by updating the image tag.
 
 ## Upgrading to 5.0.x from 4.1.x or above
 
@@ -151,9 +153,9 @@ As of the Omada Controller version 4.x, the Dockerfiles have been simplified so 
 
   ```
   docker build \
-    --build-arg INSTALL_VER="5.9" \
+    --build-arg INSTALL_VER="5.12" \
     -f Dockerfile.v5.x \
-    -t mbentley/omada-controller:5.9 .
+    -t mbentley/omada-controller:5.12 .
   ```
 
 ### `arm64`
@@ -162,10 +164,10 @@ As of the Omada Controller version 4.x, the Dockerfiles have been simplified so 
 
   ```
   docker build \
-    --build-arg INSTALL_VER="5.9" \
+    --build-arg INSTALL_VER="5.12" \
     --build-arg ARCH="arm64" \
     -f Dockerfile.v5.x \
-    -t mbentley/omada-controller:5.9-arm64 .
+    -t mbentley/omada-controller:5.12-arm64 .
   ```
 
 ### `armv7l`
@@ -174,11 +176,11 @@ As of the Omada Controller version 4.x, the Dockerfiles have been simplified so 
 
   ```
   docker build \
-    --build-arg INSTALL_VER="5.9" \
+    --build-arg INSTALL_VER="5.12" \
     --build-arg ARCH="armv7l" \
     --build-arg BASE="ubuntu:16.04" \
     -f Dockerfile.v5.x \
-    -t mbentley/omada-controller:5.9-armv7l .
+    -t mbentley/omada-controller:5.12-armv7l .
   ```
 
 </details>
@@ -199,7 +201,7 @@ If you want to change the ports of your Omada Controller to something besides th
 
 __Warning__: If you want to change the controller ports from the default mappings, you *absolutely must* update the port binding inside the container via the environment variables. The ports exposed must match what is inside the container. The Omada Controller software expects that the ports are the same inside the container and outside and will load a blank page if that is not done. See [#99](https://github.com/mbentley/docker-omada-controller/issues/99#issuecomment-821243857) for details and and example of the behavior.
 
-```
+```bash
 docker run -d \
   --name omada-controller \
   --restart unless-stopped \
@@ -229,7 +231,7 @@ docker run -d \
   -e TZ=Etc/UTC \
   -v omada-data:/opt/tplink/EAPController/data \
   -v omada-logs:/opt/tplink/EAPController/logs \
-  mbentley/omada-controller:5.9
+  mbentley/omada-controller:5.12
 ```
 
 <details>
@@ -268,14 +270,13 @@ docker run -d \
 
 In order to use the host's network namespace, you must first ensure that there are not any port conflicts. The `docker run` command is the same except for that all of the published ports should be removed and `--net host` should be added. Technically it will still work if you have the ports included, but Docker will just silently drop them. Here is a snippet of what the above should be modified to look like:
 
-```
+```bash
 ...
   --restart unless-stopped \
   --net host \
   -e MANAGE_HTTP_PORT=8088 \
 ...
 ```
-
 
 ## Optional Variables
 
@@ -310,7 +311,7 @@ In order to use the host's network namespace, you must first ensure that there a
 
 If you utilize bind mounts instead of Docker named volumes (e.g. - `-v /path/to/data:/opt/tplink/EAPController/data`) in your run command, you will want to make sure that you have set the permissions appropriately on the filesystem otherwise you will run into permissions errors and the container will not run because it won't have the permissions to write data since this container uses a non-root user. To resolve that, you need to `chown` the directory to `508:508` on the host as that is the UID and GID that we use inside the container. For example:
 
-```
+```bash
 chown -R 508:508 /data/omada/data /data/omada/logs
 ```
 
@@ -340,7 +341,7 @@ This Docker image runs as a non-root user by default. In order to bind unprivile
 
 There is a [Docker Compose file](https://github.com/mbentley/docker-omada-controller/blob/master/docker-compose.yml) available for those who would like to use compose to manage the lifecycle of their container:
 
-```
+```bash
 wget https://raw.githubusercontent.com/mbentley/docker-omada-controller/master/docker-compose.yml
 docker-compose up -d
 ```
