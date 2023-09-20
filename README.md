@@ -222,6 +222,8 @@ docker run -d \
   -e PORT_DISCOVERY=29810 \
   -e PORT_MANAGER_V1=29811 \
   -e PORT_MANAGER_V2=29814 \
+  -e PORT_TRANSFER_V2=29815 \
+  -e PORT_RTTY=29816 \
   -e PORT_UPGRADE_V1=29813 \
   -e PUID="508" \
   -e SHOW_SERVER_LOGS=true \
@@ -293,6 +295,8 @@ In order to use the host's network namespace, you must first ensure that there a
 | `PORT_DISCOVERY` | `29810` | `1024`-`65535` | Omada Controller and Omada Discovery Utility discover Omada devices | >= `5.x` |
 | `PORT_MANAGER_V1` | `29811` | `1024`-`65535` | Omada Controller and Omada Discovery Utility manage the Omada devices running firmware fully adapted to Omada Controller v4* | >= `5.x` |
 | `PORT_MANAGER_V2` | `29814` | `1024`-`65535` | Omada Controller and Omada Discovery Utility manage the Omada devices running firmware fully adapted to Omada Controller v5* | >= `5.x` |
+| `PORT_TRANSFER_V2` | `29815` | `1024`-`65535` | Omada Controller receives Device Info and Packet Capture files from the Omada devices | >= `5.9` |
+| `PORT_RTTY` | `29816` | `1024`-`65535` | Omada Controller establishes the remote control terminal session with the Omada devices | >= `5.9` |
 | `PORT_UPGRADE_V1` | `29813` | `1024`-`65535` | When upgrading the firmware for the Omada devices running firmware fully adapted to Omada Controller v4*. | >= `5.x` |
 | `PUID` | `508` | _any_ | Set the `omada` process user ID ` | >= `3.2` |
 | `PUSERNAME` | `omada` | _any_ | Set the username for the process user ID to run as | >= `5.0` |
@@ -304,6 +308,8 @@ In order to use the host's network namespace, you must first ensure that there a
 | `SSL_KEY_NAME` | `tls.key` | _any_ | Name of the private cert mounted to `/cert`; see [Custom Certificates](#custom-certificates) | >= `3.2` |
 | `TLS_1_11_ENABLED` | `false` | `[true\|false]` | Re-enables TLS 1.0 & 1.1 if set to `true` | >= `4.1` |
 | `TZ` | `Etc/UTC` | _\<many\>_ | See [Time Zones](#time-zones) for more detail | >= `3.2` |
+
+Documentation on the ports used by the controller can be found in the [TP-Link FAQ](https://www.tp-link.com/us/support/faq/3281/).
 
 ## Persistent Data and Permissions
 
