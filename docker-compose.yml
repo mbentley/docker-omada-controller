@@ -24,6 +24,8 @@ services:
       - PORT_MANAGER_V1=29811
       - PORT_MANAGER_V2=29814
       - PORT_DISCOVERY=29810
+      - PORT_TRANSFER_V2=29815
+      - PORT_RTTY=29816
       - SHOW_SERVER_LOGS=true
       - SHOW_MONGODB_LOGS=false
       - SSL_CERT_NAME=tls.crt
