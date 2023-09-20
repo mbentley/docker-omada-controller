@@ -121,10 +121,13 @@ do
   END_VAL=${!ELEM}
 
   # get the current value from the omada.properties file
-  STORED_PROP_VAL=$(grep -Po "(?<=${KEY}=)([0-9]+)" /opt/tplink/EAPController/properties/omada.properties)
+  STORED_PROP_VAL=$(grep -Po "(?<=${KEY}=)([0-9]+)" /opt/tplink/EAPController/properties/omada.properties || true)
 
   # check to see if we need to set the value
-  if [ "${STORED_PROP_VAL}" != "${END_VAL}" ]
+  if [ "${STORED_PROP_VAL}" = "" ]
+  then
+    echo "INFO: Skipping '${KEY}' - not present in omada.properties"
+  elif [ "${STORED_PROP_VAL}" != "${END_VAL}" ]
   then
     # check to see if we are trying to bind to privileged port
     if [ "${END_VAL}" -lt "1024" ] && [ "$(cat /proc/sys/net/ipv4/ip_unprivileged_port_start)" = "1024" ]
