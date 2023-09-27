@@ -73,6 +73,19 @@ body:
     validations:
       required: true
   - type: textarea
+    id: mongo-logs
+    attributes:
+      label: MongoDB Logs
+      description: |
+        If the container is refusing to start or the controller app fails to start up, collect logs from MongoDB. These can be copied from the container using `docker cp omada-controller:/opt/tplink/EAPController/logs/mongod.log .` or by copying them from the volume/bind mount specified for the logs directory.
+      placeholder: |
+        logs
+        go
+        here
+      render: plain
+    validations:
+      required: false
+  - type: textarea
     id: additional
     attributes:
       label: Additional Context
