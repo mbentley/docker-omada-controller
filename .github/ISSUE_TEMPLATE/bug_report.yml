@@ -10,6 +10,8 @@ body:
         ## Read Me First!
 
         Thanks for using my image! Hopefully it's helpful to you. You are about to report a bug you found related to the packaging or function of this Docker image, not the Controller software itself. If you have a problem with the software that is not related to this Docker image, file an issue on the [TP-Link community forums](https://community.tp-link.com/en/business/forum/582). If you're not sure if it is a problem with the Docker image or the software, file an issue here and I can assist in determining where the responsibility lies.
+
+        If you are not sure how to gather some of the requested information, please check out the [support info](https://github.com/mbentley/docker-omada-controller/blob/master/SUPPORT_INFO.md) README.
   - type: input
     id: controller-version
     attributes:
