@@ -7,6 +7,8 @@ body:
         ## Read Me First!
 
         Thanks for using my image! Hopefully it's helpful to you. If you're looking for help with this container image, related to the packaging or function of this Docker image, you're in the right place. If you have a bug with the software that is not related to this Docker image, file an issue on the [TP-Link community forums](https://community.tp-link.com/en/business/forum/582). If you're not sure if it is a problem with the Docker image or the software, we can figure that out so go ahead and start a discussion. If you are certain you have found a bug in the packaging or function of this image, go ahead and create a [Bug Report Issue](https://github.com/mbentley/docker-omada-controller/issues/new/choose). In order to better help you, it would be great if you can provide as much information as you can below.
+
+        If you are not sure how to gather some of the requested information, please check out the [support info](https://github.com/mbentley/docker-omada-controller/blob/master/SUPPORT_INFO.md) README.
   - type: input
     id: controller-version
     attributes:
