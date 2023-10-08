@@ -35,6 +35,10 @@ If updating from 3.x to 4.x or 4.x to 5.x, make sure to **completely** re-create
 
 It should be noted that users of 3.x who wish to upgrade to 4.x must perform [specific upgrade steps](#upgrading-to-41-from-3210-or-below) to prevent data loss!
 
+### 5.12 - Unable to Login After Upgrade
+
+There is a [known bug](https://github.com/mbentley/docker-omada-controller/discussions/344#discussioncomment-7104908) in the controller software where a user is not able to login with their local user after upgrading to 5.12.x. This has been [reported to TP-Link](https://community.tp-link.com/en/business/forum/topic/623942) but a fix has not yet been provided.
+
 ## Notes for `armv7l`
 
 **tl;dr** - Do not run the Omada Controller on your `armv7l`/`armhf` based operating system!  If you're running as Raspberry Pi 3, 4, Pi Zero 2W, you should [run a 64 bit operating system](https://www.raspberrypi.com/news/raspberry-pi-os-64-bit/) so you can use the `arm64` image which is supported.
