@@ -33,6 +33,7 @@ Docker image for [TP-Link Omada Controller](https://www.tp-link.com/us/business-
     * [Upgrade Issues](KNOWN_ISSUES.md#upgrade-issues)
         * [5.8 - 404s and Blank Pages](KNOWN_ISSUES.md#58---404s-and-blank-pages)
         * [Incorrect CMD](KNOWN_ISSUES.md#incorrect-cmd)
+        * [5.12 - Unable to Login After Upgrade](KNOWN_ISSUES.md#512---unable-to-login-after-upgrade)
     * [Notes for armv7l](KNOWN_ISSUES.md#notes-for-armv7l)
 
 ## Image Tags
