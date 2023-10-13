@@ -48,13 +48,6 @@ The following tags have multi-arch support for `amd64`, `armv7l`, and `arm64` an
 | `beta` | Omada Controller `beta` | `5.12.6` |
 | `5.9` | Omada Controller `5.9.x` | `5.9.31` |
 | `5.8` | Omada Controller `5.8.x` | `5.8.4` |
-| `5.7` | Omada Controller `5.7.x` | `5.7.4` |
-| `5.6` | Omada Controller `5.6.x` | `5.6.3` |
-| `5.5` | Omada Controller `5.5.x` | `5.5.6` |
-| `5.4` | Omada Controller `5.4.x` | `5.4.6` |
-| `5.3` | Omada Controller `5.3.x` | `5.3.1` |
-| `5.1` | Omada Controller `5.1.x` | `5.1.7` |
-| `5.0` | Omada Controller `5.0.x` | `5.0.30` |
 | `4.4` | Omada Controller `4.4.x` | `4.4.8` |
 | `4.1` | Omada Controller `4.1.x` | `4.1.5` |
 | `3.2` | Omada Controller `3.2.x` | `3.2.17` |
@@ -69,12 +62,6 @@ The following tags have multi-arch support for `amd64`, `armv7l`, and `arm64` an
 | `beta-chromium`, | Omada Controller `beta` |
 | `5.9-chromium` | Omada Controller `5.9.x` |
 | `5.8-chromium` | Omada Controller `5.8.x` |
-| `5.7-chromium` | Omada Controller `5.7.x` |
-| `5.6-chromium` | Omada Controller `5.6.x` |
-| `5.5-chromium` | Omada Controller `5.5.x` |
-| `5.4-chromium` | Omada Controller `5.4.x` |
-| `5.3-chromium` | Omada Controller `5.3.x` |
-| `5.1-chromium` | Omada Controller `5.1.x` |
 
 ### Explicit Architecture Tags
 
@@ -86,6 +73,19 @@ These images are still published on Docker Hub but are no longer regularly updat
 
 | Tag(s) | Major.Minor Release | Current Version |
 | :----- | ------------------- | ----------------|
+| `5.7` | Omada Controller `5.7.x` | `5.7.4` |
+| `5.7-chromium` | Omada Controller `5.7.x` | `5.7.4` |
+| `5.6` | Omada Controller `5.6.x` | `5.6.3` |
+| `5.6-chromium` | Omada Controller `5.6.x` | `5.6.3` |
+| `5.5` | Omada Controller `5.5.x` | `5.5.6` |
+| `5.5-chromium` | Omada Controller `5.5.x` | `5.5.6` |
+| `5.4` | Omada Controller `5.4.x` | `5.4.6` |
+| `5.4-chromium` | Omada Controller `5.4.x` | `5.4.6` |
+| `5.3` | Omada Controller `5.3.x` | `5.3.1` |
+| `5.3-chromium` | Omada Controller `5.3.x` | `5.3.1` |
+| `5.1` | Omada Controller `5.1.x` | `5.1.7` |
+| `5.1-chromium` | Omada Controller `5.1.x` | `5.1.7` |
+| `5.0` | Omada Controller `5.0.x` | `5.0.30` |
 | `4.3` | Omada Controller `4.3.x` | `4.3.5` |
 | `4.2` | Omada Controller `4.2.x` | `4.2.11` |
 | `3.1` | Omada Controller `3.1.x` | `3.1.13` |
