@@ -1,10 +1,39 @@
 # Known Issues
 
-## MongoDB Corruption
+* [Containerization Issues](#containerization-issues)
+    * [MongoDB Corruption](#mongodb-corruption)
+    * [Notes for `armv7l`](#notes-for-armv7l)
+        * [:warning: Unsupported Base Image for `armv7l`](#unsupported-base-image-for-armv7l)
+        * [:warning: Unsupported MongoDB](#unsupported-mongodb)
+    * [Low Resource Systems](#low-resource-systems)
+    * [Mismatched Userland and Kernel](#mismatched-userland-and-kernel)
+* [Upgrade Issues](#upgrade-issues)
+    * [5.8 - 404s and Blank Pages](#58---404s-and-blank-pages)
+    * [Incorrect CMD](#incorrect-cmd)
+    * [5.12 - Unable to Login After Upgrade](#512---unable-to-login-after-upgrade)
+    * [Slowness in Safari](#slowness-in-safari)
+
+## Containerization Issues
+
+### MongoDB Corruption
 
 While MongoDB is fairly robust, the persistent data can become corrupt if a clean shutdown isn't performed. By default, Docker only waits 10 seconds before killing the container processes when using `docker stop...`. I would **highly recommend** performing a stop with a large timeout value, such as `docker stop -t 30...` to ensure that the controller is cleanly shut down. This value may need to be even larger for low powered devices, such as a Raspberry Pi.
 
-## Raspberry Pi 4 Issues
+### Notes for `armv7l`
+
+**tl;dr** - Do not run the Omada Controller on your `armv7l`/`armhf` (32 bit arm) based operating system! If you're running as Raspberry Pi 3, 4, Pi Zero 2W, you should [run a 64 bit operating system](https://www.raspberrypi.com/news/raspberry-pi-os-64-bit/) so you can use the `arm64` image which is supported. At any time, TP-Link can break compatibility with 32 bit arm and there will be no upgrade path forward! You have been warned!
+
+#### Unsupported Base Image for `armv7l`
+
+All `armv7l` images are based on Ubuntu 16.04 due to the lack of packaging for MongoDB in newer Ubuntu releases. Ubuntu 16.04 is end of general support so security patches aren't regularly being released. I would highly recommend not using the `armv7l` images unless you have no other alternative and accept the security risk. If you are running a Raspberry Pi, I might suggest looking into running an `arm64` based operating system if your system supports it (the [Raspberry Pi 3 and above do](https://www.raspberrypi.com/news/raspberry-pi-os-64-bit/))
+
+#### Unsupported MongoDB
+
+The `armv7l` architecture is 32 bit and MongoDB is no longer available as a pre-compiled binary in Ubuntu, this means that the `armv7l` images are running version `2.6.10` of MongoDB. This may lead to unexpected behavior as TP-Link states Omada Controller version 4.1.x and newer require at least MongoDB `3.0.15` or newer, depending on which version of the controller you're running. For the `armv7l` architecture, I will continue to include those in the builds until they stop working as I can't guarantee that an update will not actually require a newer MongoDB feature that isn't available.
+
+### Low Resource Systems
+
+Systems such as Raspberry Pis may not have sufficient memory to run with the default memory settings of this image. If you system only has 1 GB of RAM, I would highly recommend adjusting the Xmx arguments by overriding the `CMD` [as seen in this issue here](https://github.com/mbentley/docker-omada-controller/issues/198#issuecomment-1100485810) to prevent the container from being OOM killed by the OS.
 
 ### Mismatched Userland and Kernel
 
@@ -31,7 +60,7 @@ If updating from 3.x to 4.x or 4.x to 5.x, make sure to **completely** re-create
 
 * Re-create the container - remove the container, keeping your persistent data and create it again using whatever method you used to originally create it.
 * Update the CMD (command is all on one line):
-   * 4.x to 5.x - `/usr/bin/java -server -Xms128m -Xmx1024m -XX:MaxHeapFreeRatio=60 -XX:MinHeapFreeRatio=30 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/opt/tplink/EAPController/logs/java_heapdump.hprof -Djava.awt.headless=true -cp /opt/tplink/EAPController/lib/*::/opt/tplink/EAPController/properties: com.tplink.smb.omada.starter.OmadaLinuxMain`
+    * 4.x to 5.x - `/usr/bin/java -server -Xms128m -Xmx1024m -XX:MaxHeapFreeRatio=60 -XX:MinHeapFreeRatio=30 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/opt/tplink/EAPController/logs/java_heapdump.hprof -Djava.awt.headless=true -cp /opt/tplink/EAPController/lib/*::/opt/tplink/EAPController/properties: com.tplink.smb.omada.starter.OmadaLinuxMain`
 
 It should be noted that users of 3.x who wish to upgrade to 4.x must perform [specific upgrade steps](#upgrading-to-41-from-3210-or-below) to prevent data loss!
 
@@ -39,18 +68,6 @@ It should be noted that users of 3.x who wish to upgrade to 4.x must perform [sp
 
 There is a [known bug](https://github.com/mbentley/docker-omada-controller/discussions/344#discussioncomment-7104908) in the controller software where a user is not able to login with their local user after upgrading to 5.12.x. This has been [reported to TP-Link](https://community.tp-link.com/en/business/forum/topic/623942) but a fix has not yet been provided.
 
-## Notes for `armv7l`
+### Slowness in Safari
 
-**tl;dr** - Do not run the Omada Controller on your `armv7l`/`armhf` based operating system!  If you're running as Raspberry Pi 3, 4, Pi Zero 2W, you should [run a 64 bit operating system](https://www.raspberrypi.com/news/raspberry-pi-os-64-bit/) so you can use the `arm64` image which is supported.
-
-### **Unsupported Base Image for `armv7l`**
-
-All `armv7l` images are based on Ubuntu 16.04 due to the lack of packaging for MongoDB in newer Ubuntu releases. Ubuntu 16.04 is end of general support so security patches aren't regularly being released. I would highly recommend not using the `armv7l` images unless you have no other alternative and accept the security risk. If you are running a Raspberry Pi, I might suggest looking into running an `arm64` based operating system if your system supports it (the [Raspberry Pi 3 and above do](https://www.raspberrypi.com/news/raspberry-pi-os-64-bit/))
-
-### **Unsupported MongoDB**
-
-The `armv7l` architecture is 32 bit and MongoDB is no longer available as a pre-compiled binary in Ubuntu, this means that the `armv7l` images are running version `2.6.10` of MongoDB. This may lead to unexpected behavior as TP-Link states Omada Controller version 4.1.x and newer require at least MongoDB `3.0.15` or newer, depending on which version of the controller you're running. For the `armv7l` architecture, I will continue to include those in the builds until they stop working as I can't guarantee that an update will not actually require a newer MongoDB feature that isn't available.
-
-### **Low Resource Systems**
-
-Systems such as Raspberry Pis may not have sufficient memory to run with the default memory settings of this image. If you system only has 1 GB of RAM, I would highly recommend adjusting the Xmx arguments by overriding the `CMD` [as seen in this issue here](https://github.com/mbentley/docker-omada-controller/issues/198#issuecomment-1100485810) to prevent the container from being OOM killed by the OS.
+In versions 5.8 to 5.12, it has been seen where Safari will take a significant amount of time to completely load a page in the controller web interface.  This is an [issue that has been reported upstream](https://community.tp-link.com/en/business/forum/topic/619304?replyId=1255404).
