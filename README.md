@@ -28,15 +28,22 @@ Docker image for [TP-Link Omada Controller](https://www.tp-link.com/us/business-
 * [Using Docker Compose](#using-docker-compose)
 * [Omada Controller API Documentation](#omada-controller-api-documentation)
 * [Known Issues](#known-issues)
-    * [MongoDB Corruption](KNOWN_ISSUES.md#mongodb-corruption)
-    * [Raspberry Pi 4 Issues](KNOWN_ISSUES.md#raspberry-pi-4-issues)
+    * [Containerization Issues](KNOWN_ISSUES.md#containerization-issues)
+        * [MongoDB Corruption](KNOWN_ISSUES.md#mongodb-corruption)
+        * [Notes for `armv7l`](KNOWN_ISSUES.md#notes-for-armv7l)
+            * [:warning: Unsupported Base Image for `armv7l`](KNOWN_ISSUES.md#unsupported-base-image-for-armv7l)
+            * [:warning: Unsupported MongoDB](KNOWN_ISSUES.md#unsupported-mongodb)
+        * [Low Resource Systems](KNOWN_ISSUES.md#low-resource-systems)
+        * [Mismatched Userland and Kernel](KNOWN_ISSUES.md#mismatched-userland-and-kernel)
     * [Upgrade Issues](KNOWN_ISSUES.md#upgrade-issues)
         * [5.8 - 404s and Blank Pages](KNOWN_ISSUES.md#58---404s-and-blank-pages)
         * [Incorrect CMD](KNOWN_ISSUES.md#incorrect-cmd)
         * [5.12 - Unable to Login After Upgrade](KNOWN_ISSUES.md#512---unable-to-login-after-upgrade)
-    * [Notes for armv7l](KNOWN_ISSUES.md#notes-for-armv7l)
+        * [Slowness in Safari](KNOWN_ISSUES.md#slowness-in-safari)
 
 ## Image Tags
+
+:warning: **Warning** :warning: Do **NOT** run the `armv7l` (32 bit) images. Upgrade your operating system to `arm64` (64 bit) unless you accept that you're running an outdated MongoDB and a base operating system with unpatched vulnerabilities! See the [Known Issues readme](KNOWN_ISSUES.md#notes-for-armv7l) for more information.
 
 ### Multi-arch Tags
 
