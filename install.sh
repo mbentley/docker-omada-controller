@@ -7,6 +7,7 @@ set -e
 # set default variables
 OMADA_DIR="/opt/tplink/EAPController"
 ARCH="${ARCH:-}"
+NO_MONGODB="${NO_MONGODB:-false}"
 INSTALL_VER="${INSTALL_VER:-}"
 
 # install wget
@@ -43,15 +44,23 @@ PKGS=(
 )
 
 # add specific package for mongodb
-case "${ARCH}" in
-  amd64|arm64|"")
-    PKGS+=( mongodb-server-core )
-    ;;
-  armv7l)
-    PKGS+=( mongodb )
+case "${NO_MONGODB}" in
+  true)
+    # do not include mongodb
     ;;
   *)
-    die "${ARCH}: unsupported ARCH"
+    # include mongodb
+    case "${ARCH}" in
+      amd64|arm64|"")
+        PKGS+=( mongodb-server-core )
+        ;;
+      armv7l)
+        PKGS+=( mongodb )
+        ;;
+      *)
+        die "${ARCH}: unsupported ARCH"
+        ;;
+    esac
     ;;
 esac
 
@@ -104,16 +113,34 @@ wget -nv "${OMADA_URL}"
 
 echo "**** Extract and Install Omada Controller ****"
 
-# the beta version is a tar.gz inside of a zip so let's pre-unzip it
 if [ "${INSTALL_VER}" = "beta" ]
 then
-  echo "INFO: this is a beta version; unzipping..."
-  # unzip the file
-  unzip "${OMADA_TAR}"
-  rm -f "${OMADA_TAR}"
+  # get the extension to determine what to do with it
+  case "${OMADA_URL##*.}" in
+    zip)
+      # this beta version is a tar.gz inside of a zip so let's pre-unzip it
+      echo "INFO: this beta version is a zip file; unzipping..."
+      # unzip the file
+      unzip "${OMADA_TAR}"
+      rm -f "${OMADA_TAR}"
 
-  # now that we have unzipped, let's get the tar name
-  OMADA_TAR="$(ls -- *.tar.gz)"
+      # now that we have unzipped, let's get the tar name
+      OMADA_TAR="$(ls -- *.tar.gz)"
+      ;;
+    gz)
+      # this beta version is a tar.gz inside of a gzipped file so let's pre-gunzip it
+      echo "info: this beta version is a gz file; gunzipping..."
+      # gunzip the file
+      gunzip "${OMADA_TAR}"
+
+      # now that we have unzipped, let's get the tar name
+      OMADA_TAR="$(ls -- *.tar.gz*)"
+      ;;
+    *)
+      echo "ERROR: unknown file extension, exiting!"
+      exit 1
+      ;;
+  esac
 fi
 
 # in the 4.4.3, 4.4.6, and 4.4.8 builds, they removed the directory. this case statement will handle variations in the build
@@ -127,7 +154,9 @@ case "${OMADA_VER}" in
     ;;
   *)
     echo "not version 4.4.3/4.4.6/4.4.8"
-    tar zxvf "${OMADA_TAR}"
+    echo "${OMADA_TAR}"
+    ls -l "${OMADA_TAR}"
+    tar xvf "${OMADA_TAR}"
     rm -f "${OMADA_TAR}"
     cd Omada_SDN_Controller_*
     ;;
@@ -161,12 +190,34 @@ do
   cp "${NAME}" "${OMADA_DIR}" -r
 done
 
-# copy omada default properties for can be used when properties is mounted as volume
-cp -r properties/ "${OMADA_DIR}/properties.defaults"
+# only add standlone options for controller version 5.x and above
+case "${OMADA_MAJOR_VER}" in
+  5)
+    # add additional properties to the properties file
+    { \
+      echo "" ;\
+      echo "" ;\
+      echo "# external mongodb" ;\
+      echo "mongo.external=false" ;\
+      echo "eap.mongod.uri=" ;\
+    } >> /opt/tplink/EAPController/properties/omada.properties
+    ;;
+esac
 
-# symlink for mongod
-ln -sf "$(command -v mongod)" "${OMADA_DIR}/bin/mongod"
-chmod 755 "${OMADA_DIR}"/bin/*
+# copy omada default properties for can be used when properties is mounted as volume
+cp -r /opt/tplink/EAPController/properties/ "${OMADA_DIR}/properties.defaults"
+
+# symlink for mongod, if applicable
+case "${NO_MONGODB}" in
+  true)
+    # do not include mongodb
+    ;;
+  *)
+    # include mongodb
+    ln -sf "$(command -v mongod)" "${OMADA_DIR}/bin/mongod"
+    chmod 755 "${OMADA_DIR}"/bin/*
+    ;;
+esac
 
 # starting with 5.0.x, the work directory is no longer needed
 case "${OMADA_MAJOR_VER}" in
