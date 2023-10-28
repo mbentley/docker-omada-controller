@@ -51,9 +51,9 @@ patch_log4j() {
 
   # download log4j tar, log4j tar's pgp signature & signature files, and signing keys
   echo "INFO: downloading log4j (${NEW_LOG4J_VERSION})"
-  wget -O "/tmp/apache-log4j-${NEW_LOG4J_VERSION}-bin.tar.gz" "https://archive.apache.org/dist/logging/log4j/${NEW_LOG4J_VERSION}/apache-log4j-${NEW_LOG4J_VERSION}-bin.tar.gz"
-  wget -O "/tmp/apache-log4j-${NEW_LOG4J_VERSION}-bin.tar.gz.sha512" "https://archive.apache.org/dist/logging/log4j/${NEW_LOG4J_VERSION}/apache-log4j-${NEW_LOG4J_VERSION}-bin.tar.gz.sha512"
-  wget -O "/tmp/apache-log4j-${NEW_LOG4J_VERSION}-bin.tar.gz.asc" "https://archive.apache.org/dist/logging/log4j/${NEW_LOG4J_VERSION}/apache-log4j-${NEW_LOG4J_VERSION}-bin.tar.gz.asc"
+  wget -O "/tmp/apache-log4j-${NEW_LOG4J_VERSION}-bin.zip" "https://archive.apache.org/dist/logging/log4j/${NEW_LOG4J_VERSION}/apache-log4j-${NEW_LOG4J_VERSION}-bin.zip"
+  wget -O "/tmp/apache-log4j-${NEW_LOG4J_VERSION}-bin.zip.sha512" "https://archive.apache.org/dist/logging/log4j/${NEW_LOG4J_VERSION}/apache-log4j-${NEW_LOG4J_VERSION}-bin.zip.sha512"
+  wget -O "/tmp/apache-log4j-${NEW_LOG4J_VERSION}-bin.zip.asc" "https://archive.apache.org/dist/logging/log4j/${NEW_LOG4J_VERSION}/apache-log4j-${NEW_LOG4J_VERSION}-bin.zip.asc"
   wget -O "/tmp/KEYS" "https://downloads.apache.org/logging/KEYS"
   echo -e "INFO: download of log4j (${NEW_LOG4J_VERSION}) complete!\n"
 
@@ -66,7 +66,7 @@ patch_log4j() {
   echo "INFO: validating signature of the downloaded log4j binaries"
   set +e
   # validate the signatures on the files
-  SIGNATURE_TEST1="$(gpg2 --verify "/tmp/apache-log4j-${NEW_LOG4J_VERSION}-bin.tar.gz.asc" >/dev/null 2>&1; echo $?)"
+  SIGNATURE_TEST1="$(gpg2 --verify "/tmp/apache-log4j-${NEW_LOG4J_VERSION}-bin.zip.asc" >/dev/null 2>&1; echo $?)"
   set -e
 
   # check results
@@ -82,14 +82,14 @@ patch_log4j() {
   echo "INFO: validating checksum of downloaded log4j binaries"
   set +e
   # multi-line with wrapping
-  SHA512SUM_TEST1="$(tr '\n' ' ' < "/tmp/apache-log4j-${NEW_LOG4J_VERSION}-bin.tar.gz.sha512" | tr -d ' ' | awk -F ':' '{ print $2 "\t" $1 }'| sha512sum -c - >/dev/null 2>&1; echo $?)"
+  SHA512SUM_TEST1="$(tr '\n' ' ' < "/tmp/apache-log4j-${NEW_LOG4J_VERSION}-bin.zip.sha512" | tr -d ' ' | awk -F ':' '{ print $2 "\t" $1 }'| sha512sum -c - >/dev/null 2>&1; echo $?)"
 
   # standard linux formatted output
-  SHA512SUM_TEST2="$(sha512sum -c "/tmp/apache-log4j-${NEW_LOG4J_VERSION}-bin.tar.gz.sha512" >/dev/null 2>&1; echo $?)"
+  SHA512SUM_TEST2="$(sha512sum -c "/tmp/apache-log4j-${NEW_LOG4J_VERSION}-bin.zip.sha512" >/dev/null 2>&1; echo $?)"
 
   # create a checksum file by appending the filename in case it is missing & check it
-  (cat "apache-log4j-${NEW_LOG4J_VERSION}-bin.tar.gz.sha512"; echo " apache-log4j-${NEW_LOG4J_VERSION}-bin.tar.gz") > "apache-log4j-${NEW_LOG4J_VERSION}-bin.tar.gz.sha512_test"
-  SHA512SUM_TEST3="$(sha512sum -c "/tmp/apache-log4j-${NEW_LOG4J_VERSION}-bin.tar.gz.sha512_test" >/dev/null 2>&1; echo $?)"
+  (cat "apache-log4j-${NEW_LOG4J_VERSION}-bin.zip.sha512"; echo " apache-log4j-${NEW_LOG4J_VERSION}-bin.zip") > "apache-log4j-${NEW_LOG4J_VERSION}-bin.zip.sha512_test"
+  SHA512SUM_TEST3="$(sha512sum -c "/tmp/apache-log4j-${NEW_LOG4J_VERSION}-bin.zip.sha512_test" >/dev/null 2>&1; echo $?)"
   set -e
 
   # check results of the checksum verification
@@ -103,17 +103,17 @@ patch_log4j() {
 
   # extract just the files we need
   echo "INFO: extracting specific jar files required to patch log4j"
-  tar xvf "apache-log4j-${NEW_LOG4J_VERSION}-bin.tar.gz" \
-    "apache-log4j-${NEW_LOG4J_VERSION}-bin/log4j-api-${NEW_LOG4J_VERSION}.jar" \
-    "apache-log4j-${NEW_LOG4J_VERSION}-bin/log4j-core-${NEW_LOG4J_VERSION}.jar" \
-    "apache-log4j-${NEW_LOG4J_VERSION}-bin/log4j-slf4j-impl-${NEW_LOG4J_VERSION}.jar"
+  unzip "apache-log4j-${NEW_LOG4J_VERSION}-bin.zip" \
+    "log4j-api-${NEW_LOG4J_VERSION}.jar" \
+    "log4j-core-${NEW_LOG4J_VERSION}.jar" \
+    "log4j-slf4j-impl-${NEW_LOG4J_VERSION}.jar"
   echo -e "INFO: extraction of specific jar files required to patch log4j complete!\n"
 
   # move the files to the correct location
   echo "INFO: moving extracted jar files required to patch log4j over the old jar files"
-  mv -v "apache-log4j-${NEW_LOG4J_VERSION}-bin/log4j-api-${NEW_LOG4J_VERSION}.jar" "${LOG4J_API}"
-  mv -v "apache-log4j-${NEW_LOG4J_VERSION}-bin/log4j-core-${NEW_LOG4J_VERSION}.jar" "${LOG4J_CORE}"
-  mv -v "apache-log4j-${NEW_LOG4J_VERSION}-bin/log4j-slf4j-impl-${NEW_LOG4J_VERSION}.jar" "${LOG4J_SLF4J_IMPL}"
+  mv -v "log4j-api-${NEW_LOG4J_VERSION}.jar" "${LOG4J_API}"
+  mv -v "log4j-core-${NEW_LOG4J_VERSION}.jar" "${LOG4J_CORE}"
+  mv -v "log4j-slf4j-impl-${NEW_LOG4J_VERSION}.jar" "${LOG4J_SLF4J_IMPL}"
   echo -e "INFO: move of extracted jar files required to patch log4j over the old jar files complete!\n"
 
   # set permissions on new log4j files
