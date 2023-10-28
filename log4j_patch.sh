@@ -31,7 +31,7 @@ main() {
 patch_log4j() {
   # install jq & gnupg2
   apt-get update
-  DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y gnupg2 jq
+  DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y gnupg2 jq unzip
   rm -rf /var/lib/apt/lists/*
 
   # get the new log4j version from the github tags
