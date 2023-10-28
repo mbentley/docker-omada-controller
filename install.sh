@@ -104,16 +104,34 @@ wget -nv "${OMADA_URL}"
 
 echo "**** Extract and Install Omada Controller ****"
 
-# the beta version is a tar.gz inside of a zip so let's pre-unzip it
 if [ "${INSTALL_VER}" = "beta" ]
 then
-  echo "INFO: this is a beta version; unzipping..."
-  # unzip the file
-  unzip "${OMADA_TAR}"
-  rm -f "${OMADA_TAR}"
+  # get the extension to determine what to do with it
+  case "${OMADA_URL##*.}" in
+    zip)
+      # this beta version is a tar.gz inside of a zip so let's pre-unzip it
+      echo "INFO: this beta version is a zip file; unzipping..."
+      # unzip the file
+      unzip "${OMADA_TAR}"
+      rm -f "${OMADA_TAR}"
 
-  # now that we have unzipped, let's get the tar name
-  OMADA_TAR="$(ls -- *.tar.gz)"
+      # now that we have unzipped, let's get the tar name
+      OMADA_TAR="$(ls -- *.tar.gz)"
+      ;;
+    gz)
+      # this beta version is a tar.gz inside of a gzipped file so let's pre-gunzip it
+      echo "info: this beta version is a gz file; gunzipping..."
+      # gunzip the file
+      gunzip "${OMADA_TAR}"
+
+      # now that we have unzipped, let's get the tar name
+      OMADA_TAR="$(ls -- *.tar.gz*)"
+      ;;
+    *)
+      echo "ERROR: unknown file extension, exiting!"
+      exit 1
+      ;;
+  esac
 fi
 
 # in the 4.4.3, 4.4.6, and 4.4.8 builds, they removed the directory. this case statement will handle variations in the build
@@ -127,7 +145,9 @@ case "${OMADA_VER}" in
     ;;
   *)
     echo "not version 4.4.3/4.4.6/4.4.8"
-    tar zxvf "${OMADA_TAR}"
+    echo "${OMADA_TAR}"
+    ls -l "${OMADA_TAR}"
+    tar xvf "${OMADA_TAR}"
     rm -f "${OMADA_TAR}"
     cd Omada_SDN_Controller_*
     ;;
