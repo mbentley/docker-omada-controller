@@ -7,6 +7,7 @@ set -e
 # set default variables
 OMADA_DIR="/opt/tplink/EAPController"
 ARCH="${ARCH:-}"
+NO_MONGODB="${NO_MONGODB:-false}"
 INSTALL_VER="${INSTALL_VER:-}"
 
 # install wget
@@ -43,15 +44,23 @@ PKGS=(
 )
 
 # add specific package for mongodb
-case "${ARCH}" in
-  amd64|arm64|"")
-    PKGS+=( mongodb-server-core )
-    ;;
-  armv7l)
-    PKGS+=( mongodb )
+case "${NO_MONGODB}" in
+  true)
+    # do not include mongodb
     ;;
   *)
-    die "${ARCH}: unsupported ARCH"
+    # include mongodb
+    case "${ARCH}" in
+      amd64|arm64|"")
+        PKGS+=( mongodb-server-core )
+        ;;
+      armv7l)
+        PKGS+=( mongodb )
+        ;;
+      *)
+        die "${ARCH}: unsupported ARCH"
+        ;;
+    esac
     ;;
 esac
 
@@ -181,12 +190,34 @@ do
   cp "${NAME}" "${OMADA_DIR}" -r
 done
 
-# copy omada default properties for can be used when properties is mounted as volume
-cp -r properties/ "${OMADA_DIR}/properties.defaults"
+# only add standlone options for controller version 5.x and above
+case "${OMADA_MAJOR_VER}" in
+  5)
+    # add additional properties to the properties file
+    { \
+      echo "" ;\
+      echo "" ;\
+      echo "# external mongodb" ;\
+      echo "mongo.external=false" ;\
+      echo "eap.mongod.uri=" ;\
+    } >> /opt/tplink/EAPController/properties/omada.properties
+    ;;
+esac
 
-# symlink for mongod
-ln -sf "$(command -v mongod)" "${OMADA_DIR}/bin/mongod"
-chmod 755 "${OMADA_DIR}"/bin/*
+# copy omada default properties for can be used when properties is mounted as volume
+cp -r /opt/tplink/EAPController/properties/ "${OMADA_DIR}/properties.defaults"
+
+# symlink for mongod, if applicable
+case "${NO_MONGODB}" in
+  true)
+    # do not include mongodb
+    ;;
+  *)
+    # include mongodb
+    ln -sf "$(command -v mongod)" "${OMADA_DIR}/bin/mongod"
+    chmod 755 "${OMADA_DIR}"/bin/*
+    ;;
+esac
 
 # starting with 5.0.x, the work directory is no longer needed
 case "${OMADA_MAJOR_VER}" in
