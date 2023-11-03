@@ -199,7 +199,7 @@ case "${OMADA_MAJOR_VER}" in
       echo "" ;\
       echo "# external mongodb" ;\
       echo "mongo.external=false" ;\
-      echo "eap.mongod.uri=" ;\
+      echo "eap.mongod.uri=mongodb://127.0.0.1:27217/omada" ;\
     } >> /opt/tplink/EAPController/properties/omada.properties
     ;;
 esac
