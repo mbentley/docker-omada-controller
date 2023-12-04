@@ -51,10 +51,10 @@ The following tags have multi-arch support for `amd64`, `armv7l`, and `arm64` an
 
 | Tag(s) | Major.Minor Release | Current Version |
 | :----- | ------------------- | --------------- |
-| `latest`, `5.12` | Omada Controller `5.12.x` | `5.12.7` |
+| `latest`, `5.13` | Omada Controller `5.13.x` | `5.13.22` |
 | `beta` | Omada Controller `beta` | `5.13.10` |
+| `5.12` | Omada Controller `5.12.x` | `5.12.7` |
 | `5.9` | Omada Controller `5.9.x` | `5.9.31` |
-| `5.8` | Omada Controller `5.8.x` | `5.8.4` |
 | `4.4` | Omada Controller `4.4.x` | `4.4.8` |
 | `4.1` | Omada Controller `4.1.x` | `4.1.5` |
 | `3.2` | Omada Controller `3.2.x` | `3.2.17` |
@@ -65,10 +65,10 @@ The following tags have multi-arch support for `amd64`, `armv7l`, and `arm64` an
 
 | Tag(s) | Major.Minor Release |
 | :----- | ------------------- |
-| `latest-chromium`, `5.12-chromium` | Omada Controller `5.12.x` |
+| `latest-chromium`, `5.13-chromium` | Omada Controller `5.13.x` |
 | `beta-chromium`, | Omada Controller `beta` |
+| `5.12-chromium` | Omada Controller `5.12.x` |
 | `5.9-chromium` | Omada Controller `5.9.x` |
-| `5.8-chromium` | Omada Controller `5.8.x` |
 
 ### Explicit Architecture Tags
 
@@ -80,6 +80,8 @@ These images are still published on Docker Hub but are no longer regularly updat
 
 | Tag(s) | Major.Minor Release | Current Version |
 | :----- | ------------------- | ----------------|
+| `5.8` | Omada Controller `5.8.x` | `5.8.4` |
+| `5.8-chromium` | Omada Controller `5.8.x` | `5.8.4` |
 | `5.7` | Omada Controller `5.7.x` | `5.7.4` |
 | `5.7-chromium` | Omada Controller `5.7.x` | `5.7.4` |
 | `5.6` | Omada Controller `5.6.x` | `5.6.3` |
@@ -161,9 +163,9 @@ As of the Omada Controller version 4.x, the Dockerfiles have been simplified so 
 
   ```
   docker build \
-    --build-arg INSTALL_VER="5.12" \
+    --build-arg INSTALL_VER="5.13" \
     -f Dockerfile.v5.x \
-    -t mbentley/omada-controller:5.12 .
+    -t mbentley/omada-controller:5.13 .
   ```
 
 ### `arm64`
@@ -172,10 +174,10 @@ As of the Omada Controller version 4.x, the Dockerfiles have been simplified so 
 
   ```
   docker build \
-    --build-arg INSTALL_VER="5.12" \
+    --build-arg INSTALL_VER="5.13" \
     --build-arg ARCH="arm64" \
     -f Dockerfile.v5.x \
-    -t mbentley/omada-controller:5.12-arm64 .
+    -t mbentley/omada-controller:5.13-arm64 .
   ```
 
 ### `armv7l`
@@ -184,11 +186,11 @@ As of the Omada Controller version 4.x, the Dockerfiles have been simplified so 
 
   ```
   docker build \
-    --build-arg INSTALL_VER="5.12" \
+    --build-arg INSTALL_VER="5.13" \
     --build-arg ARCH="armv7l" \
     --build-arg BASE="ubuntu:16.04" \
     -f Dockerfile.v5.x \
-    -t mbentley/omada-controller:5.12-armv7l .
+    -t mbentley/omada-controller:5.13-armv7l .
   ```
 
 </details>
@@ -241,7 +243,7 @@ docker run -d \
   -e TZ=Etc/UTC \
   -v omada-data:/opt/tplink/EAPController/data \
   -v omada-logs:/opt/tplink/EAPController/logs \
-  mbentley/omada-controller:5.12
+  mbentley/omada-controller:5.13
 ```
 
 <details>
