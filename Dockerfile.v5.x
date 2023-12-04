@@ -10,7 +10,7 @@ COPY healthcheck.sh install.sh log4j_patch.sh /
 ARG ARCH=amd64
 
 # install version (major.minor only); OMADA_URL set in install.sh
-ARG INSTALL_VER="5.12"
+ARG INSTALL_VER="5.13"
 ARG NO_MONGODB=false
 
 # install omada controller (instructions taken from install.sh) & patch log4j, if applicable
