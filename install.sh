@@ -28,8 +28,8 @@ fi
 # extract required data from the OMADA_URL
 OMADA_TAR="$(echo "${OMADA_URL}" | awk -F '/' '{print $NF}')"
 OMADA_VER="$(echo "${OMADA_TAR}" | awk -F '_v' '{print $2}' | awk -F '_' '{print $1}')"
-OMADA_MAJOR_VER="${OMADA_VER%.*.*}"
-OMADA_MAJOR_MINOR_VER="${OMADA_VER%.*}"
+OMADA_MAJOR_VER="$(echo "${OMADA_VER}" | awk -F '.' '{print $1}')"
+OMADA_MAJOR_MINOR_VER="$(echo "${OMADA_VER}" | awk -F '.' '{print $1"."$2}')"
 
 # function to exit on error w/message
 die() { echo -e "$@" 2>&1; exit 1; }
