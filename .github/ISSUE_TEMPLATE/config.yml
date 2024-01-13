@@ -1,7 +1,7 @@
 blank_issues_enabled: false
 contact_links:
   - name: mbentley/omada-controller Discussions
-    url: https://github.com/mbentley/docker-omada-controller/discussions
+    url: https://github.com/mbentley/docker-omada-controller/discussions/categories/help
     about: For help using this container image, start a discussion. Keep issues related to bugs & features, please.
   - name: TP-Link Forums
     url: https://community.tp-link.com/en/business/forum/582
