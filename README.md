@@ -359,7 +359,7 @@ There is a [Docker Compose file](https://github.com/mbentley/docker-omada-contro
 
 ```bash
 wget https://raw.githubusercontent.com/mbentley/docker-omada-controller/master/docker-compose.yml
-docker-compose up -d
+docker compose up -d
 ```
 
 ## Omada Controller API Documentation
