@@ -51,7 +51,7 @@ The following tags have multi-arch support for `amd64`, `armv7l`, and `arm64` an
 
 | Tag(s) | Major.Minor Release | Current Version |
 | :----- | ------------------- | --------------- |
-| `latest`, `5.13` | Omada Controller `5.13.x` | `5.13.22` |
+| `latest`, `5.13` | Omada Controller `5.13.x` | `5.13.23` |
 | `beta` | Omada Controller `beta` | `5.13.30.4` |
 | `5.12` | Omada Controller `5.12.x` | `5.12.7` |
 | `5.9` | Omada Controller `5.9.x` | `5.9.31` |
