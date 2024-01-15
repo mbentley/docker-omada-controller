@@ -113,7 +113,7 @@ wget -nv "${OMADA_URL}"
 
 echo "**** Extract and Install Omada Controller ****"
 
-if [ "${INSTALL_VER}" = "beta" ]
+if [[ "${INSTALL_VER}" =~ ^beta.* ]]
 then
   # get the extension to determine what to do with it
   case "${OMADA_URL##*.}" in
