@@ -155,7 +155,7 @@ The upgrade to the 4.1.x version is not a seamless upgrade and can't be done in 
 <details>
 <summary>Click to expand docker build instructions</summary>
 
-As of the Omada Controller version 4.x, the Dockerfiles have been simplified so that there is a unified Dockerfile. There are some differences between the build steps for `amd64`, `arm64`, and `armv7l`. These changes will happen automatically if you use the following build-args:
+As of the Omada Controller version 4.x, the Dockerfiles have been simplified so that there is a unified Dockerfile. There are some differences between the build steps for `amd64`, `arm64`, and `armv7l`. These changes will happen automatically if you use the build-args `INSTALL_VER` and `ARCH`. For possible `INSTALL_VER` values, see [mbentley/docker-omada-controller-url](https://github.com/mbentley/docker-omada-controller-url/blob/master/omada_ver_to_url.sh):
 
 ### `amd64`
 
@@ -163,7 +163,8 @@ As of the Omada Controller version 4.x, the Dockerfiles have been simplified so 
 
   ```
   docker build \
-    --build-arg INSTALL_VER="5.13" \
+    --build-arg INSTALL_VER="5.13.23" \
+    --build-arg ARCH="amd64" \
     -f Dockerfile.v5.x \
     -t mbentley/omada-controller:5.13 .
   ```
@@ -174,7 +175,7 @@ As of the Omada Controller version 4.x, the Dockerfiles have been simplified so 
 
   ```
   docker build \
-    --build-arg INSTALL_VER="5.13" \
+    --build-arg INSTALL_VER="5.13.23" \
     --build-arg ARCH="arm64" \
     -f Dockerfile.v5.x \
     -t mbentley/omada-controller:5.13-arm64 .
@@ -186,7 +187,7 @@ As of the Omada Controller version 4.x, the Dockerfiles have been simplified so 
 
   ```
   docker build \
-    --build-arg INSTALL_VER="5.13" \
+    --build-arg INSTALL_VER="5.13.23" \
     --build-arg ARCH="armv7l" \
     --build-arg BASE="ubuntu:16.04" \
     -f Dockerfile.v5.x-armv7l \
