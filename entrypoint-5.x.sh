@@ -351,6 +351,9 @@ else
   echo "INFO: userland/kernel check passed"
 fi
 
+# show java version
+echo -e "INFO: output of 'java -version':\n$(java -version 2>&1)\n"
+
 echo "INFO: Starting Omada Controller as user ${PUSERNAME}"
 
 # tail the omada logs if set to true

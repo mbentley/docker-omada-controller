@@ -67,7 +67,7 @@ esac
 # add specific package for openjdk
 case "${ARCH}" in
   amd64|arm64|"")
-    # use openjdk-17 for v5.4 and above; all others us openjdk-8
+    # use openjdk-17 for v5.4 and above; all others use openjdk-8
     case "${OMADA_MAJOR_VER}" in
       5)
         # pick specific package based on the major.minor version
@@ -77,8 +77,14 @@ case "${ARCH}" in
             PKGS+=( openjdk-8-jre-headless )
             ;;
           *)
-            # starting with 5.4, openjdk-17 is supported
-            PKGS+=( openjdk-17-jre-headless )
+            # starting with 5.4, openjdk-17 is supported; we will use OpenJ9 so let's make sure it's there
+            if [ "$(. /opt/java/openjdk/release >/dev/null 2>&1; echo "${JVM_VARIANT}")" = "Openj9" ]
+            then
+              echo "INFO: OpenJ9 was found!"
+            else
+              echo "ERROR: OpenJ9 was not found! (Hint: did you forget to use mbentley/openj9:17 as the base image?"
+              exit 1
+            fi
             ;;
         esac
         ;;
