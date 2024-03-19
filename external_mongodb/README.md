@@ -20,20 +20,22 @@ These steps are needed for either scenario you want to test.
       --pull \
       --build-arg NO_MONGODB=true \
       --build-arg ARCH="amd64" \
+      --platform linux/amd64 \
       --progress plain \
       -f Dockerfile.v5.x \
       -t mbentley/omada-controller:5.13-external-mongo-test-amd64 \
-	  -t mbentley/omada-controller:5.13-external-mongo-test .
+      -t mbentley/omada-controller:5.13-external-mongo-test .
 
     # arm64
     docker build \
       --pull \
       --build-arg NO_MONGODB=true \
       --build-arg ARCH="arm64" \
+      --platform linux/arm64 \
       --progress plain \
       -f Dockerfile.v5.x \
       -t mbentley/omada-controller:5.13-external-mongo-test-arm64 \
-	  -t mbentley/omada-controller:5.13-external-mongo-test .
+      -t mbentley/omada-controller:5.13-external-mongo-test .
 
     # armv7l
     docker build \
@@ -44,7 +46,7 @@ These steps are needed for either scenario you want to test.
       --progress plain \
       -f Dockerfile.v5.x \
       -t mbentley/omada-controller:5.13-external-mongo-test-armv7l \
-	  -t mbentley/omada-controller:5.13-external-mongo-test .
+      -t mbentley/omada-controller:5.13-external-mongo-test .
     ```
 
 1. Create a Docker `bridge` Network
