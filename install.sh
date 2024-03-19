@@ -15,6 +15,12 @@ export DEBIAN_FRONTEND=noninteractive
 apt-get update
 apt-get install --no-install-recommends -y ca-certificates unzip wget
 
+# for armv7l, force the creation of the ssl cert hashes (see https://stackoverflow.com/questions/70767396/docker-certificate-error-when-building-for-arm-v7-platform)
+if [ "${ARCH}" = "armv7l" ]
+then
+  for i in /etc/ssl/certs/*.pem; do HASH=$(openssl x509 -hash -noout -in $i); ln -sfv $(basename $i) /etc/ssl/certs/$HASH.0; done
+fi
+
 # get URL to package based on major.minor version; for information on this url API, see https://github.com/mbentley/docker-omada-controller-url
 OMADA_URL="$(wget -q -O - "https://omada-controller-url.mbentley.net/hooks/omada_ver_to_url?omada-ver=${INSTALL_VER}")"
 
@@ -65,8 +71,8 @@ case "${NO_MONGODB}" in
 esac
 
 # add specific package for openjdk
-case "${ARCH}" in
-  amd64|arm64|"")
+case "${ARCH}:${NO_MONGODB}" in
+  amd64:*|arm64:*|armv7l:true|"":*)
     # use openjdk-17 for v5.4 and above; all others us openjdk-8
     case "${OMADA_MAJOR_VER}" in
       5)
@@ -88,7 +94,7 @@ case "${ARCH}" in
         ;;
     esac
     ;;
-  armv7l)
+  armv7l:false)
     # always use openjdk-8 for armv7l
     PKGS+=( openjdk-8-jre-headless )
     ;;
