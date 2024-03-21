@@ -18,7 +18,7 @@ apt-get install --no-install-recommends -y ca-certificates unzip wget
 # for armv7l, force the creation of the ssl cert hashes (see https://stackoverflow.com/questions/70767396/docker-certificate-error-when-building-for-arm-v7-platform)
 if [ "${ARCH}" = "armv7l" ]
 then
-  for i in /etc/ssl/certs/*.pem; do HASH=$(openssl x509 -hash -noout -in $i); ln -sfv $(basename $i) /etc/ssl/certs/$HASH.0; done
+  for i in /etc/ssl/certs/*.pem; do HASH=$(openssl x509 -hash -noout -in "${i}"); ln -sfv "$(basename "${i}")" "/etc/ssl/certs/${HASH}.0"; done
 fi
 
 # get URL to package based on major.minor version; for information on this url API, see https://github.com/mbentley/docker-omada-controller-url
@@ -134,13 +134,20 @@ then
       OMADA_TAR="$(ls -- *.tar.gz)"
       ;;
     gz)
-      # this beta version is a tar.gz inside of a gzipped file so let's pre-gunzip it
-      echo "info: this beta version is a gz file; gunzipping..."
-      # gunzip the file
-      gunzip "${OMADA_TAR}"
+      # check to see if this is a tar.gz or just a gz
+      if ls -- *.tar.gz >/dev/null 2>&1
+      then
+        # this is a tar.gz
+        echo "INFO: OMADA_TAR is a tar.gz; we can handle it normally!"
+      else
+        # this beta version might be a tar.gz inside of a gzipped file so let's pre-gunzip it
+        echo "INFO: this beta version is a gz file; gunzipping..."
+        # gunzip the file
+        gunzip "${OMADA_TAR}"
 
-      # now that we have unzipped, let's get the tar name
-      OMADA_TAR="$(ls -- *.tar.gz*)"
+        # now that we have unzipped, let's get the tar name
+        OMADA_TAR="$(ls -- *.tar.gz*)"
+      fi
       ;;
     *)
       echo "ERROR: unknown file extension, exiting!"
@@ -152,14 +159,14 @@ fi
 # in the 4.4.3, 4.4.6, and 4.4.8 builds, they removed the directory. this case statement will handle variations in the build
 case "${OMADA_VER}" in
   4.4.3|4.4.6|4.4.8)
-    echo "version ${OMADA_VER}"
+    echo "INFO: version ${OMADA_VER}"
     mkdir "Omada_SDN_Controller_${OMADA_VER}"
     cd "Omada_SDN_Controller_${OMADA_VER}"
     tar zxvf "../${OMADA_TAR}"
     rm -f "../${OMADA_TAR}"
     ;;
   *)
-    echo "not version 4.4.3/4.4.6/4.4.8"
+    echo "INFO: not version 4.4.3/4.4.6/4.4.8"
     echo "${OMADA_TAR}"
     ls -l "${OMADA_TAR}"
     tar xvf "${OMADA_TAR}"
