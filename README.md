@@ -190,7 +190,7 @@ As of the Omada Controller version 4.x, the Dockerfiles have been simplified so 
     --build-arg INSTALL_VER="5.13.30.8" \
     --build-arg ARCH="armv7l" \
     --build-arg BASE="ubuntu:16.04" \
-    -f Dockerfile.v5.x-armv7l \
+    -f Dockerfile.v5.x \
     -t mbentley/omada-controller:5.13-armv7l .
   ```
 

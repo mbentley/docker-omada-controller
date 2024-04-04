@@ -25,7 +25,7 @@ PORT_RTTY="${PORT_RTTY:-29816}"
 # EXTERNAL MONGODB
 MONGO_EXTERNAL="${MONGO_EXTERNAL:-false}"
 EAP_MONGOD_URI="${EAP_MONGOD_URI:-mongodb://127.0.0.1:27217/omada}"
-EAP_MONGOD_URI=$(eval echo "$EAP_MONGOD_URI")
+EAP_MONGOD_URI=$(eval echo "${EAP_MONGOD_URI}")
 # END EXTERNAL MONGODB
 
 SHOW_SERVER_LOGS="${SHOW_SERVER_LOGS:-true}"
@@ -351,6 +351,23 @@ then
 else
   echo "INFO: userland/kernel check passed"
 fi
+
+# get the java version in different formats
+JAVA_VERSION="$(java -version 2>&1 | head -n 1 | awk -F '"' '{print $2}')"
+JAVA_VERSION_1="$(echo "${JAVA_VERSION}" | awk -F '.' '{print $1}')"
+JAVA_VERSION_2="$(echo "${JAVA_VERSION}" | awk -F '.' '{print $2}')"
+
+# for java 8, remove the opens argument from the CMD
+case ${JAVA_VERSION_1}.${JAVA_VERSION_2} in
+  1.8)
+    echo "INFO: running Java 8; removing '--add-opens' option from CMD (if present)..."
+    # remove opens option
+    NEW_CMD="${*}"
+    NEW_CMD="${NEW_CMD/'--add-opens java.base/java.util=ALL-UNNAMED '/}"
+    # shellcheck disable=SC2086
+    set -- ${NEW_CMD}
+    ;;
+esac
 
 echo "INFO: Starting Omada Controller as user ${PUSERNAME}"
 
