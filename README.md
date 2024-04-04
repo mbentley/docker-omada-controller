@@ -215,6 +215,7 @@ __Warning__: If you want to change the controller ports from the default mapping
 ```bash
 docker run -d \
   --name omada-controller \
+  --stop-timeout 60 \
   --restart unless-stopped \
   --ulimit nofile=4096:8192 \
   -p 8088:8088 \
@@ -255,6 +256,7 @@ The below example can be used with 3.2. The port and volume mappings have change
 ```
 docker run -d \
   --name omada-controller \
+  --stop-timeout 60 \
   --restart unless-stopped \
   --ulimit nofile=4096:8192 \
   -p 8088:8088 \
