@@ -130,7 +130,24 @@ then
       unzip "${OMADA_TAR}"
       rm -f "${OMADA_TAR}"
 
-      # now that we have unzipped, let's get the tar name
+      # let's figure out where the tar.gz file is
+      if [ -n "$(find . -name "*.tar.gz" -maxdepth 1 | sed 's|^./||')" ]
+      then
+        # it's in the current directory; just output message
+        echo "INFO: .tar.gz is in the current directory, nothing to move"
+      elif [ -n "$(find . -name "*.tar.gz" | sed 's|^./||')" ]
+      then
+        # it's in a subdirectory, move it to the current directory
+        mv -v "$(find . -name "*.tar.gz" | sed 's|^./||')" .
+
+        # cleanup directories
+        find ./* -type d -delete
+      else
+        echo "ERROR: unable to find a .tar.gz file!"
+        exit 1
+      fi
+
+      # it's in the current directory; let's get the tar name
       OMADA_TAR="$(ls -- *.tar.gz)"
       ;;
     gz)
