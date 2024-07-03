@@ -2,7 +2,7 @@
 
 set -e
 
-# omada controller dependency and package installer script for versions 4.x and 5.x
+# omada controller dependency and package installer script for version 5.x
 
 # set default variables
 OMADA_DIR="/opt/tplink/EAPController"
@@ -173,24 +173,11 @@ then
   esac
 fi
 
-# in the 4.4.3, 4.4.6, and 4.4.8 builds, they removed the directory. this case statement will handle variations in the build
-case "${OMADA_VER}" in
-  4.4.3|4.4.6|4.4.8)
-    echo "INFO: version ${OMADA_VER}"
-    mkdir "Omada_SDN_Controller_${OMADA_VER}"
-    cd "Omada_SDN_Controller_${OMADA_VER}"
-    tar zxvf "../${OMADA_TAR}"
-    rm -f "../${OMADA_TAR}"
-    ;;
-  *)
-    echo "INFO: not version 4.4.3/4.4.6/4.4.8"
-    echo "${OMADA_TAR}"
-    ls -l "${OMADA_TAR}"
-    tar xvf "${OMADA_TAR}"
-    rm -f "${OMADA_TAR}"
-    cd Omada_SDN_Controller_*
-    ;;
-esac
+echo "${OMADA_TAR}"
+ls -l "${OMADA_TAR}"
+tar xvf "${OMADA_TAR}"
+rm -f "${OMADA_TAR}"
+cd Omada_SDN_Controller_*
 
 # make sure tha the install directory exists
 mkdir "${OMADA_DIR}" -vp
