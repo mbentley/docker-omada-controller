@@ -2,6 +2,8 @@
 
 Docker image for [TP-Link Omada Controller](https://www.tp-link.com/us/business-networking/omada-sdn-controller/) to control [TP-Link Omada Hardware](https://www.tp-link.com/en/business-networking/all-omada/)
 
+For references on running a legacy v3 or v4 controller, see the [README for v3 and v4](README_v3_and_v4.md).
+
 ## Table of Contents
 
 * [Image Tags](#image-tags)
@@ -10,17 +12,13 @@ Docker image for [TP-Link Omada Controller](https://www.tp-link.com/us/business-
     * [Archived Tags](#archived-tags)
 * [Getting Help & Reporting Issues](#getting-help--reporting-issues)
 * [Controller Upgrades](#controller-upgrades)
-* [Upgrading to 5.0.x from 4.1.x or above](#upgrading-to-50x-from-41x-or-above)
-    * [Changes/Notes for 5.0.x](#changesnotes-for-50x)
-* [Upgrading to 4.1 from 3.2.10 or below](#upgrading-to-41-from-3210-or-below)
-    * [Notes for 4.1](#notes-for-41)
 * [Building Images](#building-images)
 * [Example Usage](#example-usage)
     * [Using non-default ports](#using-non-default-ports)
     * [Using port mapping](#using-port-mapping)
     * [Using `net=host`](#using-nethost)
 * [Optional Variables](#optional-variables)
-* [Persistent Data and Permissions](#persistent-data-and-permissions)
+* [Persistent Data](#persistent-data-and-permissions)
 * [Custom Certificates](#custom-certificates)
 * [MongoDB Small Files](#mongodb-small-files)
 * [Time Zones](#time-zones)
@@ -55,9 +53,6 @@ The following tags have multi-arch support for `amd64`, `armv7l`, and `arm64` an
 | `beta` | Omada Controller `beta` | `5.14.20.9` |
 | `5.12` | Omada Controller `5.12.x` | `5.12.7` |
 | `5.9` | Omada Controller `5.9.x` | `5.9.31` |
-| `4.4` | Omada Controller `4.4.x` | `4.4.8` |
-| `4.1` | Omada Controller `4.1.x` | `4.1.5` |
-| `3.2` | Omada Controller `3.2.x` | `3.2.17` |
 
 ### Tags with Chromium
 
@@ -112,50 +107,12 @@ Controller upgrades are done by stopping the existing container gracefully (see 
 
 When stopping your container in order to upgrade the controller, make sure to allow the MongoDB enough time to safely shutdown. This is done using `docker stop -t <value>` where `<value>` is a number in seconds, such as 60, which should allow the controller to cleanly shutdown. Database corruption has been observed when not cleanly shut down. The compose example now includes a default `stop_grace_period` of 60s.
 
-### Upgrade Path
-
-As always, take backups and read the documentation but the quick explanation of the upgrade path is:
-
-* `3.2` -> `4.1`
-    * This is a manual upgrade. See [Upgrading to 4.1 from 3.2.10 or below](#upgrading-to-41-from-3210-or-below).
-* `4.1` or `4.4` -> `5.x` (latest)
-    * These are automatic upgrades that take place by updating the image tag.
-
-## Upgrading to 5.0.x from 4.1.x or above
-
-There are no manual upgrade steps directly related to the software itself required when upgrading to 5.0.x if you are already running at least 4.1.x. For full details, please refer to the [TP-Link upgrade documentation](https://www.tp-link.com/en/omada-sdn/controller-upgrade/).
-
-As always, I would recommend taking a backup through the controller software as well as save a copy of the persistent data while the controller is not running when you do upgrade to simplify the rollback process, if required.
-
-### Changes/Notes for 5.0.x
-
-* **Updated Ports** - If you are only exposing ports using port mapping as the list of ports required has been updated. Starting with 5.0.x, the controller is also listening on `TCP port 29814` so you should add `-p 29814:29814` to your run command, compose file, or however you're running the container. Some additional unnecessary ports are no longer required so the list is shorter now.
-* **Volume Updates** - Starting with 5.0.x, the controller software is now built using Spring Boot. This version no longer uses the `work` volume as the application is no longer extracted to a temporary directory. If you do nothing, there will be no impact except for an extra directory sitting around.
-* **Custom Ports** - If using custom ports from the defaults of 8088, 8043, and 8843, they will _not_ persist across container re-creation starting in 5.0 unless you **always** set the `MANAGE_*_PORT` enviornment variables. This is due to adding `/opt/tplink/EAPController/properties` to the classpath starting in 5.0. If you change the ports through the UI, you should still continue to also set the ports using the environment variables, matching the ports you have set in the UI. For more detail, see [Using non-default ports](#using-non-default-ports).
-
-## Upgrading to 4.1 from 3.2.10 or below
-
-The upgrade to the 4.1.x version is not a seamless upgrade and can't be done in place. You must be running at least 3.1.4 or greater before you can proceed. Instructions are available from [TP-Link](https://www.tp-link.com/en/omada-sdn/controller-upgrade/) but many of the steps will be different due to running in a docker container. Here are the high level steps:
-
-1. Review the steps in the TP-Link instructions as some settings will not transfer to the new version.
-1. Take a backup of your controller as described in the [upgrade procedure](https://www.tp-link.com/en/omada-sdn/controller-upgrade/#content-5_1_1)
-1. Stop your controller
-1. Clear your existing persistent data directories for data, work, and logs. I would recommend backing up the files so you can revert to the previous version in case of issues.
-1. Start your controller with the new Docker image and proceed with at least the basic setup options
-1. Import your backup file to the 4.1 version of the controller
-
-### Notes for 4.1
-
-1. **Ports** - Do not change the ports for the controller or portal in the UI to ports below 1024 unless you have adjusted the unprivileged ports; for ports < 1024, see [Unprivileged Ports](#unprivileged-ports).
-1. **SSL Certificates** - if you are installing your own SSL certificates, you should only manage them using one method - through the UI or by using the `/cert` volume as [described below](#custom-certificates).
-1. **Synology Users** - if you're using a Synology and are using the `latest` tag and update to 4.1, you will need to make sure to re-create the container due to the `CMD` changing from older versions to 4.1 as Synology retains the entrypoint and command from the container as it is defined and not from the image.
-
 ## Building images
 
 <details>
 <summary>Click to expand docker build instructions</summary>
 
-As of the Omada Controller version 4.x, the Dockerfiles have been simplified so that there is a unified Dockerfile. There are some differences between the build steps for `amd64`, `arm64`, and `armv7l`. These changes will happen automatically if you use the build-args `INSTALL_VER` and `ARCH`. For possible `INSTALL_VER` values, see [mbentley/docker-omada-controller-url](https://github.com/mbentley/docker-omada-controller-url/blob/master/omada_ver_to_url.sh):
+There are some differences between the build steps for `amd64`, `arm64`, and `armv7l`. These changes will happen automatically if you use the build-args `INSTALL_VER` and `ARCH`. For possible `INSTALL_VER` values, see [mbentley/docker-omada-controller-url](https://github.com/mbentley/docker-omada-controller-url/blob/master/omada_ver_to_url.sh):
 
 ### `amd64`
 
@@ -204,8 +161,6 @@ To run this Docker image and keep persistent data in named volumes:
 
 __tl;dr__: Always make sure the environment variables for the ports match any changes you have made in the web UI and you'll be fine.
 
-**Note**: The `3.2` version of the controller only supports the `MANAGE_HTTP_PORT` and `MANAGE_HTTPS_PORT` variables for modifying the controller's admin web interface ports. This means that setting `PORTAL_HTTP_PORT` and `PORTAL_HTTPS_PORT` will not have any effect in `3.2`. Versions `4.x` or greater support all of the `MANAGE_*_PORT` and `PORTAL_*_PORT` variables as described in the [Optional Variables](#optional-variables) section.
-
 If you want to change the ports of your Omada Controller to something besides the defaults, there is some unexpected behavior that the controller exhibits. There are two sets of ports: one for HTTP/HTTPS for the controller itself and another for HTTP/HTTPS for the captive portal, typically used for authentication to a guest network. The controller's set of ports, which are set by the `MANAGE_*_PORT` environment variables, can only be modified using the environment variables on the first time the controller is started. If persistent data exists, changing the controller's ports via environment variables will have no effect on the controller itself and can only be modified through the web UI. On the other hand, the portal ports will always be set to whatever has been set in the environment variables, which are set by the `PORTAL_*_PORT` environment variables.
 
 ### Using port mapping
@@ -247,39 +202,6 @@ docker run -d \
   -v omada-logs:/opt/tplink/EAPController/logs \
   mbentley/omada-controller:5.13
 ```
-
-<details>
-<summary>Example usage for 3.2</summary>
-
-The below example can be used with 3.2. The port and volume mappings have changed in newer versions.
-
-```
-docker run -d \
-  --name omada-controller \
-  --stop-timeout 60 \
-  --restart unless-stopped \
-  --ulimit nofile=4096:8192 \
-  -p 8088:8088 \
-  -p 8043:8043 \
-  -p 8843:8843 \
-  -p 29810:29810/udp \
-  -p 29811:29811 \
-  -p 29812:29812 \
-  -p 29813:29813 \
-  -p 29814:29814 \
-  -e MANAGE_HTTP_PORT=8088 \
-  -e MANAGE_HTTPS_PORT=8043 \
-  -e SMALL_FILES=false \
-  -e SSL_CERT_NAME="tls.crt" \
-  -e SSL_KEY_NAME="tls.key" \
-  -e TZ=Etc/UTC \
-  -v omada-data:/opt/tplink/EAPController/data \
-  -v omada-work:/opt/tplink/EAPController/work \
-  -v omada-logs:/opt/tplink/EAPController/logs \
-  mbentley/omada-controller:3.2
-```
-
-</details>
 
 ### Using `net=host`
 
@@ -324,15 +246,7 @@ In order to use the host's network namespace, you must first ensure that there a
 
 Documentation on the ports used by the controller can be found in the [TP-Link FAQ](https://www.tp-link.com/us/support/faq/3281/).
 
-## Persistent Data and Permissions
-
-**Note**: The permissions portion only applies to tags for `3.1.x` and `3.0.x` as the `3.2.x` and newer versions manage the permissions for you.
-
-If you utilize bind mounts instead of Docker named volumes (e.g. - `-v /path/to/data:/opt/tplink/EAPController/data`) in your run command, you will want to make sure that you have set the permissions appropriately on the filesystem otherwise you will run into permissions errors and the container will not run because it won't have the permissions to write data since this container uses a non-root user. To resolve that, you need to `chown` the directory to `508:508` on the host as that is the UID and GID that we use inside the container. For example:
-
-```bash
-chown -R 508:508 /data/omada/data /data/omada/logs
-```
+## Persistent Data
 
 In the examples, there are two directories where persistent data is stored: `data` and `logs`. The `data` directory is where the persistent database data is stored where all of your settings, app configuration, etc is stored. The `log` directory is where logs are written and stored. I would suggest that you use a bind mounted volume for the `data` directory to ensure that your persistent data is directly under your control and of course take regular backups within the Omada Controller application itself.
 
@@ -341,12 +255,6 @@ In the examples, there are two directories where persistent data is stored: `dat
 By default, Omada software uses self-signed certificates. If however you want to use custom certificates you can mount them into the container as `/cert/tls.key` and `/cert/tls.crt`. The `tls.crt` file needs to include the full chain of certificates, i.e. cert, intermediate cert(s) and CA cert. This is compatible with kubernetes TLS secrets. Entrypoint script will convert them into Java Keystore used by jetty inside the Omada SW. If you need to use different file names, you can customize them by passing values for `SSL_CERT_NAME` and `SSL_KEY_NAME` as seen above in the [Optional Variables](#optional-variables) section.
 
 **Warning** - As of the version 4.1, certificates can also be installed through the web UI. You should not attempt to mix certificate management methods as installing certificates via the UI will store the certificates in MongoDB and then the `/cert` volume method will cease to function.
-
-## MongoDB Small Files
-
-In Omada 3.2 and older, this image uses the default mongodb settings for journal files. If disk space is an issue, you can set the `SMALL_FILES` variable to `true` which will add [`--smallfiles`](https://docs.mongodb.com/v3.6/core/journaling/#journaling-journal-files) to the startup arguments for MongoDB.
-
-**Warning** - As of the version 4.1 and newer, MongoDB utilizes the `WiredTiger` storage engine by default which does not have the same journal file size issue as the `MMAPv1` storage engine. If `SMALL_FILES` is set to `true`, a warning will be issued at startup but startup will still proceed.
 
 ## Time Zones
 
