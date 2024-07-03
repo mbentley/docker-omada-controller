@@ -71,7 +71,7 @@ See [list of architecture specific tags](ARCH_TAGS.md).
 
 ## Archived Tags
 
-These images are still published on Docker Hub but are no longer regularly updated due to the controller software no longer being updated. **Use with extreme caution as these images are likely to contain unpatched security vulnerabilities!**. For v3 and v4 image tags, see [README_v3_and_v4.md](README_v3_and_v4.md#archived-tags)
+These images are still published on Docker Hub but are no longer regularly updated due to the controller software no longer being updated. **Use with extreme caution as these images are likely to contain unpatched security vulnerabilities!**. See [Archived Tags for v3 and v4](README_v3_and_v4.md#archived-tags) for details on the old, unmaintained image tags.
 
 | Tag(s) | Major.Minor Release | Current Version |
 | :----- | ------------------- | ----------------|
