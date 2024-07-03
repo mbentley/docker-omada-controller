@@ -5,7 +5,7 @@ This README is the consolidation of information from the v3 and v4 images which 
 ## Table of Contents
 
 * [Image Tags](#image-tags)
-    * [Multi-arch Tags](#multi-arch-tags)
+* [Archived Tags](#archived-tags)
 * [Upgrade Path](#upgrade-path)
 * [Upgrading to 5.0.x from 4.1.x or above](#upgrading-to-50x-from-41x-or-above)
     * [Changes/Notes for 5.0.x](#changesnotes-for-50x)
@@ -21,15 +21,21 @@ This README is the consolidation of information from the v3 and v4 images which 
 
 :warning: **Warning** :warning: Do **NOT** run the `armv7l` (32 bit) images. Upgrade your operating system to `arm64` (64 bit) unless you accept that you're running an outdated MongoDB and a base operating system with unpatched vulnerabilities! See the [Known Issues readme](KNOWN_ISSUES.md#notes-for-armv7l) for more information.
 
-### Multi-arch Tags
+## Archived Tags
+
+All of the v3 and v4 images are still published on Docker Hub but are no longer regularly updated due to the controller software no longer being updated. **Use with extreme caution as these images are likely to contain unpatched security vulnerabilities!**
 
 The following tags have multi-arch support for `amd64`, `armv7l`, and `arm64` and will automatically pull the correct tag based on your system's architecture:
 
 | Tag(s) | Major.Minor Release | Current Version |
-| :----- | ------------------- | --------------- |
+| :----- | ------------------- | ----------------|
 | `4.4` | Omada Controller `4.4.x` | `4.4.8` |
+| `4.3` | Omada Controller `4.3.x` | `4.3.5` |
+| `4.2` | Omada Controller `4.2.x` | `4.2.11` |
 | `4.1` | Omada Controller `4.1.x` | `4.1.5` |
 | `3.2` | Omada Controller `3.2.x` | `3.2.17` |
+| `3.1` | Omada Controller `3.1.x` | `3.1.13` |
+| `3.0` | Omada Controller `3.0.x` | `3.0.5` |
 
 ## Upgrade Path
 

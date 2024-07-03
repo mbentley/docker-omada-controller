@@ -71,7 +71,7 @@ See [list of architecture specific tags](ARCH_TAGS.md).
 
 ## Archived Tags
 
-These images are still published on Docker Hub but are no longer regularly updated due to the controller software no longer being updated. **Use with extreme caution as these images are likely to contain unpatched security vulnerabilities!**
+These images are still published on Docker Hub but are no longer regularly updated due to the controller software no longer being updated. **Use with extreme caution as these images are likely to contain unpatched security vulnerabilities!**. For v3 and v4 image tags, see [README_v3_and_v4.md](README_v3_and_v4.md#archived-tags)
 
 | Tag(s) | Major.Minor Release | Current Version |
 | :----- | ------------------- | ----------------|
@@ -90,10 +90,6 @@ These images are still published on Docker Hub but are no longer regularly updat
 | `5.1` | Omada Controller `5.1.x` | `5.1.7` |
 | `5.1-chromium` | Omada Controller `5.1.x` | `5.1.7` |
 | `5.0` | Omada Controller `5.0.x` | `5.0.30` |
-| `4.3` | Omada Controller `4.3.x` | `4.3.5` |
-| `4.2` | Omada Controller `4.2.x` | `4.2.11` |
-| `3.1` | Omada Controller `3.1.x` | `3.1.13` |
-| `3.0` | Omada Controller `3.0.x` | `3.0.5` |
 
 ## Getting Help & Reporting Issues
 
@@ -235,8 +231,8 @@ In order to use the host's network namespace, you must first ensure that there a
 | `PORT_UPGRADE_V1` | `29813` | `1024`-`65535` | When upgrading the firmware for the Omada devices running firmware fully adapted to Omada Controller v4*. | >= `5.x` |
 | `PUID` | `508` | _any_ | Set the `omada` process user ID ` | >= `3.2` |
 | `PUSERNAME` | `omada` | _any_ | Set the username for the process user ID to run as | >= `5.0` |
-| `SHOW_SERVER_LOGS` | `true` | `[true\|false]` | Outputs Omada Controller logs to STDOUT at runtime | >= `4.1` |
-| `SHOW_MONGODB_LOGS` | `false` | `[true\|false]` | Outputs MongoDB logs to STDOUT at runtime | >= `4.1` |
+| `SHOW_SERVER_LOGS` | `true` | `[true|false]` | Outputs Omada Controller logs to STDOUT at runtime | >= `4.1` |
+| `SHOW_MONGODB_LOGS` | `false` | `[true|false]` | Outputs MongoDB logs to STDOUT at runtime | >= `4.1` |
 | `SKIP_USERLAND_KERNEL_CHECK` | `false` | `[true\|false]` | When set to `true`, skips the userland/kernel match check for `armv7l` & `arm64` |
 | `SMALL_FILES` | `false` | `[true\|false]` | See [Small Files](#small-files) for more detail; no effect in >= `4.1.x` | `3.2` only |
 | `SSL_CERT_NAME` | `tls.crt` | _any_ | Name of the public cert chain mounted to `/cert`; see [Custom Certificates](#custom-certificates) | >= `3.2` |
