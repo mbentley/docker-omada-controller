@@ -45,12 +45,12 @@ For references on running a legacy v3 or v4 controller, see the [README for v3 a
 
 ### Multi-arch Tags
 
-The following tags have multi-arch support for `amd64`, `armv7l`, and `arm64` and will automatically pull the correct tag based on your system's architecture:
+For a full tag list, search the [Docker Hub tags list](https://hub.docker.com/r/mbentley/omada-controller/tags). The following tags have multi-arch support for `amd64`, `armv7l`, and `arm64` and will automatically pull the correct tag based on your system's architecture:
 
 | Tag(s) | Major.Minor Release | Current Version |
 | :----- | ------------------- | --------------- |
 | `latest`, `5.13` | Omada Controller `5.13.x` | `5.13.30.8` |
-| `beta` | Omada Controller `beta` | `5.14.20.9` |
+| `beta`, `beta-5.14` | Omada Controller `beta` | `5.14.20.9` |
 | `5.12` | Omada Controller `5.12.x` | `5.12.7` |
 | `5.9` | Omada Controller `5.9.x` | `5.9.31` |
 
