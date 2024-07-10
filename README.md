@@ -49,8 +49,9 @@ For a full tag list, search the [Docker Hub tags list](https://hub.docker.com/r/
 
 | Tag(s) | Major.Minor Release | Current Version |
 | :----- | ------------------- | --------------- |
-| `latest`, `5.13` | Omada Controller `5.13.x` | `5.13.30.8` |
+| `latest`, `5.14` | Omada Controller `5.14.x` | `5.14.26.1` |
 | `beta`, `beta-5.14` | Omada Controller `beta` | `5.14.20.9` |
+| `5.13` | Omada Controller `5.13.x` | `5.13.30.8` |
 | `5.12` | Omada Controller `5.12.x` | `5.12.7` |
 | `5.9` | Omada Controller `5.9.x` | `5.9.31` |
 
@@ -60,8 +61,9 @@ For a full tag list, search the [Docker Hub tags list](https://hub.docker.com/r/
 
 | Tag(s) | Major.Minor Release |
 | :----- | ------------------- |
-| `latest-chromium`, `5.13-chromium` | Omada Controller `5.13.x` |
+| `latest-chromium`, `5.14-chromium` | Omada Controller `5.14.x` |
 | `beta-chromium`, | Omada Controller `beta` |
+| `5.13-chromium` | Omada Controller `5.13.x` |
 | `5.12-chromium` | Omada Controller `5.12.x` |
 | `5.9-chromium` | Omada Controller `5.9.x` |
 
@@ -116,10 +118,10 @@ There are some differences between the build steps for `amd64`, `arm64`, and `ar
 
   ```
   docker build \
-    --build-arg INSTALL_VER="5.13.30.8" \
+    --build-arg INSTALL_VER="5.14.26.1" \
     --build-arg ARCH="amd64" \
     -f Dockerfile.v5.x \
-    -t mbentley/omada-controller:5.13 .
+    -t mbentley/omada-controller:5.14 .
   ```
 
 ### `arm64`
@@ -128,10 +130,10 @@ There are some differences between the build steps for `amd64`, `arm64`, and `ar
 
   ```
   docker build \
-    --build-arg INSTALL_VER="5.13.30.8" \
+    --build-arg INSTALL_VER="5.14.26.1" \
     --build-arg ARCH="arm64" \
     -f Dockerfile.v5.x \
-    -t mbentley/omada-controller:5.13-arm64 .
+    -t mbentley/omada-controller:5.14-arm64 .
   ```
 
 ### `armv7l`
@@ -140,11 +142,11 @@ There are some differences between the build steps for `amd64`, `arm64`, and `ar
 
   ```
   docker build \
-    --build-arg INSTALL_VER="5.13.30.8" \
+    --build-arg INSTALL_VER="5.14.26.1" \
     --build-arg ARCH="armv7l" \
     --build-arg BASE="ubuntu:16.04" \
     -f Dockerfile.v5.x \
-    -t mbentley/omada-controller:5.13-armv7l .
+    -t mbentley/omada-controller:5.14-armv7l .
   ```
 
 </details>
@@ -196,7 +198,7 @@ docker run -d \
   -e TZ=Etc/UTC \
   -v omada-data:/opt/tplink/EAPController/data \
   -v omada-logs:/opt/tplink/EAPController/logs \
-  mbentley/omada-controller:5.13
+  mbentley/omada-controller:5.14
 ```
 
 ### Using `net=host`
