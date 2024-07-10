@@ -9,6 +9,7 @@ For references on running a legacy v3 or v4 controller, see the [README for v3 a
 * [Image Tags](#image-tags)
     * [Multi-arch Tags](#multi-arch-tags)
     * [Explicit Architecture Tags](#explicit-architecture-tags)
+    * [Explicit Version Tags](#explicit-version-tags)
     * [Archived Tags](#archived-tags)
 * [Getting Help & Reporting Issues](#getting-help--reporting-issues)
 * [Controller Upgrades](#controller-upgrades)
@@ -53,7 +54,6 @@ For a full tag list, search the [Docker Hub tags list](https://hub.docker.com/r/
 | `beta`, `beta-5.14` | Omada Controller `beta` | `5.14.20.9` |
 | `5.13` | Omada Controller `5.13.x` | `5.13.30.8` |
 | `5.12` | Omada Controller `5.12.x` | `5.12.7` |
-| `5.9` | Omada Controller `5.9.x` | `5.9.31` |
 
 ### Tags with Chromium
 
@@ -65,11 +65,14 @@ For a full tag list, search the [Docker Hub tags list](https://hub.docker.com/r/
 | `beta-chromium`, | Omada Controller `beta` |
 | `5.13-chromium` | Omada Controller `5.13.x` |
 | `5.12-chromium` | Omada Controller `5.12.x` |
-| `5.9-chromium` | Omada Controller `5.9.x` |
 
 ### Explicit Architecture Tags
 
-See [list of architecture specific tags](ARCH_TAGS.md).
+If for some reason you can't use the multi-arch tags, there are explicitly tagged images with the architecture (`-amd64`, `-arm64`, and `-armv7l`) appended to them. Check [Docker Hub](https://hub.docker.com/r/mbentley/omada-controller/tags) for the full list of tags.
+
+### Explicit Version Tags
+
+If you need a specific version of the controller, starting with 5.13 and 5.14, there are explicitly tagged images with the exact version (i.e. - `5.14.26.1`) in the tag name. Check [Docker Hub](https://hub.docker.com/r/mbentley/omada-controller/tags) for the full list of tags.
 
 ## Archived Tags
 
@@ -77,6 +80,8 @@ These images are still published on Docker Hub but are no longer regularly updat
 
 | Tag(s) | Major.Minor Release | Current Version |
 | :----- | ------------------- | ----------------|
+| `5.9` | Omada Controller `5.9.x` | `5.9.31` |
+| `5.9-chromium` | Omada Controller `5.9.x` | `5.9.31` |
 | `5.8` | Omada Controller `5.8.x` | `5.8.4` |
 | `5.8-chromium` | Omada Controller `5.8.x` | `5.8.4` |
 | `5.7` | Omada Controller `5.7.x` | `5.7.4` |
@@ -233,13 +238,13 @@ In order to use the host's network namespace, you must first ensure that there a
 | `PORT_UPGRADE_V1` | `29813` | `1024`-`65535` | When upgrading the firmware for the Omada devices running firmware fully adapted to Omada Controller v4*. | >= `5.x` |
 | `PUID` | `508` | _any_ | Set the `omada` process user ID ` | >= `3.2` |
 | `PUSERNAME` | `omada` | _any_ | Set the username for the process user ID to run as | >= `5.0` |
-| `SHOW_SERVER_LOGS` | `true` | `[true|false]` | Outputs Omada Controller logs to STDOUT at runtime | >= `4.1` |
-| `SHOW_MONGODB_LOGS` | `false` | `[true|false]` | Outputs MongoDB logs to STDOUT at runtime | >= `4.1` |
-| `SKIP_USERLAND_KERNEL_CHECK` | `false` | `[true\|false]` | When set to `true`, skips the userland/kernel match check for `armv7l` & `arm64` |
-| `SMALL_FILES` | `false` | `[true\|false]` | See [Small Files](#small-files) for more detail; no effect in >= `4.1.x` | `3.2` only |
+| `SHOW_SERVER_LOGS` | `true` | `true`, `false` | Outputs Omada Controller logs to STDOUT at runtime | >= `4.1` |
+| `SHOW_MONGODB_LOGS` | `false` | `true`, `false` | Outputs MongoDB logs to STDOUT at runtime | >= `4.1` |
+| `SKIP_USERLAND_KERNEL_CHECK` | `false` | `true`, `false` | When set to `true`, skips the userland/kernel match check for `armv7l` & `arm64` | >= `3.2` |
+| `SMALL_FILES` | `false` | `true`, `false` | See [Small Files](#small-files) for more detail; no effect in >= `4.1.x` | `3.2` only |
 | `SSL_CERT_NAME` | `tls.crt` | _any_ | Name of the public cert chain mounted to `/cert`; see [Custom Certificates](#custom-certificates) | >= `3.2` |
 | `SSL_KEY_NAME` | `tls.key` | _any_ | Name of the private cert mounted to `/cert`; see [Custom Certificates](#custom-certificates) | >= `3.2` |
-| `TLS_1_11_ENABLED` | `false` | `[true\|false]` | Re-enables TLS 1.0 & 1.1 if set to `true` | >= `4.1` |
+| `TLS_1_11_ENABLED` | `false` | `true`, `false` | Re-enables TLS 1.0 & 1.1 if set to `true` | >= `4.1` |
 | `TZ` | `Etc/UTC` | _\<many\>_ | See [Time Zones](#time-zones) for more detail | >= `3.2` |
 
 Documentation on the ports used by the controller can be found in the [TP-Link FAQ](https://www.tp-link.com/us/support/faq/3281/).
