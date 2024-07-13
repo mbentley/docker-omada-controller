@@ -78,7 +78,28 @@ case "${NO_MONGODB}" in
     # include mongodb
     case "${ARCH}" in
       amd64|arm64|"")
-        PKGS+=( mongodb-server-core )
+        # check to see if this is 22.04 or not
+        if [ "$(eval "$(grep '^VERSION_ID=' /etc/os-release)"; echo "${VERSION_ID}")" = "22.04" ]
+        then
+          # 22.04
+          # install gnupg
+          apt-get install --no-install-recommends -y gnupg
+
+          # download & install public key
+          wget -q -O - https://www.mongodb.org/static/pgp/server-8.0.asc | gpg -o /etc/apt/keyrings/mongodb-server-8.0.gpg --dearmor
+
+          # add repo
+          echo "deb [ arch=${ARCH} signed-by=/etc/apt/keyrings/mongodb-server-8.0.gpg ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/8.0 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-8.0.list
+
+          # update apt sources
+          apt-get update
+
+          # add the required packages
+          PKGS+=( mongodb-org-server )
+        else
+          # not 22.04; use the package from the ubuntu repo
+          PKGS+=( mongodb-server-core )
+        fi
         ;;
       armv7l)
         PKGS+=( mongodb )
@@ -142,6 +163,15 @@ echo "PKGS=( ${PKGS[*]} )"
 
 echo "**** Install Dependencies ****"
 apt-get install --no-install-recommends -y "${PKGS[@]}"
+
+# remove directories that we will not use, if present
+for DIR in /var/lib/mongodb /var/log/mongodb
+do
+  if [ -d "${DIR}" ]
+  then
+    rm -rvf "${DIR}"
+  fi
+done
 
 echo "**** Download Omada Controller ****"
 cd /tmp
