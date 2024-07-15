@@ -6,12 +6,8 @@ catch_error() {
 }
 
 upgrade_mongodb() {
-  ### start upgrade
   # start upgrade
   echo -e "\nINFO: starting upgrade to ${MONGO_MAJ_MIN}..."
-
-  # run repair on db to upgrade
-  #/tmp/mongod-${MONGO_VER} --dbpath ../data/db -pidfilepath ../data/mongo.pid --bind_ip 127.0.0.1 --journal --logpath /tmp/upgrade_log.txt --logappend --repair || catch_error
 
   # starting with 7.0, there is no journal arg
   if [ "${MONGO_MAJ_MIN}" != "7.0" ]
@@ -20,6 +16,9 @@ upgrade_mongodb() {
   else
     JOURNAL=""
   fi
+
+  # run repair on db to upgrade
+  #/tmp/mongod-${MONGO_VER} --dbpath ../data/db -pidfilepath ../data/mongo.pid --bind_ip 127.0.0.1 ${JOURNAL} --logpath /tmp/upgrade_log.txt --logappend --repair || catch_error
 
   # start db
   echo -n "INFO: starting mongod ${MONGO_VER}..."
@@ -67,8 +66,10 @@ upgrade_mongodb() {
     # mongo client
     echo 'db.adminCommand( { setFeatureCompatibilityVersion: "'"${MONGO_MAJ_MIN}"'" } )' | /tmp/${MONGO_CLIENT} --quiet >/dev/null 2>&1
   fi
+  echo "done"
 
   # verify new compat version
+  echo -n "INFO: verifying feature compatibility version has been updated to ${MONGO_MAJ_MIN}..."
   if [ "${MONGO_CLIENT}" = "mongosh" ]
   then
     # mongosh
@@ -105,6 +106,9 @@ upgrade_mongodb() {
   # upgrade complete
   echo -e "INFO: upgrade to ${MONGO_MAJ_MIN} complete!\n"
 }
+
+# output message
+echo -e "INFO: executing upgrade process from MongoDB 3.6 to 7.0...\n"
 
 ### 3.6 to 4.0
 # set variables
@@ -182,3 +186,5 @@ upgrade_mongodb
 echo -ne "\nINFO: Fixing ownership of database files..."
 chown -R "$(stat -c "%u:%g" ../data)" ../data
 echo "done"
+
+echo -e "\n\nINFO: upgrade process from MongoDB 3.6 to 7.0 was successful!"
