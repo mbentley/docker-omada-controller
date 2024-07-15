@@ -5,222 +5,178 @@ catch_error() {
   exit 1
 }
 
-### upgrade to 4.0
-echo -e "\nINFO: Starting migration to 4.0..."
+upgrade_mongodb() {
+  ### start upgrade
+  # start upgrade
+  echo -e "\nINFO: starting upgrade to ${MONGO_MAJ_MIN}..."
 
-# run repair on db to upgrade
-/tmp/mongod-4.0.28 --dbpath ../data/db -pidfilepath ../data/mongo.pid --bind_ip 127.0.0.1 --journal --repair || catch_error
+  # run repair on db to upgrade
+  #/tmp/mongod-${MONGO_VER} --dbpath ../data/db -pidfilepath ../data/mongo.pid --bind_ip 127.0.0.1 --journal --logpath /tmp/upgrade_log.txt --logappend --repair || catch_error
 
-# start db
-/tmp/mongod-4.0.28 --dbpath ../data/db -pidfilepath ../data/mongo.pid --bind_ip 127.0.0.1 --journal &
+  # starting with 7.0, there is no journal arg
+  if [ "${MONGO_MAJ_MIN}" != "7.0" ]
+  then
+    JOURNAL="--journal"
+  else
+    JOURNAL=""
+  fi
 
-# set compatibility version to 4.0
-while ! echo 'db.adminCommand( { setFeatureCompatibilityVersion: "4.0" } )' | /tmp/mongo-4.0.28
-do
-  echo "Sleeping! MongoDB isn't running yet"
-  sleep 1
-done
+  # start db
+  echo -n "INFO: starting mongod ${MONGO_VER}..."
+  /tmp/mongod-${MONGO_VER} --dbpath ../data/db -pidfilepath ../data/mongo.pid --bind_ip 127.0.0.1 ${JOURNAL} --logpath /tmp/upgrade_log.txt --logappend &
 
-# stop mongodb
-kill -2 "$(cat ../data/mongo.pid)"
+  # make sure MongoDB is running
+  while ! echo 'db.adminCommand( { getParameter: 1, featureCompatibilityVersion: 1 } )' | /tmp/${MONGO_CLIENT} --quiet >/dev/null 2>&1
+  do
+    echo -n "."
+    sleep 1
+  done
+  echo "done"
 
-# wait for mongodb to stop
-echo -n "INFO: Waiting for mongod to stop..."
-while pgrep mongod > /dev/null
-do
-  echo -n "."
-  sleep 1
-done
-echo "done"
+  # get current compat version
+  if [ "${MONGO_CLIENT}" = "mongosh" ]
+  then
+    # mongosh
+    CURRENT_COMPAT_VERSION="$(/tmp/${MONGO_CLIENT} --quiet --json --eval 'db.adminCommand( { getParameter: 1, featureCompatibilityVersion: 1 } )' | jq -r .featureCompatibilityVersion.version)"
+  else
+    # mongo client
+    CURRENT_COMPAT_VERSION="$(echo 'db.adminCommand( { getParameter: 1, featureCompatibilityVersion: 1 } )' | /tmp/${MONGO_CLIENT} --quiet | jq -r .featureCompatibilityVersion.version)"
+  fi
 
-# remove pidfile
-rm ../data/mongo.pid
+  # make sure that the current compat version is correct
+  if [ "${CURRENT_COMPAT_VERSION}" != "${EXPECTED_COMPAT_VERSION}" ]
+  then
+    echo -e "\nERROR: featureCompatibilityVersion is currently ${CURRENT_COMPAT_VERSION}; expected ${EXPECTED_COMPAT_VERSION}; aborting upgrade!"
+    exit 1
+  fi
 
-# migration complete
-echo -e "\nINFO: Migration to 4.0 complete!\n"
+  # set compatibility version
+  echo -n "INFO: setting feature compatibility version to ${MONGO_MAJ_MIN}..."
+  if [ "${MONGO_CLIENT}" = "mongosh" ]
+  then
+    # mongosh
+    if [ "${MONGO_MAJ_MIN}" = "7.0" ]
+    then
+      # 7.0
+      /tmp/${MONGO_CLIENT} --quiet --json --eval 'db.adminCommand( { setFeatureCompatibilityVersion: "'"${MONGO_MAJ_MIN}"'", confirm: true } )' >/dev/null 2>&1
+    else
+      # not 7.0
+      /tmp/${MONGO_CLIENT} --quiet --json --eval 'db.adminCommand( { setFeatureCompatibilityVersion: "'"${MONGO_MAJ_MIN}"'" } )' >/dev/null 2>&1
+    fi
+  else
+    # mongo client
+    echo 'db.adminCommand( { setFeatureCompatibilityVersion: "'"${MONGO_MAJ_MIN}"'" } )' | /tmp/${MONGO_CLIENT} --quiet >/dev/null 2>&1
+  fi
+
+  # verify new compat version
+  if [ "${MONGO_CLIENT}" = "mongosh" ]
+  then
+    # mongosh
+    NEW_COMPAT_VERSION="$(/tmp/${MONGO_CLIENT} --quiet --json --eval 'db.adminCommand( { getParameter: 1, featureCompatibilityVersion: 1 } )' | jq -r .featureCompatibilityVersion.version)"
+  else
+    # mongo client
+    NEW_COMPAT_VERSION="$(echo 'db.adminCommand( { getParameter: 1, featureCompatibilityVersion: 1 } )' | /tmp/${MONGO_CLIENT} --quiet | jq -r .featureCompatibilityVersion.version)"
+  fi
+
+  # make sure that the new compat version is correct
+  if [ "${NEW_COMPAT_VERSION}" != "${MONGO_MAJ_MIN}" ]
+  then
+    echo -e "\nERROR: featureCompatibilityVersion was not updated to ${MONGO_MAJ_MIN} as expected; aborting upgrade!"
+    exit 1
+  else
+    echo "done"
+  fi
+
+  # stop mongodb
+  echo -n "INFO: stopping mongod..."
+  echo 'db.adminCommand( { shutdown: 1 } )' | /tmp/${MONGO_CLIENT} --quiet >/dev/null 2>&1
+
+  # wait for mongodb to stop
+  while pgrep mongod > /dev/null
+  do
+    echo -n "."
+    sleep 1
+  done
+  echo "done"
+
+  # remove pidfile
+  rm ../data/mongo.pid || catch_error
+
+  # upgrade complete
+  echo -e "INFO: upgrade to ${MONGO_MAJ_MIN} complete!\n"
+}
+
+### 3.6 to 4.0
+# set variables
+MONGO_VER="4.0.28"
+MONGO_MAJ_MIN="$(echo "${MONGO_VER}" | awk -F '.' '{print $1"."$2}')"
+MONGO_CLIENT="mongo-${MONGO_VER}"
+EXPECTED_COMPAT_VERSION="3.6"
+
+# run upgrade
+upgrade_mongodb
 
 
+### 4.0 to 4.2
 ### upgrade to 4.2
 if [ "$(uname -m)" = "aarch64" ]
 then
   echo "INFO: upgrading from libcurl3 to libcurl4"
-  #apt-get update
-  #apt-get install -y libcurl4
   dpkg -i /libcurl4_7.58.0-2ubuntu3.24_arm64.deb
 fi
 
-echo -e "\nINFO: Starting migration to 4.2..."
+# set variables
+MONGO_VER="4.2.23"
+MONGO_MAJ_MIN="$(echo "${MONGO_VER}" | awk -F '.' '{print $1"."$2}')"
+MONGO_CLIENT="mongo-${MONGO_VER}"
+EXPECTED_COMPAT_VERSION="4.0"
 
-# run repair on db to upgrade
-/tmp/mongod-4.2.23 --dbpath ../data/db -pidfilepath ../data/mongo.pid --bind_ip 127.0.0.1 --journal --repair || catch_error
-
-# start db
-/tmp/mongod-4.2.23 --dbpath ../data/db -pidfilepath ../data/mongo.pid --bind_ip 127.0.0.1 --journal &
-
-# set compatibility version to 4.2
-while ! echo 'db.adminCommand( { setFeatureCompatibilityVersion: "4.2" } )' | /tmp/mongo-4.2.23
-do
-  echo "Sleeping! MongoDB isn't running yet"
-  sleep 1
-done
-
-# stop mongodb
-kill -2 "$(cat ../data/mongo.pid)"
-
-# wait for mongodb to stop
-echo -n "INFO: Waiting for mongod to stop..."
-while pgrep mongod > /dev/null
-do
-  echo -n "."
-  sleep 1
-done
-echo "done"
-
-# remove pidfile
-rm ../data/mongo.pid
-
-# migration complete
-echo -e "\nINFO: Migration to 4.2 complete!\n"
+# run upgrade
+upgrade_mongodb
 
 
-### upgrade to 4.4
-echo -e "\nINFO: Starting migration to 4.4..."
+### 4.2 to 4.4
+# set variables
+MONGO_VER="4.4.18"
+MONGO_MAJ_MIN="$(echo "${MONGO_VER}" | awk -F '.' '{print $1"."$2}')"
+MONGO_CLIENT="mongo-${MONGO_VER}"
+EXPECTED_COMPAT_VERSION="4.2"
 
-# run repair on db to upgrade
-/tmp/mongod-4.4.18 --dbpath ../data/db -pidfilepath ../data/mongo.pid --bind_ip 127.0.0.1 --journal --repair || catch_error
-
-# # start db
-/tmp/mongod-4.4.18 --dbpath ../data/db -pidfilepath ../data/mongo.pid --bind_ip 127.0.0.1 --journal &
-
-# set compatibility version to 4.4
-while ! echo 'db.adminCommand( { setFeatureCompatibilityVersion: "4.4" } )' | /tmp/mongo-4.4.18
-do
-  echo "Sleeping! MongoDB isn't running yet"
-  sleep 1
-done
-
-# stop mongodb
-kill -2 "$(cat ../data/mongo.pid)"
-
-# wait for mongodb to stop
-echo -n "INFO: Waiting for mongod to stop..."
-while pgrep mongod > /dev/null
-do
-  echo -n "."
-  sleep 1
-done
-echo "done"
-
-# remove pidfile
-rm ../data/mongo.pid
-
-# migration complete
-echo -e "\nINFO: Migration to 4.4 complete!\n"
+# run upgrade
+upgrade_mongodb
 
 
-### upgrade to 5.0.27
-echo -e "\nINFO: Starting migration to 5.0.27..."
+### 4.4 to 5.0
+# set variables
+MONGO_VER="5.0.27"
+MONGO_MAJ_MIN="$(echo "${MONGO_VER}" | awk -F '.' '{print $1"."$2}')"
+MONGO_CLIENT="mongo-${MONGO_VER}"
+EXPECTED_COMPAT_VERSION="4.4"
 
-# run repair on db to upgrade
-/tmp/mongod-5.0.27 --dbpath ../data/db -pidfilepath ../data/mongo.pid --bind_ip 127.0.0.1 --journal --repair || catch_error
-
-# # start db
-/tmp/mongod-5.0.27 --dbpath ../data/db -pidfilepath ../data/mongo.pid --bind_ip 127.0.0.1 --journal &
-
-# set compatibility version to 5.0
-while ! echo 'db.adminCommand( { setFeatureCompatibilityVersion: "5.0" } )' | /tmp/mongo-5.0.27
-do
-  echo "Sleeping! MongoDB isn't running yet"
-  sleep 1
-done
-
-# stop mongodb
-kill -2 "$(cat ../data/mongo.pid)"
-
-# wait for mongodb to stop
-echo -n "INFO: Waiting for mongod to stop..."
-while pgrep mongod > /dev/null
-do
-  echo -n "."
-  sleep 1
-done
-echo "done"
-
-# remove pidfile
-rm ../data/mongo.pid
-
-# migration complete
-echo -e "\nINFO: Migration to 5.0.27 complete!\n"
+# run upgrade
+upgrade_mongodb
 
 
-### upgrade to 6.0.16
-echo -e "\nINFO: Starting migration to 6.0.16..."
+### 5.0 to 6.0
+# set variables
+MONGO_VER="6.0.16"
+MONGO_MAJ_MIN="$(echo "${MONGO_VER}" | awk -F '.' '{print $1"."$2}')"
+MONGO_CLIENT="mongosh"
+EXPECTED_COMPAT_VERSION="5.0"
 
-# run repair on db to upgrade
-/tmp/mongod-6.0.16 --dbpath ../data/db -pidfilepath ../data/mongo.pid --bind_ip 127.0.0.1 --journal --repair || catch_error
-
-# # start db
-/tmp/mongod-6.0.16 --dbpath ../data/db -pidfilepath ../data/mongo.pid --bind_ip 127.0.0.1 --journal &
-
-# set compatibility version to 5.0
-while ! echo 'db.adminCommand( { setFeatureCompatibilityVersion: "6.0" } )' | /tmp/mongosh
-do
-  echo "Sleeping! MongoDB isn't running yet"
-  sleep 1
-done
-
-# stop mongodb
-kill -2 "$(cat ../data/mongo.pid)"
-
-# wait for mongodb to stop
-echo -n "INFO: Waiting for mongod to stop..."
-while pgrep mongod > /dev/null
-do
-  echo -n "."
-  sleep 1
-done
-echo "done"
-
-# remove pidfile
-rm ../data/mongo.pid
-
-# migration complete
-echo -e "\nINFO: Migration to 6.0.16 complete!\n"
+# run upgrade
+upgrade_mongodb
 
 
-### upgrade to 7.x
-echo -e "\nINFO: Starting migration to 7.0.12..."
+### 6.0 to 7.0
+# set variables
+MONGO_VER="7.0.12"
+MONGO_MAJ_MIN="$(echo "${MONGO_VER}" | awk -F '.' '{print $1"."$2}')"
+MONGO_CLIENT="mongosh"
+EXPECTED_COMPAT_VERSION="6.0"
 
-# run repair on db to upgrade
-/tmp/mongod-7.0.12 --dbpath ../data/db -pidfilepath ../data/mongo.pid --bind_ip 127.0.0.1 --repair || catch_error
-
-# # start db
-/tmp/mongod-7.0.12 --dbpath ../data/db -pidfilepath ../data/mongo.pid --bind_ip 127.0.0.1 &
-
-# set compatibility version to 5.0
-while ! echo 'db.adminCommand( { setFeatureCompatibilityVersion: "7.0", confirm: true } )' | /tmp/mongosh
-do
-  echo "Sleeping! MongoDB isn't running yet"
-  sleep 1
-done
-
-# stop mongodb
-kill -2 "$(cat ../data/mongo.pid)"
-
-# wait for mongodb to stop
-echo -n "INFO: Waiting for mongod to stop..."
-while pgrep mongod > /dev/null
-do
-  echo -n "."
-  sleep 1
-done
-echo "done"
-
-# remove pidfile
-rm ../data/mongo.pid
-
-# migration complete
-echo -e "\nINFO: Migration to 7.0.12 complete!\n"
+# run upgrade
+upgrade_mongodb
 
 # set ownership
 echo -ne "\nINFO: Fixing ownership of database files..."
