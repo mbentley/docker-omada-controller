@@ -6,7 +6,7 @@ LABEL org.opencontainers.image.source="https://github.com/mbentley/docker-omada-
 ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update &&\
-  apt-get install --no-install-recommends -y ca-certificates libcurl3 wget &&\
+  apt-get install --no-install-recommends -y ca-certificates jq libcurl3 wget &&\
   wget -q http://launchpadlibrarian.net/548254972/libssl1.0.0_1.0.2g-1ubuntu4.20_arm64.deb &&\
   dpkg -i libssl1.0.0_1.0.2g-1ubuntu4.20_arm64.deb &&\
   rm libssl1.0.0_1.0.2g-1ubuntu4.20_arm64.deb &&\

@@ -6,7 +6,7 @@ LABEL org.opencontainers.image.source="https://github.com/mbentley/docker-omada-
 ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update &&\
-  apt-get install --no-install-recommends -y ca-certificates libcurl4 wget &&\
+  apt-get install --no-install-recommends -y ca-certificates jq libcurl4 wget &&\
   rm -rf /var/lib/apt/lists/*
 
 RUN cd /tmp &&\
