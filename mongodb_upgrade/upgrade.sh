@@ -7,6 +7,7 @@ catch_error() {
 
 abort_and_rollback() {
   echo -e "\nERROR: unexpected failure; aborting MongoDB upgrade and rolling back!"
+  echo       "  see /opt/tplink/EAPController/data/mongodb_upgrade.log for errors related to MongoDB"
 
   # check for mongod running
   MONGOD_PROC="$(pgrep mongod)"
@@ -75,11 +76,11 @@ version_step_upgrade() {
   fi
 
   # run repair on db to upgrade
-  #/tmp/mongod-${MONGO_VER} --dbpath /opt/tplink/EAPController/data/db -pidfilepath /opt/tplink/EAPController/data/mongo.pid --bind_ip 127.0.0.1 ${JOURNAL} --logpath /tmp/upgrade_log.txt --logappend --repair || abort_and_rollback
+  #/tmp/mongod-${MONGO_VER} --dbpath /opt/tplink/EAPController/data/db -pidfilepath /opt/tplink/EAPController/data/mongo.pid --bind_ip 127.0.0.1 ${JOURNAL} --logpath /opt/tplink/EAPController/data/mongodb_upgrade.log --logappend --repair || abort_and_rollback
 
   # start db
   echo -n "INFO: starting mongod ${MONGO_VER}..."
-  /tmp/mongod-${MONGO_VER} --fork --dbpath /opt/tplink/EAPController/data/db -pidfilepath /opt/tplink/EAPController/data/mongo.pid --bind_ip 127.0.0.1 ${JOURNAL} --logpath /tmp/upgrade_log.txt --logappend || abort_and_rollback
+  /tmp/mongod-${MONGO_VER} --fork --dbpath /opt/tplink/EAPController/data/db -pidfilepath /opt/tplink/EAPController/data/mongo.pid --bind_ip 127.0.0.1 ${JOURNAL} --logpath /opt/tplink/EAPController/data/mongodb_upgrade.log --logappend || abort_and_rollback
 
   # make sure MongoDB is running
   while ! echo 'db.adminCommand( { getParameter: 1, featureCompatibilityVersion: 1 } )' | /tmp/${MONGO_CLIENT} --quiet >/dev/null 2>&1
