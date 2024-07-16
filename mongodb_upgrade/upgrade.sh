@@ -6,8 +6,16 @@ catch_error() {
 }
 
 abort_and_rollback() {
-  echo -e "\nERROR: unexpected failure; aborting MongoDB upgrade and rolling back!"
-  echo       "  see /opt/tplink/EAPController/data/mongodb_upgrade.log for errors related to MongoDB"
+  echo -e "\nERROR: unexpected failure during upgrade!"
+
+  # only output if present
+  if [ -f /opt/tplink/EAPController/data/mongodb_upgrade.log ]
+  then
+    echo "INFO: outputting last 30 lines from the mongodb_upgrade.log:"
+    tail -30 /opt/tplink/EAPController/data/mongodb_upgrade.log
+  fi
+
+  echo -e "\nERROR: aborting MongoDB upgrade and rolling back!"
 
   # check for mongod running
   MONGOD_PROC="$(pgrep mongod)"
@@ -53,6 +61,12 @@ abort_and_rollback() {
   else
     # this should never happen
     echo "ERROR: there was no backup file (mongodb-preupgrade.tar) present; skipping rollback!"
+  fi
+
+  # output message about full logs, if present
+  if [ -f /opt/tplink/EAPController/data/mongodb_upgrade.log ]
+  then
+    echo "INFO: see /opt/tplink/EAPController/data/mongodb_upgrade.log for the full MongoDB logs"
   fi
 
   echo "INFO: successfully rolled back MongoDB using the pre-backup archive"
