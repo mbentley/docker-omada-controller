@@ -79,7 +79,7 @@ version_step_upgrade() {
 
   # start db
   echo -n "INFO: starting mongod ${MONGO_VER}..."
-  /tmp/mongod-${MONGO_VER} --dbpath /opt/tplink/EAPController/data/db -pidfilepath /opt/tplink/EAPController/data/mongo.pid --bind_ip 127.0.0.1 ${JOURNAL} --logpath /tmp/upgrade_log.txt --logappend &
+  /tmp/mongod-${MONGO_VER} --fork --dbpath /opt/tplink/EAPController/data/db -pidfilepath /opt/tplink/EAPController/data/mongo.pid --bind_ip 127.0.0.1 ${JOURNAL} --logpath /tmp/upgrade_log.txt --logappend || abort_and_rollback
 
   # make sure MongoDB is running
   while ! echo 'db.adminCommand( { getParameter: 1, featureCompatibilityVersion: 1 } )' | /tmp/${MONGO_CLIENT} --quiet >/dev/null 2>&1
@@ -172,9 +172,10 @@ version_step_upgrade() {
 
 # TODO
 #   X validate no /opt/tplink/EAPController/data/db/mongod.lock exists; abort if so
-#   - validate no /opt/tplink/EAPController/data/mongo.pid exists; abort if so ???
 #   X backup database before upgrade
 #   X rollback database on failure (and update all of the places we might exit to roll back)
+#   - validate no /opt/tplink/EAPController/data/mongo.pid exists; abort if so ???
+#   - Add AVX check (https://www.mongodb.com/docs/manual/administration/production-notes/#x86_64)
 
 # verify no lock file exists
 echo -n "INFO: running pre-flight checks on MongoDB..."
@@ -288,5 +289,5 @@ echo -n "INFO: Fixing ownership of database files..."
 chown -R "$(stat -c "%u:%g" /opt/tplink/EAPController/data)" /opt/tplink/EAPController/data
 echo "done"
 
-echo -e "\nINFO: upgrade process from MongoDB 3.6 to 7.0 was successful!"
-echo "INFO: the MongoDB backup file (mongodb-preupgrade.tar) is still in your persistent data directory in case you need to roll back but this can be removed once you have verified your controller is functioning correctly"
+echo -e "\nINFO: the MongoDB backup file (mongodb-preupgrade.tar) is still in your persistent data directory in case you need to roll back but this can be removed once you have verified your controller is functioning correctly"
+echo "INFO: upgrade process from MongoDB 3.6 to 7.0 was successful!"
