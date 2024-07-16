@@ -1,11 +1,68 @@
 #!/bin/bash
 
 catch_error() {
-  echo "ERROR: Unexpected failure!"
+  echo -e "\nERROR: unexpected failure!"
   exit 1
 }
 
-upgrade_mongodb() {
+abort_and_rollback() {
+  echo -e "\nERROR: unexpected failure; aborting MongoDB upgrade and rolling back!"
+
+  # check for mongod running
+  MONGOD_PROC="$(pgrep mongod)"
+
+  # if running, kill mongod
+  if [ -n "${MONGOD_PROC}" ]
+  then
+    # kill mongod
+    echo "INFO: killing mongod process..."
+    kill -9 "${MONGOD_PROC}"
+
+    # wait for mongod to be killed
+    while pgrep mongod > /dev/null
+    do
+      sleep .25
+    done
+    echo "done"
+  fi
+
+  # cleanup pid file, if present
+  if [ -f /opt/tplink/EAPController/data/mongo.pid ]
+  then
+    echo -n "INFO: cleaning up mongo.pid..."
+    rm /opt/tplink/EAPController/data/mongo.pid
+    echo "done"
+  fi
+
+  # make sure we actually have a backup
+  if [ -f /opt/tplink/EAPController/data/mongodb-preupgrade.tar ]
+  then
+    echo -n "INFO: rolling back to the backup of MongoDB prior to the upgrade..."
+    # roll back to the previous backup of mongodb
+    cd /opt/tplink/EAPController/data || catch_error
+
+    # remove partially migrated db
+    rm -rf db
+
+    # restore backup
+    tar xf mongodb-preupgrade.tar
+    echo "done"
+
+    echo "INFO: the MongoDB backup file (mongodb-preupgrade.tar) is still in your persistent data directory in case you need it"
+  else
+    # this should never happen
+    echo "ERROR: there was no backup file (mongodb-preupgrade.tar) present; skipping rollback!"
+  fi
+
+  echo "INFO: successfully rolled back MongoDB using the pre-backup archive"
+
+  # TODO: information on what to do should go here with final error
+
+  # exit
+  exit 1
+}
+
+version_step_upgrade() {
   # start upgrade
   echo -e "\nINFO: starting upgrade to ${MONGO_MAJ_MIN}..."
 
@@ -18,11 +75,11 @@ upgrade_mongodb() {
   fi
 
   # run repair on db to upgrade
-  #/tmp/mongod-${MONGO_VER} --dbpath ../data/db -pidfilepath ../data/mongo.pid --bind_ip 127.0.0.1 ${JOURNAL} --logpath /tmp/upgrade_log.txt --logappend --repair || catch_error
+  #/tmp/mongod-${MONGO_VER} --dbpath /opt/tplink/EAPController/data/db -pidfilepath /opt/tplink/EAPController/data/mongo.pid --bind_ip 127.0.0.1 ${JOURNAL} --logpath /tmp/upgrade_log.txt --logappend --repair || abort_and_rollback
 
   # start db
   echo -n "INFO: starting mongod ${MONGO_VER}..."
-  /tmp/mongod-${MONGO_VER} --dbpath ../data/db -pidfilepath ../data/mongo.pid --bind_ip 127.0.0.1 ${JOURNAL} --logpath /tmp/upgrade_log.txt --logappend &
+  /tmp/mongod-${MONGO_VER} --dbpath /opt/tplink/EAPController/data/db -pidfilepath /opt/tplink/EAPController/data/mongo.pid --bind_ip 127.0.0.1 ${JOURNAL} --logpath /tmp/upgrade_log.txt --logappend &
 
   # make sure MongoDB is running
   while ! echo 'db.adminCommand( { getParameter: 1, featureCompatibilityVersion: 1 } )' | /tmp/${MONGO_CLIENT} --quiet >/dev/null 2>&1
@@ -46,7 +103,9 @@ upgrade_mongodb() {
   if [ "${CURRENT_COMPAT_VERSION}" != "${EXPECTED_COMPAT_VERSION}" ]
   then
     echo -e "\nERROR: featureCompatibilityVersion is currently ${CURRENT_COMPAT_VERSION}; expected ${EXPECTED_COMPAT_VERSION}; aborting upgrade!"
-    exit 1
+
+    # abort and rollback
+    abort_and_rollback
   fi
 
   # set compatibility version
@@ -69,7 +128,7 @@ upgrade_mongodb() {
   echo "done"
 
   # verify new compat version
-  echo -n "INFO: verifying feature compatibility version has been updated to ${MONGO_MAJ_MIN}..."
+  echo -n "INFO: verifying feature compatibility version is now ${MONGO_MAJ_MIN}..."
   if [ "${MONGO_CLIENT}" = "mongosh" ]
   then
     # mongosh
@@ -83,7 +142,9 @@ upgrade_mongodb() {
   if [ "${NEW_COMPAT_VERSION}" != "${MONGO_MAJ_MIN}" ]
   then
     echo -e "\nERROR: featureCompatibilityVersion was not updated to ${MONGO_MAJ_MIN} as expected; aborting upgrade!"
-    exit 1
+
+    # abort and rollback
+    abort_and_rollback
   else
     echo "done"
   fi
@@ -101,14 +162,53 @@ upgrade_mongodb() {
   echo "done"
 
   # remove pidfile
-  rm ../data/mongo.pid || catch_error
+  rm /opt/tplink/EAPController/data/mongo.pid || abort_and_rollback
 
   # upgrade complete
-  echo -e "INFO: upgrade to ${MONGO_MAJ_MIN} complete!\n"
+  echo "INFO: upgrade to ${MONGO_MAJ_MIN} complete!"
 }
 
+### start of full upgrade cycle
+
+# TODO
+#   X validate no /opt/tplink/EAPController/data/db/mongod.lock exists; abort if so
+#   - validate no /opt/tplink/EAPController/data/mongo.pid exists; abort if so ???
+#   X backup database before upgrade
+#   X rollback database on failure (and update all of the places we might exit to roll back)
+
+# verify no lock file exists
+echo -n "INFO: running pre-flight checks on MongoDB..."
+
+# check to see if mongod.lock exists & it is > zero bytes
+if [ -f /opt/tplink/EAPController/data/db/mongod.lock ] && [ -s "/opt/tplink/EAPController/data/db/mongod.lock" ]
+then
+  # mongod.lock exists & is > zero bytes
+  echo -e "\nERROR: mongod.lock exists and isn't empty! Either the MongoDB wasn't shut down cleanly or there is another process accessing the persistent data files! Unable to execute upgrade!"
+  # TODO: add instructions for what to do in this case
+  exit 1
+fi
+
+# pre-flight checks successful
+echo "done"
+
+# take backup before upgrade
+echo -n "INFO: creating a backup (mongodb-preupgrade.tar) of MongoDB pre-upgrade..."
+cd /opt/tplink/EAPController/data || catch_error
+tar cf mongodb-preupgrade.tar db
+
+# make sure the backup file is a valid tar
+if tar tf mongodb-preupgrade.tar >/dev/null 2>&1
+then
+  # successfully listed the files
+  echo "done"
+else
+  # failed to list contents of tar
+  echo -e "\nERROR: failed to create a backup of MongoDB; aborting upgrade!"
+  exit 1
+fi
+
 # output message
-echo -e "INFO: executing upgrade process from MongoDB 3.6 to 7.0...\n"
+echo -e "\nINFO: executing upgrade process from MongoDB 3.6 to 7.0..."
 
 ### 3.6 to 4.0
 # set variables
@@ -118,15 +218,16 @@ MONGO_CLIENT="mongo-${MONGO_VER}"
 EXPECTED_COMPAT_VERSION="3.6"
 
 # run upgrade
-upgrade_mongodb
+version_step_upgrade
 
 
 ### 4.0 to 4.2
 ### upgrade to 4.2
 if [ "$(uname -m)" = "aarch64" ]
 then
-  echo "INFO: upgrading from libcurl3 to libcurl4"
+  echo -e "\nINFO: upgrading from libcurl3 to libcurl4..."
   dpkg -i /libcurl4_7.58.0-2ubuntu3.24_arm64.deb
+  echo "done"
 fi
 
 # set variables
@@ -136,7 +237,7 @@ MONGO_CLIENT="mongo-${MONGO_VER}"
 EXPECTED_COMPAT_VERSION="4.0"
 
 # run upgrade
-upgrade_mongodb
+version_step_upgrade
 
 
 ### 4.2 to 4.4
@@ -147,7 +248,7 @@ MONGO_CLIENT="mongo-${MONGO_VER}"
 EXPECTED_COMPAT_VERSION="4.2"
 
 # run upgrade
-upgrade_mongodb
+version_step_upgrade
 
 
 ### 4.4 to 5.0
@@ -158,7 +259,7 @@ MONGO_CLIENT="mongo-${MONGO_VER}"
 EXPECTED_COMPAT_VERSION="4.4"
 
 # run upgrade
-upgrade_mongodb
+version_step_upgrade
 
 
 ### 5.0 to 6.0
@@ -169,7 +270,7 @@ MONGO_CLIENT="mongosh"
 EXPECTED_COMPAT_VERSION="5.0"
 
 # run upgrade
-upgrade_mongodb
+version_step_upgrade
 
 
 ### 6.0 to 7.0
@@ -180,11 +281,12 @@ MONGO_CLIENT="mongosh"
 EXPECTED_COMPAT_VERSION="6.0"
 
 # run upgrade
-upgrade_mongodb
+version_step_upgrade
 
 # set ownership
-echo -ne "\nINFO: Fixing ownership of database files..."
-chown -R "$(stat -c "%u:%g" ../data)" ../data
+echo -n "INFO: Fixing ownership of database files..."
+chown -R "$(stat -c "%u:%g" /opt/tplink/EAPController/data)" /opt/tplink/EAPController/data
 echo "done"
 
-echo -e "\n\nINFO: upgrade process from MongoDB 3.6 to 7.0 was successful!"
+echo -e "\nINFO: upgrade process from MongoDB 3.6 to 7.0 was successful!"
+echo "INFO: the MongoDB backup file (mongodb-preupgrade.tar) is still in your persistent data directory in case you need to roll back but this can be removed once you have verified your controller is functioning correctly"
