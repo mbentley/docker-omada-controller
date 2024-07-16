@@ -41,7 +41,7 @@ RUN cd /tmp &&\
   mv mongosh-2.2.12-linux-arm64/bin/mongosh mongosh &&\
   rm -rf mongodb-* mongosh-*
 
-COPY migrate.sh /
+COPY upgrade.sh /
 
 WORKDIR /opt/tplink/EAPController/lib
-ENTRYPOINT ["/migrate.sh"]
+ENTRYPOINT ["/upgrade.sh"]
