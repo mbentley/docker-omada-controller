@@ -5,8 +5,10 @@
 #   X backup database before upgrade
 #   X rollback database on failure (and update all of the places we might exit to roll back)
 #   - validate no /opt/tplink/EAPController/data/mongo.pid exists; abort if so ???
-#   - Add AVX check (https://www.mongodb.com/docs/manual/administration/production-notes/#x86_64) for amd64
-#   - Check to see if the upgrade fails on arm64 if the instruction set isn't ARMv8.2-A or later
+#   - amd64 requirements
+#     - Add AVX check (https://www.mongodb.com/docs/manual/administration/production-notes/#x86_64)
+#   - arm64 requirements
+#     - Check to see if the upgrade fails on arm64 if the instruction set isn't ARMv8.2-A or later (https://www.mongodb.com/docs/manual/administration/production-notes/#arm64)
 
 catch_error() {
   echo -e "\nERROR: unexpected failure!"

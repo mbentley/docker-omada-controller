@@ -2,6 +2,10 @@
 
 **Warning**: this is a work in progress and is not meant to be ran against your actual controller in production today!
 
+## TODO List
+
+The TODO list can be found at the top of the [upgrade.sh](./upgrade.sh) script.
+
 ## Build the Images
 
 Neither of these images are present on Docker Hub and must be built manually for now.
