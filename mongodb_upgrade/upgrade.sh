@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# TODO
+#   X validate no /opt/tplink/EAPController/data/db/mongod.lock exists; abort if so
+#   X backup database before upgrade
+#   X rollback database on failure (and update all of the places we might exit to roll back)
+#   - validate no /opt/tplink/EAPController/data/mongo.pid exists; abort if so ???
+#   - Add AVX check (https://www.mongodb.com/docs/manual/administration/production-notes/#x86_64) for amd64
+#   - Check to see if the upgrade fails on arm64 if the instruction set isn't ARMv8.2-A or later
+
 catch_error() {
   echo -e "\nERROR: unexpected failure!"
   exit 1
@@ -11,8 +19,8 @@ abort_and_rollback() {
   # only output if present
   if [ -f /opt/tplink/EAPController/data/mongodb_upgrade.log ]
   then
-    echo "INFO: outputting last 30 lines from the mongodb_upgrade.log:"
-    tail -30 /opt/tplink/EAPController/data/mongodb_upgrade.log
+    echo "INFO: outputting MongoDB logs (may provide hints as to what went wrong):"
+    cat /opt/tplink/EAPController/data/mongodb_upgrade.log
   fi
 
   echo -e "\nERROR: aborting MongoDB upgrade and rolling back!"
@@ -94,7 +102,7 @@ version_step_upgrade() {
 
   # start db
   echo -n "INFO: starting mongod ${MONGO_VER}..."
-  /tmp/mongod-${MONGO_VER} --fork --dbpath /opt/tplink/EAPController/data/db -pidfilepath /opt/tplink/EAPController/data/mongo.pid --bind_ip 127.0.0.1 ${JOURNAL} --logpath /opt/tplink/EAPController/data/mongodb_upgrade.log --logappend || abort_and_rollback
+  /tmp/mongod-${MONGO_VER} --fork --dbpath /opt/tplink/EAPController/data/db -pidfilepath /opt/tplink/EAPController/data/mongo.pid --bind_ip 127.0.0.1 ${JOURNAL} --logpath /opt/tplink/EAPController/data/mongodb_upgrade.log || abort_and_rollback
 
   # make sure MongoDB is running
   while ! echo 'db.adminCommand( { getParameter: 1, featureCompatibilityVersion: 1 } )' | /tmp/${MONGO_CLIENT} --quiet >/dev/null 2>&1
@@ -184,23 +192,23 @@ version_step_upgrade() {
 }
 
 ### start of full upgrade cycle
-
-# TODO
-#   X validate no /opt/tplink/EAPController/data/db/mongod.lock exists; abort if so
-#   X backup database before upgrade
-#   X rollback database on failure (and update all of the places we might exit to roll back)
-#   - validate no /opt/tplink/EAPController/data/mongo.pid exists; abort if so ???
-#   - Add AVX check (https://www.mongodb.com/docs/manual/administration/production-notes/#x86_64)
-
 # verify no lock file exists
 echo -n "INFO: running pre-flight checks on MongoDB..."
 
 # check to see if mongod.lock exists & it is > zero bytes
-if [ -f /opt/tplink/EAPController/data/db/mongod.lock ] && [ -s "/opt/tplink/EAPController/data/db/mongod.lock" ]
+if [ -f "/opt/tplink/EAPController/data/db/mongod.lock" ] && [ -s "/opt/tplink/EAPController/data/db/mongod.lock" ]
 then
   # mongod.lock exists & is > zero bytes
   echo -e "\nERROR: mongod.lock exists and isn't empty! Either the MongoDB wasn't shut down cleanly or there is another process accessing the persistent data files! Unable to execute upgrade!"
   # TODO: add instructions for what to do in this case
+  exit 1
+fi
+
+# check for files known to exist when MongoDB has written data
+if [ ! -f "/opt/tplink/EAPController/data/db/WiredTiger" ] || [ ! -f "/opt/tplink/EAPController/data/db/storage.bson" ]
+then
+  # could not find WiredTiger or a storage.bson
+  echo -e "\nERROR: could not find MongoDB related files in '/opt/tplink/EAPController/data/db' (did you mount 'data' into the container using the same path as you run for the controller?)"
   exit 1
 fi
 
@@ -300,7 +308,7 @@ EXPECTED_COMPAT_VERSION="6.0"
 version_step_upgrade
 
 # set ownership
-echo -n "INFO: Fixing ownership of database files..."
+echo -n "INFO: fixing ownership of database files..."
 chown -R "$(stat -c "%u:%g" /opt/tplink/EAPController/data)" /opt/tplink/EAPController/data
 echo "done"
 
