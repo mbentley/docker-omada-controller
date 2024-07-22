@@ -19,7 +19,7 @@ For references on running a legacy v3 or v4 controller, see the [README for v3 a
     * [Using port mapping](#using-port-mapping)
     * [Using `net=host`](#using-nethost)
 * [Optional Variables](#optional-variables)
-* [Persistent Data](#persistent-data-and-permissions)
+* [Persistent Data](#persistent-data)
 * [Custom Certificates](#custom-certificates)
 * [MongoDB Small Files](#mongodb-small-files)
 * [Time Zones](#time-zones)
