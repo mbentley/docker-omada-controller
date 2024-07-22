@@ -251,7 +251,7 @@ Documentation on the ports used by the controller can be found in the [TP-Link F
 
 ## Persistent Data
 
-In the examples, there are two directories where persistent data is stored: `data` and `logs`. The `data` directory is where the persistent database data is stored where all of your settings, app configuration, etc is stored. The `log` directory is where logs are written and stored. I would suggest that you use a bind mounted volume for the `data` directory to ensure that your persistent data is directly under your control and of course take regular backups within the Omada Controller application itself.
+In the examples, there are two directories where persistent data is stored: `data` and `logs`. The `data` directory is where the persistent database data is stored where all of your settings, app configuration, etc is stored. The `log` directory is where logs are written and stored. I would suggest that you use a bind mounted volume for the `data` directory to ensure that your persistent data is directly under your control and of course take regular backups within the Omada Controller application itself. Previous versions of the controller (before 5.x) also used a `work` persistent directory `omada-work` which was mapped to `/opt/tplink/EAPController/work` inside the container where the application was deployed. This `work` directory is no longer needed as of 5.0.x.
 
 ## Custom Certificates
 
