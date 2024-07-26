@@ -34,8 +34,28 @@ fi
 # extract required data from the OMADA_URL
 OMADA_TAR="$(echo "${OMADA_URL}" | awk -F '/' '{print $NF}')"
 OMADA_VER="$(echo "${OMADA_TAR}" | awk -F '_v' '{print $2}' | awk -F '_' '{print $1}')"
+
+# try alternate way to get OMADA_VER if not found
+if [ -z "${OMADA_VER}" ]
+then
+  echo "INFO: failed to get OMADA_VER; trying alternate method of getting OMADA_VER..."
+  # get only numbers and periods; remove any beginning or trailing periods with sed (also get rid of 64 from x64 from end)
+  OMADA_VER="$(echo "${OMADA_TAR//[!0-9.]/}" | sed 's/\.*$//' | sed 's/^\.*//' | sed 's/64$//')"
+fi
+
 OMADA_MAJOR_VER="$(echo "${OMADA_VER}" | awk -F '.' '{print $1}')"
 OMADA_MAJOR_MINOR_VER="$(echo "${OMADA_VER}" | awk -F '.' '{print $1"."$2}')"
+
+# make sure we were able to figure out these env vars
+if [ -z "${OMADA_TAR}" ] || [ -z "${OMADA_VER}" ] || [ -z "${OMADA_MAJOR_VER}" ] || [ -z "${OMADA_MAJOR_MINOR_VER}" ]
+then
+  echo "ERROR: one of the following variables wasn't populated:"
+  echo "  OMADA_TAR=\"${OMADA_TAR}\""
+  echo "  OMADA_VER=\"${OMADA_VER}\""
+  echo "  OMADA_MAJOR_VER=\"${OMADA_MAJOR_VER}\""
+  echo "  OMADA_MAJOR_MINOR_VER=\"${OMADA_MAJOR_MINOR_VER}\""
+  exit 1
+fi
 
 # function to exit on error w/message
 die() { echo -e "$@" 2>&1; exit 1; }
@@ -104,10 +124,12 @@ case "${ARCH}:${NO_MONGODB}" in
 esac
 
 # output variables/selections
-echo "ARCH=${ARCH}"
-echo "OMADA_VER=${OMADA_VER}"
-echo "OMADA_TAR=${OMADA_TAR}"
-echo "OMADA_URL=${OMADA_URL}"
+echo "ARCH=\"${ARCH}\""
+echo "OMADA_URL=\"${OMADA_URL}\""
+echo "OMADA_TAR=\"${OMADA_TAR}\""
+echo "OMADA_VER=\"${OMADA_VER}\""
+echo "OMADA_MAJOR_VER=\"${OMADA_MAJOR_VER}\""
+echo "OMADA_MAJOR_MINOR_VER=\"${OMADA_MAJOR_MINOR_VER}\""
 echo "PKGS=( ${PKGS[*]} )"
 
 echo "**** Install Dependencies ****"
@@ -141,6 +163,15 @@ then
         mv -v "$(find . -name "*.tar.gz" | sed 's|^./||')" .
 
         # cleanup directories
+        # shellcheck disable=SC2044
+        for DIR in $(find ./* -type d)
+        do
+          # cd to dir, find and delete any files; return
+          cd "${DIR}"
+          find . -type f -delete
+          cd -
+        done
+
         find ./* -type d -delete
       else
         echo "ERROR: unable to find a .tar.gz file!"

@@ -126,7 +126,7 @@ There are some differences between the build steps for `amd64`, `arm64`, and `ar
     --build-arg INSTALL_VER="5.14.26.1" \
     --build-arg ARCH="amd64" \
     -f Dockerfile.v5.x \
-    -t mbentley/omada-controller:5.14 .
+    -t mbentley/omada-controller:5.14-amd64 .
   ```
 
 ### `arm64`
