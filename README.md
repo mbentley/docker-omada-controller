@@ -51,7 +51,7 @@ For a full tag list, search the [Docker Hub tags list](https://hub.docker.com/r/
 | Tag(s) | Major.Minor Release | Current Version |
 | :----- | ------------------- | --------------- |
 | `latest`, `5.14` | Omada Controller `5.14.x` | `5.14.26.1` |
-| `beta`, `beta-5.14` | Omada Controller `beta` | `5.14.20.9` |
+| `beta`, `beta-5.14` | Omada Controller `beta` | `5.14.30.7` |
 | `5.13` | Omada Controller `5.13.x` | `5.13.30.8` |
 | `5.12` | Omada Controller `5.12.x` | `5.12.7` |
 
