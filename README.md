@@ -12,7 +12,10 @@ For references on running a legacy v3 or v4 controller, see the [README for v3 a
     * [Explicit Version Tags](#explicit-version-tags)
     * [Archived Tags](#archived-tags)
 * [Getting Help & Reporting Issues](#getting-help--reporting-issues)
-* [Controller Upgrades](#controller-upgrades)
+* [Best Practices for Operation](#best-practices-for-operation)
+    * [Controller Backups](#controller-backups)
+    * [Controller Upgrades](#controller-upgrades)
+    * [Preventing Database Corruption](#preventing-database-corruption)
 * [Building Images](#building-images)
 * [Example Usage](#example-usage)
     * [Using non-default ports](#using-non-default-ports)
@@ -102,13 +105,21 @@ These images are still published on Docker Hub but are no longer regularly updat
 
 If you have issues running the controller, feel free to [create a Help discussion](https://github.com/mbentley/docker-omada-controller/discussions/categories/help) and I will help as I can. If you are specifically having a problem that is related to the actual software, I would suggest filing an issue on the [TP-Link community forums](https://community.tp-link.com/en/business/forum/582) as I do not have access to source code to debug those issues. If you're not sure where the problem might be, I can help determine if it is a running in Docker issue or a software issue. If you're certain you have found a bug, create a [Bug Report Issue](https://github.com/mbentley/docker-omada-controller/issues/new/choose).
 
-## Controller Upgrades
+## Best Practices for Operation
 
-Controller upgrades are done by stopping the existing container gracefully (see the [note below](#preventing-database-corruption) on this topic), removing the existing container, and running a new container with the new version of the controller. This can be done manually, with compose, or with manby other 3rd party tools which auto-update containers.
+### Controller Backups
 
-### Preventing database corruption
+While you can take backups of your controller by making a copy of the persistent data, the chance of data corruption exists if you do so while the container is running as there is a database used for persistence. The best way to take backups is to use the automatic backup capabilities within the controller itself. Go to **Settings** > **Maintenance** > **Backup** and scroll down to **Auto Backup** to enable and configure the feature. These backups can be restored as a part of the installation process on a clean controller install.
 
-When stopping your container in order to upgrade the controller, make sure to allow the MongoDB enough time to safely shutdown. This is done using `docker stop -t <value>` where `<value>` is a number in seconds, such as 60, which should allow the controller to cleanly shutdown. Database corruption has been observed when not cleanly shut down. The compose example now includes a default `stop_grace_period` of 60s.
+Backups can also be taken manually on the same screen as the auto backup settings. This would be ideal to do before you perform an upgrade to ensure that you are able to roll back in case of issues upon upgrade as you can not move from a newer version of the controller to an older version! It will break the database and require you to do a full reinstall!
+
+### Controller Upgrades
+
+Before performing and upgrade, I would suggest taking a backup through the controller itself. Controller upgrades are done by stopping the existing container gracefully (see the [note below](#preventing-database-corruption) on this topic), removing the existing container, and running a new container with the new version of the controller. This can be done manually, with compose, or with manby other 3rd party tools which auto-update containers.
+
+### Preventing Database Corruption
+
+When stopping your container in order to upgrade the controller, make sure to allow the MongoDB enough time to safely shutdown. This is done using `docker stop -t <value>` where `<value>` is a number in seconds, such as 60, which should allow the controller to cleanly shutdown. Database corruption has been observed when not cleanly shut down. The `docker run` and compose examples now include `--stop-timeout` and `stop_grace_period` which are set to 60s.
 
 ## Building images
 
@@ -273,6 +284,7 @@ There is a [Docker Compose file](https://github.com/mbentley/docker-omada-contro
 
 ```bash
 wget https://raw.githubusercontent.com/mbentley/docker-omada-controller/master/docker-compose.yml
+<edit the compose file to match your persistent data needs>
 docker compose up -d
 ```
 
