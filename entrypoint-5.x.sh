@@ -369,6 +369,20 @@ case ${JAVA_VERSION_1}.${JAVA_VERSION_2} in
     ;;
 esac
 
+# check for autobackup
+if [ ! -d "/opt/tplink/EAPController/data/autobackup" ]
+then
+  echo
+  echo "##############################################################################"
+  echo "##############################################################################"
+  echo "WARNGING: autobackup directory not found! Please configure automatic backups!"
+  echo "  For instructions, see https://github.com/mbentley/docker-omada-controller#controller-backups"
+  echo "##############################################################################"
+  echo "##############################################################################"
+  echo
+  sleep 2
+fi
+
 echo "INFO: Starting Omada Controller as user ${PUSERNAME}"
 
 # tail the omada logs if set to true
