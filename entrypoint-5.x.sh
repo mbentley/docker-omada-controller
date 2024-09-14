@@ -47,7 +47,7 @@ if grep -q -E "^${PGROUP}:" /etc/group > /dev/null 2>&1
 then
   # existing group found; also make sure the omada group matches the GID
   echo "INFO: Group (${PGROUP}) exists; skipping creation"
-  EXISTING_GID="$(id -g "${PGROUP}")"
+  EXISTING_GID="$(getent group "${PGROUP}" | cut -d: -f3)"
   if [ "${EXISTING_GID}" != "${PGID}" ]
   then
     echo "ERROR: Group (${PGROUP}) has an unexpected GID; was expecting '${PGID}' but found '${EXISTING_GID}'!"
