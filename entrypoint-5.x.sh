@@ -355,6 +355,9 @@ else
   echo "INFO: userland/kernel check passed"
 fi
 
+# show java version
+echo -e "INFO: output of 'java -version':\n$(java -version 2>&1)\n"
+
 # get the java version in different formats
 JAVA_VERSION="$(java -version 2>&1 | head -n 1 | awk -F '"' '{print $2}')"
 JAVA_VERSION_1="$(echo "${JAVA_VERSION}" | awk -F '.' '{print $1}')"

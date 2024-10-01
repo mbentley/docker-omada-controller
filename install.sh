@@ -93,7 +93,7 @@ esac
 # add specific package for openjdk
 case "${ARCH}:${NO_MONGODB}" in
   amd64:*|arm64:*|armv7l:true|"":*)
-    # use openjdk-17 for v5.4 and above; all others us openjdk-8
+    # use openjdk-17 for v5.4 and above; all others use openjdk-8
     case "${OMADA_MAJOR_VER}" in
       5)
         # pick specific package based on the major.minor version
@@ -103,8 +103,16 @@ case "${ARCH}:${NO_MONGODB}" in
             PKGS+=( openjdk-8-jre-headless )
             ;;
           *)
-            # starting with 5.4, openjdk-17 is supported
-            PKGS+=( openjdk-17-jre-headless )
+            # starting with 5.4, OpenJDK 17 is supported; we will use OpenJ9 if present or OpenJDK 17 if not
+            if [ "$(. /opt/java/openjdk/release >/dev/null 2>&1; echo "${JVM_VARIANT}")" = "Openj9" ]
+            then
+              # we found OpenJ9; assume we want to use that
+              echo "INFO: OpenJ9 was found; using that instead of OpenJDK 17!"
+            else
+              # OpenJ9 not found; assume we need to use OpenJDK 17
+              echo "INFO: OpenJ9 was NOT found; using adding OpenJDK 17 to the list of packages to install"
+              PKGS+=( openjdk-17-jre-headless )
+            fi
             ;;
         esac
         ;;
