@@ -103,13 +103,15 @@ case "${ARCH}:${NO_MONGODB}" in
             PKGS+=( openjdk-8-jre-headless )
             ;;
           *)
-            # starting with 5.4, openjdk-17 is supported; we will use OpenJ9 so let's make sure it's there
+            # starting with 5.4, OpenJDK 17 is supported; we will use OpenJ9 if present or OpenJDK 17 if not
             if [ "$(. /opt/java/openjdk/release >/dev/null 2>&1; echo "${JVM_VARIANT}")" = "Openj9" ]
             then
-              echo "INFO: OpenJ9 was found!"
+              # we found OpenJ9; assume we want to use that
+              echo "INFO: OpenJ9 was found; using that instead of OpenJDK 17!"
             else
-              echo "ERROR: OpenJ9 was not found! (Hint: did you forget to use mbentley/openj9:17 as the base image?"
-              exit 1
+              # OpenJ9 not found; assume we need to use OpenJDK 17
+              echo "INFO: OpenJ9 was NOT found; using adding OpenJDK 17 to the list of packages to install"
+              PKGS+=( openjdk-17-jre-headless )
             fi
             ;;
         esac
