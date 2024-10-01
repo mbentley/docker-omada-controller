@@ -1,6 +1,6 @@
 # Notes for External MongoDB (Experimental)
 
-Note: This is 100% experiemental. If you move to an external MongoDB, you're on your own in terms of getting help. These notes below are just my notes from when I was proving this out, not a production ready setup. They include standing up a new MongoDB + Controller and test steps for a migration from the all in one to separate containers. Again, you're on your own.
+Note: This is still experiemental. If you move to an external MongoDB, you're on your own in terms of getting help. These notes below are just my notes from when I was proving this out, not a production ready setup. They include standing up a new MongoDB + Controller and test steps for a migration from the all in one to separate containers. Again, you're on your own.
 
 * [Common Steps](#common-steps)
 * [MongoDB + Omada Controller (fresh install)](#mongodb--omada-controller-fresh-install)
@@ -12,15 +12,41 @@ These steps are needed for either scenario you want to test.
 
 1. (Optional) Build the Docker Image
 
-    As of 10/23/2023, a multi-arch test image is available on Docker Hub as `mbentley/omada-controller:5.12-external-mongo-test` for `amd64` and `arm64` but you can build it yourself:
+    As of 3/19/2024, a multi-arch test image is available on Docker Hub as `mbentley/omada-controller:5.13-external-mongo-test` for `amd64`, `arm64`, and `armv7l` but you can build them yourself:
 
     ```bash
+    # amd64
     docker build \
       --pull \
-      --build-arg INSTALL_VER="5.12" \
+      --build-arg NO_MONGODB=true \
+      --build-arg ARCH="amd64" \
+      --platform linux/amd64 \
       --progress plain \
       -f Dockerfile.v5.x \
-      -t mbentley/omada-controller:5.12-external-mongo-test .
+      -t mbentley/omada-controller:5.13-external-mongo-test-amd64 \
+      -t mbentley/omada-controller:5.13-external-mongo-test .
+
+    # arm64
+    docker build \
+      --pull \
+      --build-arg NO_MONGODB=true \
+      --build-arg ARCH="arm64" \
+      --platform linux/arm64 \
+      --progress plain \
+      -f Dockerfile.v5.x \
+      -t mbentley/omada-controller:5.13-external-mongo-test-arm64 \
+      -t mbentley/omada-controller:5.13-external-mongo-test .
+
+    # armv7l
+    docker build \
+      --pull \
+      --build-arg NO_MONGODB=true \
+      --build-arg ARCH="armv7l" \
+      --platform linux/arm/v7 \
+      --progress plain \
+      -f Dockerfile.v5.x \
+      -t mbentley/omada-controller:5.13-external-mongo-test-armv7l \
+      -t mbentley/omada-controller:5.13-external-mongo-test .
     ```
 
 1. Create a Docker `bridge` Network
@@ -74,7 +100,7 @@ This expects that you are in this project's root where the `Dockerfile` is.  Upd
       --mount type=volume,source=omada-logs,destination=/opt/tplink/EAPController/logs \
       -e MONGO_EXTERNAL="true" \
       -e EAP_MONGOD_URI="mongodb://omada:0m4d4@mongodb.omada:27017/omada" \
-      mbentley/omada-controller:5.12-external-mongo-test &&\
+      mbentley/omada-controller:5.13-external-mongo-test &&\
     docker logs -f omada-controller
     ```
 
@@ -107,7 +133,7 @@ While I have this WIP for migrating from all in one, it would be much simplier t
       -p 29811-29816:29811-29816 \
       --mount type=volume,source=omada-data,destination=/opt/tplink/EAPController/data \
       --mount type=volume,source=omada-logs,destination=/opt/tplink/EAPController/logs \
-      mbentley/omada-controller:5.12-external-mongo-test &&\
+      mbentley/omada-controller:5.13-external-mongo-test &&\
     docker logs -f omada-controller
     ```
 
@@ -156,7 +182,7 @@ While I have this WIP for migrating from all in one, it would be much simplier t
       --mount type=volume,source=omada-logs,destination=/opt/tplink/EAPController/logs \
       -e MONGO_EXTERNAL="true" \
       -e EAP_MONGOD_URI="mongodb://mongodb.omada:27017/omada" \
-      mbentley/omada-controller:5.12-external-mongo-test &&\
+      mbentley/omada-controller:5.13-external-mongo-test &&\
     docker logs -f omada-controller
     ```
 

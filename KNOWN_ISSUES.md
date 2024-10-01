@@ -12,6 +12,7 @@
     * [Incorrect CMD](#incorrect-cmd)
     * [5.12 - Unable to Login After Upgrade](#512---unable-to-login-after-upgrade)
     * [Slowness in Safari](#slowness-in-safari)
+    * [5.14 - Controller Unable to Start](#514---controller-unable-to-start)
 
 ## Containerization Issues
 
@@ -71,3 +72,7 @@ There is a [known bug](https://github.com/mbentley/docker-omada-controller/discu
 ### Slowness in Safari
 
 In versions 5.8 to 5.12, it has been seen where Safari will take a significant amount of time to completely load a page in the controller web interface.  This is an [issue that has been reported upstream](https://community.tp-link.com/en/business/forum/topic/619304?replyId=1255404).
+
+### 5.14 - Controller Unable to Start
+
+Upon upgrade to 5.14, the controller may not start. You may see error messages that include phrases like: `Cannot retry start up springboot`, `Unsatisfied dependency expressed through field...`, `org.springframework.beans.factory.UnsatisfiedDependencyException`, among others. This is a problem with the controller software itself that TP-Link is aware of. If you're impacted, see the first post in [this issue](https://github.com/mbentley/docker-omada-controller/issues/418) for possible workaround instructions and more information.

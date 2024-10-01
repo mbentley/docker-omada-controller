@@ -4,19 +4,18 @@ FROM ${BASE}
 LABEL maintainer="Matt Bentley <mbentley@mbentley.net>"
 LABEL org.opencontainers.image.source="https://github.com/mbentley/docker-omada-controller"
 
-COPY healthcheck.sh install.sh log4j_patch.sh /
+COPY healthcheck.sh install.sh /
 
 # valid values: amd64 (default) | arm64 | armv7l
 ARG ARCH=amd64
 
-# install version (major.minor only); OMADA_URL set in install.sh
-ARG INSTALL_VER="5.13"
+# install version (major.minor or full version); OMADA_URL set in install.sh
+ARG INSTALL_VER="5.14.26.1"
 ARG NO_MONGODB=false
 
-# install omada controller (instructions taken from install.sh) & patch log4j, if applicable
+# install omada controller (instructions taken from install.sh)
 RUN /install.sh &&\
-  /log4j_patch.sh &&\
-  rm /install.sh /log4j_patch.sh
+  rm /install.sh
 
 COPY entrypoint-5.x.sh /entrypoint.sh
 
