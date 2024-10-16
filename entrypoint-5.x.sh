@@ -366,10 +366,12 @@ JAVA_VERSION_2="$(echo "${JAVA_VERSION}" | awk -F '.' '{print $2}')"
 # for java 8, remove the opens argument from the CMD
 case ${JAVA_VERSION_1}.${JAVA_VERSION_2} in
   1.8)
-    echo "INFO: running Java 8; removing '--add-opens' option from CMD (if present)..."
+    echo "INFO: running Java 8; removing '--add-opens' option(s) from CMD (if present)..."
     # remove opens option
     NEW_CMD="${*}"
     NEW_CMD="${NEW_CMD/'--add-opens java.base/java.util=ALL-UNNAMED '/}"
+    NEW_CMD="${NEW_CMD/'--add-opens java.base/sun.security.x509=ALL-UNNAMED '/}"
+    NEW_CMD="${NEW_CMD/'--add-opens java.base/sun.security.util=ALL-UNNAMED '/}"
     # shellcheck disable=SC2086
     set -- ${NEW_CMD}
     ;;
