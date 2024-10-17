@@ -369,7 +369,6 @@ case ${JAVA_VERSION_1}.${JAVA_VERSION_2} in
     echo "INFO: running Java 8; removing '--add-opens' option(s) from CMD (if present)..."
     # remove opens option
     NEW_CMD="${*}"
-    NEW_CMD="${NEW_CMD/'--add-opens java.base/java.util=ALL-UNNAMED '/}"
     NEW_CMD="${NEW_CMD/'--add-opens java.base/sun.security.x509=ALL-UNNAMED '/}"
     NEW_CMD="${NEW_CMD/'--add-opens java.base/sun.security.util=ALL-UNNAMED '/}"
     # shellcheck disable=SC2086
