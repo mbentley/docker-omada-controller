@@ -43,8 +43,9 @@ As always, take backups and read the documentation but the quick explanation of 
 
 * `3.2` -> `4.1`
     * This is a manual upgrade. See [Upgrading to 4.1 from 3.2.10 or below](#upgrading-to-41-from-3210-or-below).
-* `4.1` or `4.4` -> `5.x` (latest)
+* `4.1` or `4.4` -> `5.13` -> `5.x` (latest)
     * These are automatic upgrades that take place by updating the image tag.
+    * **Note**: Upgrading to `5.13.x` as an intermediate step is required due to `5.14.32.2` removing support for upgrading from v4 to v5.
 
 ## Upgrading to 5.0.x from 4.1.x or above
 
