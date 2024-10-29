@@ -12,8 +12,12 @@ This README is the consolidation of information from the v3 and v4 images which 
 * [Upgrading to 4.1 from 3.2.10 or below](#upgrading-to-41-from-3210-or-below)
     * [Notes for 4.1](#notes-for-41)
 * [Example Usage](#example-usage)
-    * [Using non-default ports](#using-non-default-ports)
-    * [Using Port Mapping](#using-port-mapping)
+    * [4.x - Example Usage](#4x---example-usage)
+    * [4.x - Using Port Mapping](#4x---using-port-mapping)
+    * [4.x - Using net=host](#4x---using-nethost)
+    * [3.x - Example Usage](#3x---example-usage)
+    * [3.x - Using Port Mapping](#3x---using-port-mapping)
+    * [3.x - Using net=host](#3x---using-nethost)
 * [Persistent Data and Permissions](#persistent-data-and-permissions)
 * [MongoDB Small Files](#mongodb-small-files)
 
@@ -78,16 +82,73 @@ The upgrade to the 4.1.x version is not a seamless upgrade and can't be done in 
 
 ## Example Usage
 
+For additional usage information, check out [this revision](https://github.com/mbentley/docker-omada-controller/blob/9885438b013651d18c29b5b2b9e1d18be70e2e5c/README.md) in the git history.
+
 ### Using non-default ports
 
 __tl;dr__: Always make sure the environment variables for the ports match any changes you have made in the web UI and you'll be fine.
 
 **Note**: The `3.2` version of the controller only supports the `MANAGE_HTTP_PORT` and `MANAGE_HTTPS_PORT` variables for modifying the controller's admin web interface ports. This means that setting `PORTAL_HTTP_PORT` and `PORTAL_HTTPS_PORT` will not have any effect in `3.2`. Versions `4.x` or greater support all of the `MANAGE_*_PORT` and `PORTAL_*_PORT` variables as described in the [Optional Variables](#optional-variables) section.
 
-### Using port mapping
+### 4.x - Example Usage
 
-<details>
-<summary>Example usage for 3.2</summary>
+#### 4.x - Using port mapping
+
+```
+docker run -d \
+  --name omada-controller \
+  --restart unless-stopped \
+  -p 8088:8088 \
+  -p 8043:8043 \
+  -p 8843:8843 \
+  -p 29810:29810 \
+  -p 29810:29810/udp \
+  -p 29811:29811 \
+  -p 29811:29811/udp \
+  -p 29812:29812 \
+  -p 29812:29812/udp \
+  -p 29813:29813 \
+  -p 29813:29813/udp \
+  -e MANAGE_HTTP_PORT=8088 \
+  -e MANAGE_HTTPS_PORT=8043 \
+  -e PORTAL_HTTP_PORT=8088 \
+  -e PORTAL_HTTPS_PORT=8843 \
+  -e SHOW_SERVER_LOGS=true \
+  -e SHOW_MONGODB_LOGS=false \
+  -e SSL_CERT_NAME="tls.crt" \
+  -e SSL_KEY_NAME="tls.key" \
+  -e TZ=Etc/UTC \
+  -v omada-data:/opt/tplink/EAPController/data \
+  -v omada-work:/opt/tplink/EAPController/work \
+  -v omada-logs:/opt/tplink/EAPController/logs \
+  mbentley/omada-controller:4.4
+```
+
+#### 4.x - Using `net=host`
+
+```
+docker run -d \
+  --name omada-controller \
+  --restart unless-stopped \
+  --net host \
+  -e MANAGE_HTTP_PORT=8088 \
+  -e MANAGE_HTTPS_PORT=8043 \
+  -e PORTAL_HTTP_PORT=8088 \
+  -e PORTAL_HTTPS_PORT=8843 \
+  -e SHOW_SERVER_LOGS=true \
+  -e SHOW_MONGODB_LOGS=false \
+  -e SSL_CERT_NAME="tls.crt" \
+  -e SSL_KEY_NAME="tls.key" \
+  -e TZ=Etc/UTC \
+  -v omada-data:/opt/tplink/EAPController/data \
+  -v omada-work:/opt/tplink/EAPController/work \
+  -v omada-logs:/opt/tplink/EAPController/logs \
+  mbentley/omada-controller:4.4
+```
+
+### 3.x - Example Usage
+
+#### 3.x - Using port mapping
 
 The below example can be used with 3.2. The port and volume mappings have changed in newer versions.
 
@@ -117,7 +178,26 @@ docker run -d \
   mbentley/omada-controller:3.2
 ```
 
-</details>
+#### 3.x - Using `net=host`
+
+```
+docker run -d \
+  --name omada-controller \
+  --stop-timeout 60 \
+  --restart unless-stopped \
+  --ulimit nofile=4096:8192 \
+  --net host \
+  -e MANAGE_HTTP_PORT=8088 \
+  -e MANAGE_HTTPS_PORT=8043 \
+  -e SMALL_FILES=false \
+  -e SSL_CERT_NAME="tls.crt" \
+  -e SSL_KEY_NAME="tls.key" \
+  -e TZ=Etc/UTC \
+  -v omada-data:/opt/tplink/EAPController/data \
+  -v omada-work:/opt/tplink/EAPController/work \
+  -v omada-logs:/opt/tplink/EAPController/logs \
+  mbentley/omada-controller:3.2
+```
 
 ## Persistent Data and Permissions
 
