@@ -328,6 +328,23 @@ else
   LAST_RAN_OMADA_VER="0.0.0"
 fi
 
+# make sure we are not trying to upgrade from 4.x to 5.14.32.x
+LAST_RAN_MAJOR_VER="$(echo "${LAST_RAN_OMADA_VER}" | awk -F '.' '{print $1}')"
+IMAGE_MAJOR_VER="$(echo "${IMAGE_OMADA_VER}" | awk -F '.' '{print $1}')"
+IMAGE_MINOR_VER="$(echo "${IMAGE_OMADA_VER}" | awk -F '.' '{print $2}')"
+
+# make sure we are not trying to upgrade from 4.x to 5.14.32.x or greater
+if [ "${LAST_RAN_MAJOR_VER}" = "4" ] && [ "${IMAGE_MAJOR_VER}" -ge "5" ]
+then
+  # check to see if we are runnning 5.14 or greater
+  if [ "${IMAGE_MAJOR_VER}" = "5" ] && [ "${IMAGE_MINOR_VER}" -ge "14" ] || [ "${IMAGE_MAJOR_VER}" -gt "5" ]
+  then
+    echo "ERROR: You are attempting to upgrade from 4.x to 5.14.x or greater; the upgrade code was removed in 5.14.x!"
+    echo "  See https://github.com/mbentley/docker-omada-controller/blob/master/README_v3_and_v4.md#upgrade-path for the upgrade path from 4.x to 5.x"
+    exit 1
+  fi
+fi
+
 # use sort to check which version is newer; should sort the newest version to the top
 if [ "$(printf '%s\n' "${IMAGE_OMADA_VER}" "${LAST_RAN_OMADA_VER}" | sort -rV | head -n1)" != "${IMAGE_OMADA_VER}" ]
 then
