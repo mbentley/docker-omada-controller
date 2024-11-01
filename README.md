@@ -53,7 +53,7 @@ For a full tag list, search the [Docker Hub tags list](https://hub.docker.com/r/
 
 | Tag(s) | Major.Minor Release | Current Version |
 | :----- | ------------------- | --------------- |
-| `latest`, `5.14` | Omada Controller `5.14.x` | `5.14.32.2` |
+| `latest`, `5.14` | Omada Controller `5.14.x` | `5.14.32.3` |
 | `beta`, `beta-5.15` | Omada Controller `beta` | `5.15.6.4` |
 | `5.13` | Omada Controller `5.13.x` | `5.13.30.8` |
 | `5.12` | Omada Controller `5.12.x` | `5.12.7` |
@@ -75,7 +75,7 @@ If for some reason you can't use the multi-arch tags, there are explicitly tagge
 
 ### Explicit Version Tags
 
-If you need a specific version of the controller, starting with 5.13 and 5.14, there are explicitly tagged images with the exact version (i.e. - `5.14.32.2`) in the tag name. Check [Docker Hub](https://hub.docker.com/r/mbentley/omada-controller/tags) for the full list of tags.
+If you need a specific version of the controller, starting with 5.13 and 5.14, there are explicitly tagged images with the exact version (i.e. - `5.14.32.3`) in the tag name. Check [Docker Hub](https://hub.docker.com/r/mbentley/omada-controller/tags) for the full list of tags.
 
 ## Archived Tags
 
@@ -134,7 +134,7 @@ There are some differences between the build steps for `amd64`, `arm64`, and `ar
 
   ```
   docker build \
-    --build-arg INSTALL_VER="5.14.32.2" \
+    --build-arg INSTALL_VER="5.14.32.3" \
     --build-arg ARCH="amd64" \
     -f Dockerfile.v5.x \
     -t mbentley/omada-controller:5.14-amd64 .
@@ -146,7 +146,7 @@ There are some differences between the build steps for `amd64`, `arm64`, and `ar
 
   ```
   docker build \
-    --build-arg INSTALL_VER="5.14.32.2" \
+    --build-arg INSTALL_VER="5.14.32.3" \
     --build-arg ARCH="arm64" \
     -f Dockerfile.v5.x \
     -t mbentley/omada-controller:5.14-arm64 .
@@ -158,7 +158,7 @@ There are some differences between the build steps for `amd64`, `arm64`, and `ar
 
   ```
   docker build \
-    --build-arg INSTALL_VER="5.14.32.2" \
+    --build-arg INSTALL_VER="5.14.32.3" \
     --build-arg ARCH="armv7l" \
     --build-arg BASE="ubuntu:16.04" \
     -f Dockerfile.v5.x \
