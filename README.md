@@ -8,6 +8,7 @@ For references on running a legacy v3 or v4 controller, see the [README for v3 a
 
 * [Image Tags](#image-tags)
     * [Multi-arch Tags](#multi-arch-tags)
+    * [Tags for Beta/Testing](#tags-for-betatesting)
     * [Explicit Architecture Tags](#explicit-architecture-tags)
     * [Explicit Version Tags](#explicit-version-tags)
     * [Archived Tags](#archived-tags)
@@ -53,10 +54,9 @@ For a full tag list, search the [Docker Hub tags list](https://hub.docker.com/r/
 
 | Tag(s) | Major.Minor Release | Current Version |
 | :----- | ------------------- | --------------- |
-| `latest`, `5.14` | Omada Controller `5.14.x` | `5.14.32.4` |
-| `beta`, `beta-5.15` | Omada Controller `beta` | `5.15.6.4` |
-| `5.13` | Omada Controller `5.13.x` | `5.13.30.8` |
-| `5.12` | Omada Controller `5.12.x` | `5.12.7` |
+| `latest`, `5.14` | `5.14.x` | `5.14.32.4` |
+| `5.13` | `5.13.x` | `5.13.30.8` |
+| `5.12` | `5.12.x` | `5.12.7` |
 
 ### Tags with Chromium
 
@@ -64,10 +64,21 @@ For a full tag list, search the [Docker Hub tags list](https://hub.docker.com/r/
 
 | Tag(s) | Major.Minor Release |
 | :----- | ------------------- |
-| `latest-chromium`, `5.14-chromium` | Omada Controller `5.14.x` |
-| `beta-chromium`, | Omada Controller `beta` |
-| `5.13-chromium` | Omada Controller `5.13.x` |
-| `5.12-chromium` | Omada Controller `5.12.x` |
+| `latest-chromium`, `5.14-chromium` | `5.14.x` |
+| `beta-chromium`, | `beta` |
+| `5.13-chromium` | `5.13.x` |
+| `5.12-chromium` | `5.12.x` |
+
+### Tags for Beta/Testing
+
+These are multi-arch tags. For the full tag listings, see the Docker Hub tags above but the general format for `beta-*` and `*-openj9` follow for the specific architecture tags. OpenJ9 images are only available for `amd64` and `arm64`.
+
+| Tag(s) | Major.Minor Release | Current Version |
+| :----- | ------------------- | --------------- |
+| `beta`, `beta-5.15` | `beta` | `5.15.6.4` |
+| `beta-5.15-openj9`, `beta-5.15.6.4-openj9` | `5.15.x` Beta w/OpenJ9 | `5.15.6.4` |
+| `5.14-openj9`, `5.14.32.4-openj9` | `5.14.x` w/OpenJ9 | `5.14.32.4` |
+| `5.13-openj9`, `5.13.30.8-openj9` | `5.13.x` w/OpenJ9 | `5.13.30.8` |
 
 ### Explicit Architecture Tags
 
@@ -83,23 +94,23 @@ These images are still published on Docker Hub but are no longer regularly updat
 
 | Tag(s) | Major.Minor Release | Current Version |
 | :----- | ------------------- | ----------------|
-| `5.9` | Omada Controller `5.9.x` | `5.9.31` |
-| `5.9-chromium` | Omada Controller `5.9.x` | `5.9.31` |
-| `5.8` | Omada Controller `5.8.x` | `5.8.4` |
-| `5.8-chromium` | Omada Controller `5.8.x` | `5.8.4` |
-| `5.7` | Omada Controller `5.7.x` | `5.7.4` |
-| `5.7-chromium` | Omada Controller `5.7.x` | `5.7.4` |
-| `5.6` | Omada Controller `5.6.x` | `5.6.3` |
-| `5.6-chromium` | Omada Controller `5.6.x` | `5.6.3` |
-| `5.5` | Omada Controller `5.5.x` | `5.5.6` |
-| `5.5-chromium` | Omada Controller `5.5.x` | `5.5.6` |
-| `5.4` | Omada Controller `5.4.x` | `5.4.6` |
-| `5.4-chromium` | Omada Controller `5.4.x` | `5.4.6` |
-| `5.3` | Omada Controller `5.3.x` | `5.3.1` |
-| `5.3-chromium` | Omada Controller `5.3.x` | `5.3.1` |
-| `5.1` | Omada Controller `5.1.x` | `5.1.7` |
-| `5.1-chromium` | Omada Controller `5.1.x` | `5.1.7` |
-| `5.0` | Omada Controller `5.0.x` | `5.0.30` |
+| `5.9` | `5.9.x` | `5.9.31` |
+| `5.9-chromium` | `5.9.x` | `5.9.31` |
+| `5.8` | `5.8.x` | `5.8.4` |
+| `5.8-chromium` | `5.8.x` | `5.8.4` |
+| `5.7` | `5.7.x` | `5.7.4` |
+| `5.7-chromium` | `5.7.x` | `5.7.4` |
+| `5.6` | `5.6.x` | `5.6.3` |
+| `5.6-chromium` | `5.6.x` | `5.6.3` |
+| `5.5` | `5.5.x` | `5.5.6` |
+| `5.5-chromium` | `5.5.x` | `5.5.6` |
+| `5.4` | `5.4.x` | `5.4.6` |
+| `5.4-chromium` | `5.4.x` | `5.4.6` |
+| `5.3` | `5.3.x` | `5.3.1` |
+| `5.3-chromium` | `5.3.x` | `5.3.1` |
+| `5.1` | `5.1.x` | `5.1.7` |
+| `5.1-chromium` | `5.1.x` | `5.1.7` |
+| `5.0` | `5.0.x` | `5.0.30` |
 
 ## Getting Help & Reporting Issues
 
