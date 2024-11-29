@@ -149,6 +149,7 @@ wget -nv "${OMADA_URL}"
 
 echo "**** Extract and Install Omada Controller ****"
 
+# the beta versions are absolutely horrific in the file naming scheme - this mess tries to address and fix that bullshit
 if [[ "${INSTALL_VER}" =~ ^beta.* ]]
 then
   # get the extension to determine what to do with it
@@ -159,6 +160,26 @@ then
       # unzip the file
       unzip "${OMADA_TAR}"
       rm -f "${OMADA_TAR}"
+
+      # whoever packages the beta up sucks at understanding file extensions
+      FILENAME_CHECK="$(find . -name "*tar.gz*" | grep -v "zip" | sed 's|^./||')"
+
+      # expect .tar.gz as the extension
+      case "${FILENAME_CHECK}" in
+        *.tar.gz)
+          echo "INFO: filename extension for (${FILENAME_CHECK}) is '.tar.gz'; it's fine as is"
+          ;;
+        *_tar.gz.gz)
+          echo "INFO: filename extension for (${FILENAME_CHECK}) is '_tar.gz.gz'; let's rename it to something sane"
+          mv -v "${FILENAME_CHECK}" "${FILENAME_CHECK/_tar.gz.gz/.tar.gz}"
+          ;;
+        *tar.gz.gz)
+          echo "INFO: filename extension for (${FILENAME_CHECK}) is 'tar.gz.gz'; let's rename it to something sane"
+          mv -v "${FILENAME_CHECK}" "${FILENAME_CHECK/tar.gz.gz/.tar.gz}"
+          ;;
+        *)
+          echo "WARN: the filename extension for (${FILENAME_CHECK}) is nothing that is expected; don't be surprised if one of the next steps fail!"
+      esac
 
       # let's figure out where the tar.gz file is
       if [ -n "$(find . -name "*.tar.gz" -maxdepth 1 | sed 's|^./||')" ]
@@ -193,11 +214,11 @@ then
       # check to see if this is a tar.gz or just a gz
       if ls -- *.tar.gz >/dev/null 2>&1
       then
-        # this is a tar.gz
-        echo "INFO: OMADA_TAR is a tar.gz; we can handle it normally!"
+        # this is a .tar.gz
+        echo "INFO: OMADA_TAR is a .tar.gz; we can handle it normally!"
       else
         # this beta version might be a tar.gz inside of a gzipped file so let's pre-gunzip it
-        echo "INFO: this beta version is a gz file; gunzipping..."
+        echo "INFO: this beta version is a .gz file; gunzipping..."
         # gunzip the file
         gunzip "${OMADA_TAR}"
 
