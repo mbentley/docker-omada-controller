@@ -1,0 +1,12 @@
+nameOverride: ""
+fullnameOverride: ""
+
+customComponents:
+
+  externalSecrets: {}
+    # mongodb-auth-secret:
+    #   annotations: {}
+    #   spec: {}
+
+# Ref: https://github.com/bitnami/charts/blob/main/bitnami/mongodb/values.yaml
+mongodb: {}
