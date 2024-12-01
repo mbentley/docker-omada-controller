@@ -234,7 +234,7 @@ helm dependency update kubernetes/mongodb
 ```console
 helm upgrade --install mongodb kubernetes/mongodb \
   -f kubernetes/mongodb/values-customized.yaml \
-  -n mongodb --create-namespace
+  -n omada-controller --create-namespace
 ```
 
 ### Deploy Omada Controller
