@@ -1,0 +1,10 @@
+$patch: merge
+apiVersion: v1
+kind: Service
+metadata:
+  name: omada-controller
+  #annotations:
+    #metallb.universe.tf/loadBalancerIPs: &loadbalancerIP 192.168.2.64
+spec:
+  type: LoadBalancer
+
