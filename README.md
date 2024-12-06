@@ -54,7 +54,8 @@ For a full tag list, search the [Docker Hub tags list](https://hub.docker.com/r/
 
 | Tag(s) | Major.Minor Release | Current Version |
 | :----- | ------------------- | --------------- |
-| `latest`, `5.14` | `5.14.x` | `5.14.32.4` |
+| `latest`, `5.15` | `5.15.x` | `5.15.6.7` |
+| `5.14` | `5.14.x` | `5.14.32.4` |
 | `5.13` | `5.13.x` | `5.13.30.8` |
 | `5.12` | `5.12.x` | `5.12.7` |
 
@@ -77,6 +78,7 @@ These are multi-arch tags. For the full tag listings, see the Docker Hub tags ab
 | :----- | ------------------- | --------------- |
 | `beta`, `beta-5.15` | `beta` | `5.15.6.7` |
 | `beta-5.15-openj9`, `beta-5.15.6.7-openj9` | `5.15.x` Beta w/OpenJ9 | `5.15.6.7` |
+| `5.15-openj9`, `5.15.6.7-openj9` | `5.15.x` w/OpenJ9 | `5.15.6.7` |
 | `5.14-openj9`, `5.14.32.4-openj9` | `5.14.x` w/OpenJ9 | `5.14.32.4` |
 | `5.13-openj9`, `5.13.30.8-openj9` | `5.13.x` w/OpenJ9 | `5.13.30.8` |
 
@@ -86,7 +88,7 @@ If for some reason you can't use the multi-arch tags, there are explicitly tagge
 
 ### Explicit Version Tags
 
-If you need a specific version of the controller, starting with 5.13 and 5.14, there are explicitly tagged images with the exact version (i.e. - `5.14.32.4`) in the tag name. Check [Docker Hub](https://hub.docker.com/r/mbentley/omada-controller/tags) for the full list of tags.
+If you need a specific version of the controller, starting with 5.13 and 5.14, there are explicitly tagged images with the exact version (i.e. - `5.15.6.7`) in the tag name. Check [Docker Hub](https://hub.docker.com/r/mbentley/omada-controller/tags) for the full list of tags.
 
 ## Archived Tags
 
@@ -145,10 +147,10 @@ There are some differences between the build steps for `amd64`, `arm64`, and `ar
 
   ```
   docker build \
-    --build-arg INSTALL_VER="5.14.32.4" \
+    --build-arg INSTALL_VER="5.15.6.7" \
     --build-arg ARCH="amd64" \
     -f Dockerfile.v5.x \
-    -t mbentley/omada-controller:5.14-amd64 .
+    -t mbentley/omada-controller:5.15-amd64 .
   ```
 
 ### `arm64`
@@ -157,10 +159,10 @@ There are some differences between the build steps for `amd64`, `arm64`, and `ar
 
   ```
   docker build \
-    --build-arg INSTALL_VER="5.14.32.4" \
+    --build-arg INSTALL_VER="5.15.6.7" \
     --build-arg ARCH="arm64" \
     -f Dockerfile.v5.x \
-    -t mbentley/omada-controller:5.14-arm64 .
+    -t mbentley/omada-controller:5.15-arm64 .
   ```
 
 ### `armv7l`
@@ -169,11 +171,11 @@ There are some differences between the build steps for `amd64`, `arm64`, and `ar
 
   ```
   docker build \
-    --build-arg INSTALL_VER="5.14.32.4" \
+    --build-arg INSTALL_VER="5.15.6.7" \
     --build-arg ARCH="armv7l" \
     --build-arg BASE="ubuntu:16.04" \
     -f Dockerfile.v5.x \
-    -t mbentley/omada-controller:5.14-armv7l .
+    -t mbentley/omada-controller:5.15-armv7l .
   ```
 
 </details>
@@ -225,7 +227,7 @@ docker run -d \
   -e TZ=Etc/UTC \
   -v omada-data:/opt/tplink/EAPController/data \
   -v omada-logs:/opt/tplink/EAPController/logs \
-  mbentley/omada-controller:5.14
+  mbentley/omada-controller:5.15
 ```
 
 ### Using `net=host`
