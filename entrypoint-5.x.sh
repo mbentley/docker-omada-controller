@@ -372,6 +372,29 @@ else
   echo "INFO: userland/kernel check passed"
 fi
 
+# see if we should try to delete bcpkix-jdk15on-1.70.jar and bcprov-jdk15on-1.70.jar to workaround https://github.com/mbentley/docker-omada-controller/issues/509
+if [ "${WORKAROUND_509}" = "true" ]
+then
+  echo "INFO: WORKAROUND_509=true; deleting files that block controller startup, if present"
+
+  # delete files, if present
+  for FILE in bcpkix-jdk15on-1.70.jar bcprov-jdk15on-1.70.jar
+  do
+    # see if the file is there
+    if [ -f "${FILE}" ]
+    then
+      # found; delete it
+      echo -ne "INFO: deleting '/opt/tplink/EAPController/lib/${FILE}'\nINFO: "
+      rm -v "/opt/tplink/EAPController/lib/${FILE}"
+    else
+      # not found
+      echo "INFO: '/opt/tplink/EAPController/lib/${FILE}' isn't present, skipping"
+    fi
+  done
+
+  echo "INFO: WORKAROUND_509 complete!"
+fi
+
 # show java version
 echo -e "INFO: output of 'java -version':\n$(java -version 2>&1)\n"
 

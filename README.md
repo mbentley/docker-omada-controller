@@ -43,6 +43,8 @@ For references on running a legacy v3 or v4 controller, see the [README for v3 a
         * [Incorrect CMD](KNOWN_ISSUES.md#incorrect-cmd)
         * [5.12 - Unable to Login After Upgrade](KNOWN_ISSUES.md#512---unable-to-login-after-upgrade)
         * [Slowness in Safari](KNOWN_ISSUES.md#slowness-in-safari)
+        * [5.14 - Controller Unable to Start](KNOWN_ISSUES.md#514---controller-unable-to-start)
+        * [5.15 - Controller Unable to Start](KNOWN_ISSUES.md#515---controller-unable-to-start)
 
 ## Image Tags
 

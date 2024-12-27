@@ -13,6 +13,7 @@
     * [5.12 - Unable to Login After Upgrade](#512---unable-to-login-after-upgrade)
     * [Slowness in Safari](#slowness-in-safari)
     * [5.14 - Controller Unable to Start](#514---controller-unable-to-start)
+    * [5.15 - Controller Unable to Start](#515---controller-unable-to-start)
 
 ## Containerization Issues
 
@@ -75,4 +76,8 @@ In versions 5.8 to 5.12, it has been seen where Safari will take a significant a
 
 ### 5.14 - Controller Unable to Start
 
-Upon upgrade to 5.14, the controller may not start. You may see error messages that include phrases like: `Cannot retry start up springboot`, `Unsatisfied dependency expressed through field...`, `org.springframework.beans.factory.UnsatisfiedDependencyException`, among others. This is a problem with the controller software itself that TP-Link is aware of. If you're impacted, see the first post in [this issue](https://github.com/mbentley/docker-omada-controller/issues/418) for possible workaround instructions and more information.
+Upon upgrade to 5.14, the controller may not start. You may see error messages that include phrases like: `Cannot retry start up springboot`, `Unsatisfied dependency expressed through field...`, `org.springframework.beans.factory.UnsatisfiedDependencyException`, among others. This is a problem with the controller software itself that TP-Link is aware of. If you're impacted, see the first post in [this issue](https://github.com/mbentley/docker-omada-controller/issues/418) for possible workaround instructions and more information. This issue should no longer be present on the latest 5.14 versions.
+
+### 5.15 - Controller Unable to Start
+
+Upon upgrade to 5.15, the controller may not start. You may see error messages right around the `Valid radius server keystore is missing. Generating one ...` message that include phrases like: `Exception in thread "main" java.lang.NoSuchFieldError: id_alg_zlibCompress` among others. This is a problem with the controller software itself that TP-Link is aware of. If you're impacted, see the first post in [this issue](https://github.com/mbentley/docker-omada-controller/issues/509) for more information. An environment variable can be set as `WORKAROUND_509=true` on the container definition and it will delete two library files that are causing the issue.
