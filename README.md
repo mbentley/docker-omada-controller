@@ -56,8 +56,6 @@ For a full tag list, search the [Docker Hub tags list](https://hub.docker.com/r/
 | :----- | ------------------- | --------------- |
 | `latest`, `5.15` | `5.15.x` | `5.15.6.7` |
 | `5.14` | `5.14.x` | `5.14.32.4` |
-| `5.13` | `5.13.x` | `5.13.30.8` |
-| `5.12` | `5.12.x` | `5.12.7` |
 
 ### Tags with Chromium
 
@@ -67,8 +65,6 @@ For a full tag list, search the [Docker Hub tags list](https://hub.docker.com/r/
 | :----- | ------------------- |
 | `latest-chromium`, `5.14-chromium` | `5.14.x` |
 | `beta-chromium`, | `beta` |
-| `5.13-chromium` | `5.13.x` |
-| `5.12-chromium` | `5.12.x` |
 
 ### Tags for Beta/Testing
 
@@ -97,6 +93,10 @@ These images are still published on Docker Hub but are no longer regularly updat
 
 | Tag(s) | Major.Minor Release | Current Version |
 | :----- | ------------------- | ----------------|
+| `5.13` | `5.13.x` | `5.13.30.8` |
+| `5.13-chromium` | `5.13.x` | `5.13.30.8` |
+| `5.12` | `5.12.x` | `5.12.7` |
+| `5.12-chromium` | `5.12.x` | `5.12.7` |
 | `5.9` | `5.9.x` | `5.9.31` |
 | `5.9-chromium` | `5.9.x` | `5.9.31` |
 | `5.8` | `5.8.x` | `5.8.4` |
