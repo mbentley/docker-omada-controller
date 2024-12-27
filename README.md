@@ -77,7 +77,6 @@ These are multi-arch tags. For the full tag listings, see the Docker Hub tags ab
 | --- | --- | --- |
 | `5.15-openj9`, `5.15.6.7-openj9` | `5.15.x` w/OpenJ9 | `5.15.6.7` |
 | `5.14-openj9`, `5.14.32.4-openj9` | `5.14.x` w/OpenJ9 | `5.14.32.4` |
-| `5.13-openj9`, `5.13.30.8-openj9` | `5.13.x` w/OpenJ9 | `5.13.30.8` |
 
 ### Explicit Architecture Tags
 
@@ -95,6 +94,7 @@ These images are still published on Docker Hub but are no longer regularly updat
 | :----- | ------------------- | ----------------|
 | `5.13` | `5.13.x` | `5.13.30.8` |
 | `5.13-chromium` | `5.13.x` | `5.13.30.8` |
+| `5.13-openj9`, `5.13.30.8-openj9` | `5.13.x` w/OpenJ9 | `5.13.30.8` |
 | `5.12` | `5.12.x` | `5.12.7` |
 | `5.12-chromium` | `5.12.x` | `5.12.7` |
 | `5.9` | `5.9.x` | `5.9.31` |
