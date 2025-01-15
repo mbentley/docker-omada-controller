@@ -6,45 +6,35 @@ For references on running a legacy v3 or v4 controller, see the [README for v3 a
 
 ## Table of Contents
 
-* [Image Tags](#image-tags)
-    * [Multi-arch Tags](#multi-arch-tags)
-    * [Tags for Beta/Testing](#tags-for-betatesting)
-    * [Explicit Architecture Tags](#explicit-architecture-tags)
-    * [Explicit Version Tags](#explicit-version-tags)
-    * [Archived Tags](#archived-tags)
-* [Getting Help & Reporting Issues](#getting-help--reporting-issues)
-* [Best Practices for Operation](#best-practices-for-operation)
-    * [Controller Backups](#controller-backups)
-    * [Controller Upgrades](#controller-upgrades)
-    * [Preventing Database Corruption](#preventing-database-corruption)
-* [Building Images](#building-images)
-* [Example Usage](#example-usage)
-    * [Using non-default ports](#using-non-default-ports)
-    * [Using port mapping](#using-port-mapping)
-    * [Using `net=host`](#using-nethost)
-* [Optional Variables](#optional-variables)
-* [Persistent Data](#persistent-data)
-* [Custom Certificates](#custom-certificates)
-* [MongoDB Small Files](#mongodb-small-files)
-* [Time Zones](#time-zones)
-* [Unprivileged Ports](#unprivileged-ports)
-* [Using Docker Compose](#using-docker-compose)
-* [Omada Controller API Documentation](#omada-controller-api-documentation)
-* [Known Issues](#known-issues)
-    * [Containerization Issues](KNOWN_ISSUES.md#containerization-issues)
-        * [MongoDB Corruption](KNOWN_ISSUES.md#mongodb-corruption)
-        * [Notes for `armv7l`](KNOWN_ISSUES.md#notes-for-armv7l)
-            * [:warning: Unsupported Base Image for `armv7l`](KNOWN_ISSUES.md#unsupported-base-image-for-armv7l)
-            * [:warning: Unsupported MongoDB](KNOWN_ISSUES.md#unsupported-mongodb)
-        * [Low Resource Systems](KNOWN_ISSUES.md#low-resource-systems)
-        * [Mismatched Userland and Kernel](KNOWN_ISSUES.md#mismatched-userland-and-kernel)
-    * [Upgrade Issues](KNOWN_ISSUES.md#upgrade-issues)
-        * [5.8 - 404s and Blank Pages](KNOWN_ISSUES.md#58---404s-and-blank-pages)
-        * [Incorrect CMD](KNOWN_ISSUES.md#incorrect-cmd)
-        * [5.12 - Unable to Login After Upgrade](KNOWN_ISSUES.md#512---unable-to-login-after-upgrade)
-        * [Slowness in Safari](KNOWN_ISSUES.md#slowness-in-safari)
-        * [5.14 - Controller Unable to Start](KNOWN_ISSUES.md#514---controller-unable-to-start)
-        * [5.15 - Controller Unable to Start](KNOWN_ISSUES.md#515---controller-unable-to-start)
+- [Table of Contents](#table-of-contents)
+- [Image Tags](#image-tags)
+  - [Multi-arch Tags](#multi-arch-tags)
+  - [Tags with Chromium](#tags-with-chromium)
+  - [Tags for Beta/Testing](#tags-for-betatesting)
+  - [Explicit Architecture Tags](#explicit-architecture-tags)
+  - [Explicit Version Tags](#explicit-version-tags)
+- [Archived Tags](#archived-tags)
+- [Getting Help \& Reporting Issues](#getting-help--reporting-issues)
+- [Best Practices for Operation](#best-practices-for-operation)
+  - [Controller Backups](#controller-backups)
+  - [Controller Upgrades](#controller-upgrades)
+  - [Preventing Database Corruption](#preventing-database-corruption)
+- [Building images](#building-images)
+  - [`amd64`](#amd64)
+  - [`arm64`](#arm64)
+  - [`armv7l`](#armv7l)
+- [Example Usage](#example-usage)
+  - [Using non-default ports](#using-non-default-ports)
+  - [Using port mapping](#using-port-mapping)
+  - [Using `net=host`](#using-nethost)
+- [Optional Variables](#optional-variables)
+- [Persistent Data](#persistent-data)
+- [Custom Certificates](#custom-certificates)
+- [Time Zones](#time-zones)
+- [Unprivileged Ports](#unprivileged-ports)
+- [Using Docker Compose](#using-docker-compose)
+- [Omada Controller API Documentation](#omada-controller-api-documentation)
+- [Known Issues](#known-issues)
 
 ## Image Tags
 
@@ -285,7 +275,7 @@ In the examples, there are two directories where persistent data is stored: `dat
 
 By default, Omada software uses self-signed certificates. If however you want to use custom certificates you can mount them into the container as `/cert/tls.key` and `/cert/tls.crt`. The `tls.crt` file needs to include the full chain of certificates, i.e. cert, intermediate cert(s) and CA cert. This is compatible with kubernetes TLS secrets. Entrypoint script will convert them into Java Keystore used by jetty inside the Omada SW. If you need to use different file names, you can customize them by passing values for `SSL_CERT_NAME` and `SSL_KEY_NAME` as seen above in the [Optional Variables](#optional-variables) section.
 
-**Warning** - As of the version 4.1, certificates can also be installed through the web UI. You should not attempt to mix certificate management methods as installing certificates via the UI will store the certificates in MongoDB and then the `/cert` volume method will cease to function.
+**Warning** - As of the version 4.1, certificates can also be installed through the web UI. You should not attempt to mix certificate management methods as installing certificates via the UI will store the certificates in MongoDB and then the `/cert` volume method will cease to function. If you installed certificates using the UI and want to revert this - see [this discussion](https://github.com/mbentley/docker-omada-controller/discussions/527).
 
 ## Time Zones
 
