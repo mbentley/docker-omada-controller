@@ -422,7 +422,7 @@ then
   echo
   echo "##############################################################################"
   echo "##############################################################################"
-  echo "WARNGING: autobackup directory not found! Please configure automatic backups!"
+  echo "WARNING: autobackup directory not found! Please configure automatic backups!"
   echo "  For instructions, see https://github.com/mbentley/docker-omada-controller#controller-backups"
   echo "##############################################################################"
   echo "##############################################################################"
