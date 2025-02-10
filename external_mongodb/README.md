@@ -196,3 +196,62 @@ While I have this WIP for migrating from all in one, it would be much simplier t
       docker volume rm omada-data omada-logs ;\
       docker network rm omada
     ```
+
+## Kubernetes Deployment Guide
+
+In advanced setups, deploying applications in container orchestrators like Kubernetes is common,
+even in homelabs to enhance reliability.
+
+Below, we’ll use both Helm and Kustomize to deploy **MongoDB** and **Omada Controller**.
+
+### Deploy MongoDB
+
+
+We use a custom Helm chart that wraps Bitnami's MongoDB chart.
+
+The customization includes templates for managing secrets securely, avoiding the bad practice of
+hardcoding credentials in `values.yaml`.
+
+Instead, it supports tools like **External Secrets** to fetch credentials from secure vaults and
+generate Kubernetes secrets automatically.
+
+The custom Helm chart has credentials hardcoded as an example, but provides commented examples
+about how to get secrets safely from mentioned vaults.
+
+Let's deploy our chart:
+
+1. Update dependencies
+
+```console
+helm dependency update kubernetes/mongodb
+```
+
+2. Deploy MongoDB in the cluster currently pointed by your Kubeconfig
+
+> [!IMPORTANT]
+> Customize chart's parameters to meet your needs
+
+```console
+helm upgrade --install mongodb kubernetes/mongodb \
+  -f kubernetes/mongodb/values-customized.yaml \
+  -n omada-controller --create-namespace
+```
+
+### Deploy Omada Controller
+
+We'll use Kustomize since there's no official Helm chart provided by Omada Controller's maintainers
+or a trusted external provider like Bitnami.
+
+Ensure your cluster has Ingress-Nginx as the ingress controller and Cert-Manager for certificate management.
+
+If you're in an on-premises environment, you might need tools like MetalLB or Kube-VIP to provision
+load balancers for services of type LoadBalancer.
+
+To deploy Omada Controller, just execute the following command
+
+```console
+kubectl apply -k kubernetes/production
+```
+
+> [!IMPORTANT]
+> Always adjust parameters to align with your infrastructure and requirements.

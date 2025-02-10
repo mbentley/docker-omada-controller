@@ -1,0 +1,123 @@
+# Ref: https://github.com/mbentley/docker-omada-controller/blob/master/docker-compose.yml
+# Fixed: https://github.com/mbentley/docker-omada-controller/commit/2b4ba51143740e727c03f6f2a38c8a0006a80415
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: omada-controller
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels: {}
+  template:
+    spec:
+      # Omada Controller is listening on the host network to look for the APs
+      # and then, cannot resolve internal DNS request properly for MongoDB's Service FQDN.
+      # This is only needed to allow the controller to discover the devices on the same network.
+      # Not needed if EAPs are configured to point directly to controller's IP
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+
+      restartPolicy: Always
+      containers:
+      - name: omada-controller
+        image: "mbentley/omada-controller:latest-amd64"
+        imagePullPolicy: IfNotPresent
+        ports:
+          # Ref: https://www.tp-link.com/us/support/faq/3281/
+
+          # 1. When you visit the management page of Omada Software Controller via an HTTP connection.
+          # 2. When the clients visit the Portal page via an HTTP connection.
+          - name: manage-http
+            containerPort: 8088
+            protocol: TCP
+
+          # 1. When you visit the management page of Omada Software Controller via an HTTPS connection.
+          # 2. When upgrading the firmware for the Omada devices with Omada Software Controller.
+          - name: manage-https
+            containerPort: 8043
+            protocol: TCP
+
+          # When the clients visit the Portal page via an HTTPS connection.
+          - name: portal-https
+            containerPort: 8843
+            protocol: TCP
+
+          ############################################################
+          ## Initialization Check
+          ############################################################
+
+          # Omada Controller can be discovered by the Omada APP within the same network through this port
+          - name: app-discovery
+            containerPort: 27001
+            protocol: UDP
+
+          ############################################################
+          ## EAP Discovery, Adoption, Management, and Upgrade
+          ############################################################
+
+          # Omada Controller and Omada Discovery Utility discover Omada devices
+          - name: discovery
+            containerPort: 29810
+            protocol: UDP
+
+          # Omada Controller and Omada Discovery Utility manage the Omada devices running firmware
+          # fully adapted to Omada Controller v4*.
+          - name: manager-v1
+            containerPort: 29811
+            protocol: TCP
+          - name: adopt-v1
+            containerPort: 29812
+            protocol: TCP
+
+          # When upgrading the firmware for the Omada devices running firmware fully adapted to
+          # Omada Controller v4*.
+          - name: upgrade-v1
+            containerPort: 29813
+            protocol: TCP
+
+          # Omada Controller and Omada Discovery Utility manage the Omada devices running firmware
+          # fully adapted to Omada Controller v5*.
+          - name: manager-v2
+            containerPort: 29814
+            protocol: TCP
+
+          # Starting from v5.9, Omada Controller receives Device Info, Packet Capture Files,
+          # and DPI Application Statistic Data from the Omada devices
+          - name: transfer-v2
+            containerPort: 29815
+            protocol: TCP
+
+          # Starting from v5.9, Omada Controller establishes the remote control terminal
+          # session with the Omada devices
+          - name: rtty
+            containerPort: 29816
+            protocol: TCP
+
+        env:
+        - name: MONGODB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mongodb-users-credentials
+              key: mongodb-passwords
+
+        envFrom:
+          - configMapRef:
+              name: omada-controller-environment
+              optional: false
+
+        volumeMounts:
+          - name: omada-data
+            mountPath: /opt/tplink/EAPController/data
+          - name: omada-logs
+            mountPath: /opt/tplink/EAPController/logs
+
+      volumes:
+        - name: omada-data
+          persistentVolumeClaim:
+            claimName: omada-data
+        - name: omada-logs
+          persistentVolumeClaim:
+            claimName: omada-logs

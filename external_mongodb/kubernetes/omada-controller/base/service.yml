@@ -1,0 +1,63 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: omada-controller
+  annotations: {}
+spec:
+  selector: {}
+  type: ClusterIP
+  ports:
+  #- name: manage-http
+  #  targetPort: manage-http
+  #  port: 8088
+  #  protocol: TCP
+
+  - name: manage-https
+    targetPort: manage-https
+    port: 8043
+    protocol: TCP
+
+  #- name: portal-https
+  #  targetPort: portal-https
+  #  port: 8843
+  #  protocol: TCP
+
+  - name: app-discovery
+    targetPort: app-discovery
+    port: 27001
+    protocol: UDP
+
+  - name: discovery
+    targetPort: discovery
+    port: 29810
+    protocol: UDP
+
+  - name: manager-v1
+    targetPort: manager-v1
+    port: 29811
+    protocol: TCP
+
+  - name: adopt-v1
+    targetPort: adopt-v1
+    port: 29812
+    protocol: TCP
+
+  - name: upgrade-v1
+    targetPort: upgrade-v1
+    port: 29813
+    protocol: TCP
+
+  - name: manager-v2
+    targetPort: manager-v2
+    port: 29814
+    protocol: TCP
+
+  - name: transfer-v2
+    targetPort: transfer-v2
+    port: 29815
+    protocol: TCP
+
+  - name: rtty
+    targetPort: rtty
+    port: 29816
+    protocol: TCP

@@ -8,6 +8,7 @@ For references on running a legacy v3 or v4 controller, see the [README for v3 a
 
 * [Image Tags](#image-tags)
     * [Multi-arch Tags](#multi-arch-tags)
+    * [Tags for Beta/Testing](#tags-for-betatesting)
     * [Explicit Architecture Tags](#explicit-architecture-tags)
     * [Explicit Version Tags](#explicit-version-tags)
     * [Archived Tags](#archived-tags)
@@ -42,6 +43,8 @@ For references on running a legacy v3 or v4 controller, see the [README for v3 a
         * [Incorrect CMD](KNOWN_ISSUES.md#incorrect-cmd)
         * [5.12 - Unable to Login After Upgrade](KNOWN_ISSUES.md#512---unable-to-login-after-upgrade)
         * [Slowness in Safari](KNOWN_ISSUES.md#slowness-in-safari)
+        * [5.14 - Controller Unable to Start](KNOWN_ISSUES.md#514---controller-unable-to-start)
+        * [5.15 - Controller Unable to Start](KNOWN_ISSUES.md#515---controller-unable-to-start)
 
 ## Image Tags
 
@@ -53,10 +56,8 @@ For a full tag list, search the [Docker Hub tags list](https://hub.docker.com/r/
 
 | Tag(s) | Major.Minor Release | Current Version |
 | :----- | ------------------- | --------------- |
-| `latest`, `5.14` | Omada Controller `5.14.x` | `5.14.32.2` |
-| `beta`, `beta-5.15` | Omada Controller `beta` | `5.15.6.4` |
-| `5.13` | Omada Controller `5.13.x` | `5.13.30.8` |
-| `5.12` | Omada Controller `5.12.x` | `5.12.7` |
+| `latest`, `5.15` | `5.15.x` | `5.15.8.2` |
+| `5.14` | `5.14.x` | `5.14.32.4` |
 
 ### Tags with Chromium
 
@@ -64,10 +65,21 @@ For a full tag list, search the [Docker Hub tags list](https://hub.docker.com/r/
 
 | Tag(s) | Major.Minor Release |
 | :----- | ------------------- |
-| `latest-chromium`, `5.14-chromium` | Omada Controller `5.14.x` |
-| `beta-chromium`, | Omada Controller `beta` |
-| `5.13-chromium` | Omada Controller `5.13.x` |
-| `5.12-chromium` | Omada Controller `5.12.x` |
+| `latest-chromium`, `5.15-chromium` | `5.15.x` |
+| `5.14-chromium` | `5.14.x` |
+| `beta-chromium`, | `beta` |
+
+### Tags for Beta/Testing
+
+These are multi-arch tags. For the full tag listings, see the Docker Hub tags above but the general format for `beta-*` and `*-openj9` follow for the specific architecture tags. OpenJ9 images are only available for `amd64` and `arm64`.
+
+| Tag(s) | Major.Minor Release | Current Version |
+| :----- | ------------------- | --------------- |
+| `beta`, `beta-5.15` | `beta` | `5.15.20.10` |
+| `beta-5.15-openj9`, `beta-5.15.8.2-openj9` | `5.15.x` Beta w/OpenJ9 | `5.15.20.10` |
+| --- | --- | --- |
+| `5.15-openj9`, `5.15.8.2-openj9` | `5.15.x` w/OpenJ9 | `5.15.8.2` |
+| `5.14-openj9`, `5.14.32.4-openj9` | `5.14.x` w/OpenJ9 | `5.14.32.4` |
 
 ### Explicit Architecture Tags
 
@@ -75,7 +87,7 @@ If for some reason you can't use the multi-arch tags, there are explicitly tagge
 
 ### Explicit Version Tags
 
-If you need a specific version of the controller, starting with 5.13 and 5.14, there are explicitly tagged images with the exact version (i.e. - `5.14.32.2`) in the tag name. Check [Docker Hub](https://hub.docker.com/r/mbentley/omada-controller/tags) for the full list of tags.
+If you need a specific version of the controller, starting with 5.13 and 5.14, there are explicitly tagged images with the exact version (i.e. - `5.15.8.2`) in the tag name. Check [Docker Hub](https://hub.docker.com/r/mbentley/omada-controller/tags) for the full list of tags.
 
 ## Archived Tags
 
@@ -83,23 +95,28 @@ These images are still published on Docker Hub but are no longer regularly updat
 
 | Tag(s) | Major.Minor Release | Current Version |
 | :----- | ------------------- | ----------------|
-| `5.9` | Omada Controller `5.9.x` | `5.9.31` |
-| `5.9-chromium` | Omada Controller `5.9.x` | `5.9.31` |
-| `5.8` | Omada Controller `5.8.x` | `5.8.4` |
-| `5.8-chromium` | Omada Controller `5.8.x` | `5.8.4` |
-| `5.7` | Omada Controller `5.7.x` | `5.7.4` |
-| `5.7-chromium` | Omada Controller `5.7.x` | `5.7.4` |
-| `5.6` | Omada Controller `5.6.x` | `5.6.3` |
-| `5.6-chromium` | Omada Controller `5.6.x` | `5.6.3` |
-| `5.5` | Omada Controller `5.5.x` | `5.5.6` |
-| `5.5-chromium` | Omada Controller `5.5.x` | `5.5.6` |
-| `5.4` | Omada Controller `5.4.x` | `5.4.6` |
-| `5.4-chromium` | Omada Controller `5.4.x` | `5.4.6` |
-| `5.3` | Omada Controller `5.3.x` | `5.3.1` |
-| `5.3-chromium` | Omada Controller `5.3.x` | `5.3.1` |
-| `5.1` | Omada Controller `5.1.x` | `5.1.7` |
-| `5.1-chromium` | Omada Controller `5.1.x` | `5.1.7` |
-| `5.0` | Omada Controller `5.0.x` | `5.0.30` |
+| `5.13` | `5.13.x` | `5.13.30.8` |
+| `5.13-chromium` | `5.13.x` | `5.13.30.8` |
+| `5.13-openj9`, `5.13.30.8-openj9` | `5.13.x` w/OpenJ9 | `5.13.30.8` |
+| `5.12` | `5.12.x` | `5.12.7` |
+| `5.12-chromium` | `5.12.x` | `5.12.7` |
+| `5.9` | `5.9.x` | `5.9.31` |
+| `5.9-chromium` | `5.9.x` | `5.9.31` |
+| `5.8` | `5.8.x` | `5.8.4` |
+| `5.8-chromium` | `5.8.x` | `5.8.4` |
+| `5.7` | `5.7.x` | `5.7.4` |
+| `5.7-chromium` | `5.7.x` | `5.7.4` |
+| `5.6` | `5.6.x` | `5.6.3` |
+| `5.6-chromium` | `5.6.x` | `5.6.3` |
+| `5.5` | `5.5.x` | `5.5.6` |
+| `5.5-chromium` | `5.5.x` | `5.5.6` |
+| `5.4` | `5.4.x` | `5.4.6` |
+| `5.4-chromium` | `5.4.x` | `5.4.6` |
+| `5.3` | `5.3.x` | `5.3.1` |
+| `5.3-chromium` | `5.3.x` | `5.3.1` |
+| `5.1` | `5.1.x` | `5.1.7` |
+| `5.1-chromium` | `5.1.x` | `5.1.7` |
+| `5.0` | `5.0.x` | `5.0.30` |
 
 ## Getting Help & Reporting Issues
 
@@ -134,10 +151,10 @@ There are some differences between the build steps for `amd64`, `arm64`, and `ar
 
   ```
   docker build \
-    --build-arg INSTALL_VER="5.14.32.2" \
+    --build-arg INSTALL_VER="5.15.8.2" \
     --build-arg ARCH="amd64" \
     -f Dockerfile.v5.x \
-    -t mbentley/omada-controller:5.14-amd64 .
+    -t mbentley/omada-controller:5.15-amd64 .
   ```
 
 ### `arm64`
@@ -146,10 +163,10 @@ There are some differences between the build steps for `amd64`, `arm64`, and `ar
 
   ```
   docker build \
-    --build-arg INSTALL_VER="5.14.32.2" \
+    --build-arg INSTALL_VER="5.15.8.2" \
     --build-arg ARCH="arm64" \
     -f Dockerfile.v5.x \
-    -t mbentley/omada-controller:5.14-arm64 .
+    -t mbentley/omada-controller:5.15-arm64 .
   ```
 
 ### `armv7l`
@@ -158,11 +175,11 @@ There are some differences between the build steps for `amd64`, `arm64`, and `ar
 
   ```
   docker build \
-    --build-arg INSTALL_VER="5.14.32.2" \
+    --build-arg INSTALL_VER="5.15.8.2" \
     --build-arg ARCH="armv7l" \
     --build-arg BASE="ubuntu:16.04" \
     -f Dockerfile.v5.x \
-    -t mbentley/omada-controller:5.14-armv7l .
+    -t mbentley/omada-controller:5.15-armv7l .
   ```
 
 </details>
@@ -214,7 +231,7 @@ docker run -d \
   -e TZ=Etc/UTC \
   -v omada-data:/opt/tplink/EAPController/data \
   -v omada-logs:/opt/tplink/EAPController/logs \
-  mbentley/omada-controller:5.14
+  mbentley/omada-controller:5.15
 ```
 
 ### Using `net=host`
@@ -268,11 +285,11 @@ In the examples, there are two directories where persistent data is stored: `dat
 
 By default, Omada software uses self-signed certificates. If however you want to use custom certificates you can mount them into the container as `/cert/tls.key` and `/cert/tls.crt`. The `tls.crt` file needs to include the full chain of certificates, i.e. cert, intermediate cert(s) and CA cert. This is compatible with kubernetes TLS secrets. Entrypoint script will convert them into Java Keystore used by jetty inside the Omada SW. If you need to use different file names, you can customize them by passing values for `SSL_CERT_NAME` and `SSL_KEY_NAME` as seen above in the [Optional Variables](#optional-variables) section.
 
-**Warning** - As of the version 4.1, certificates can also be installed through the web UI. You should not attempt to mix certificate management methods as installing certificates via the UI will store the certificates in MongoDB and then the `/cert` volume method will cease to function.
+**Warning** - As of the version 4.1, certificates can also be installed through the web UI. You should not attempt to mix certificate management methods as installing certificates via the UI will store the certificates in MongoDB and then the `/cert` volume method will cease to function. If you installed certificates using the UI and want to revert this - see [this discussion](https://github.com/mbentley/docker-omada-controller/discussions/527).
 
 ## Time Zones
 
-By default, this image uses the `Etc/UTC` time zone. You may update the time zone used by passing a different value in the `TZ` variable. See [List of tz database time zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) for a complete list of values in the `TZ database name` table column.
+By default, this image uses the `Etc/UTC` time zone. You may update the time zone used by passing a different value in the `TZ` variable. See [List of tz database time zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) for a complete list of values in the `TZ identifier` table column.
 
 ## Unprivileged Ports
 
