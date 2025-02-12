@@ -92,12 +92,14 @@ version_step_upgrade() {
   echo -e "\nINFO: starting upgrade to ${MONGO_MAJ_MIN}..."
 
   # starting with 7.0, there is no journal arg
-  if [ "${MONGO_MAJ_MIN}" != "7.0" ]
-  then
-    JOURNAL="--journal"
-  else
-    JOURNAL=""
-  fi
+  case "${MONGO_MAJ_MIN}" in
+    7.0|8.0)
+      JOURNAL=""
+      ;;
+    *)
+      JOURNAL="--journal"
+      ;;
+  esac
 
   # run repair on db to upgrade
   #/tmp/mongod-${MONGO_VER} --dbpath /opt/tplink/EAPController/data/db -pidfilepath /opt/tplink/EAPController/data/mongo.pid --bind_ip 127.0.0.1 ${JOURNAL} --logpath /opt/tplink/EAPController/data/mongodb_upgrade.log --logappend --repair || abort_and_rollback
@@ -138,14 +140,14 @@ version_step_upgrade() {
   if [ "${MONGO_CLIENT}" = "mongosh" ]
   then
     # mongosh
-    if [ "${MONGO_MAJ_MIN}" = "7.0" ]
-    then
-      # 7.0
-      /tmp/${MONGO_CLIENT} --quiet --json --eval 'db.adminCommand( { setFeatureCompatibilityVersion: "'"${MONGO_MAJ_MIN}"'", confirm: true } )' >/dev/null 2>&1
-    else
-      # not 7.0
-      /tmp/${MONGO_CLIENT} --quiet --json --eval 'db.adminCommand( { setFeatureCompatibilityVersion: "'"${MONGO_MAJ_MIN}"'" } )' >/dev/null 2>&1
-    fi
+    case "${MONGO_MAJ_MIN}" in
+      7.0|8.0)
+        /tmp/${MONGO_CLIENT} --quiet --json --eval 'db.adminCommand( { setFeatureCompatibilityVersion: "'"${MONGO_MAJ_MIN}"'", confirm: true } )' >/dev/null 2>&1
+      ;;
+      *)
+        /tmp/${MONGO_CLIENT} --quiet --json --eval 'db.adminCommand( { setFeatureCompatibilityVersion: "'"${MONGO_MAJ_MIN}"'" } )' >/dev/null 2>&1
+      ;;
+    esac
   else
     # mongo client
     echo 'db.adminCommand( { setFeatureCompatibilityVersion: "'"${MONGO_MAJ_MIN}"'" } )' | /tmp/${MONGO_CLIENT} --quiet >/dev/null 2>&1
@@ -279,7 +281,7 @@ version_step_upgrade
 
 ### 4.4 to 5.0
 # set variables
-MONGO_VER="5.0.27"
+MONGO_VER="5.0.31"
 MONGO_MAJ_MIN="$(echo "${MONGO_VER}" | awk -F '.' '{print $1"."$2}')"
 MONGO_CLIENT="mongo-${MONGO_VER}"
 EXPECTED_COMPAT_VERSION="4.4"
@@ -290,7 +292,7 @@ version_step_upgrade
 
 ### 5.0 to 6.0
 # set variables
-MONGO_VER="6.0.16"
+MONGO_VER="6.0.20"
 MONGO_MAJ_MIN="$(echo "${MONGO_VER}" | awk -F '.' '{print $1"."$2}')"
 MONGO_CLIENT="mongosh"
 EXPECTED_COMPAT_VERSION="5.0"
@@ -301,7 +303,7 @@ version_step_upgrade
 
 ### 6.0 to 7.0
 # set variables
-MONGO_VER="7.0.12"
+MONGO_VER="7.0.16"
 MONGO_MAJ_MIN="$(echo "${MONGO_VER}" | awk -F '.' '{print $1"."$2}')"
 MONGO_CLIENT="mongosh"
 EXPECTED_COMPAT_VERSION="6.0"
@@ -309,10 +311,25 @@ EXPECTED_COMPAT_VERSION="6.0"
 # run upgrade
 version_step_upgrade
 
+
+### 7.0 to 8.0
+# set variables
+MONGO_VER="8.0.4"
+MONGO_MAJ_MIN="$(echo "${MONGO_VER}" | awk -F '.' '{print $1"."$2}')"
+MONGO_CLIENT="mongosh"
+EXPECTED_COMPAT_VERSION="7.0"
+
+# run upgrade
+version_step_upgrade
+
+
+# step upgrades finished
+echo -e "\nINFO: running post-upgrade tasks..."
+
 # set ownership
 echo -n "INFO: fixing ownership of database files..."
 chown -R "$(stat -c "%u:%g" /opt/tplink/EAPController/data)" /opt/tplink/EAPController/data
 echo "done"
 
 echo -e "\nINFO: the MongoDB backup file (mongodb-preupgrade.tar) is still in your persistent data directory in case you need to roll back but this can be removed once you have verified your controller is functioning correctly"
-echo "INFO: upgrade process from MongoDB 3.6 to 7.0 was successful!"
+echo "INFO: upgrade process from MongoDB 3.6 to 8.0 was successful!"
