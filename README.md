@@ -25,7 +25,6 @@ For references on running a legacy v3 or v4 controller, see the [README for v3 a
 * [Optional Variables](#optional-variables)
 * [Persistent Data](#persistent-data)
 * [Custom Certificates](#custom-certificates)
-* [MongoDB Small Files](#mongodb-small-files)
 * [Time Zones](#time-zones)
 * [Unprivileged Ports](#unprivileged-ports)
 * [Using Docker Compose](#using-docker-compose)
