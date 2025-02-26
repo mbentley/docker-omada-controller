@@ -23,6 +23,8 @@ While MongoDB is fairly robust, the persistent data can become corrupt if a clea
 
 ### Notes for `armv7l`
 
+** ⚠ Deprecation and Removal Notice ⚠** - armv7l images will no longer be available starting with the v5.15.20 and later versions. See [this issue](https://github.com/mbentley/docker-omada-controller/issues/542) describing the change.
+
 **tl;dr** - Do not run the Omada Controller on your `armv7l`/`armhf` (32 bit arm) based operating system! If you're running as Raspberry Pi 3, 4, Pi Zero 2W, you should [run a 64 bit operating system](https://www.raspberrypi.com/news/raspberry-pi-os-64-bit/) so you can use the `arm64` image which is supported. At any time, TP-Link can break compatibility with 32 bit arm and there will be no upgrade path forward! You have been warned!
 
 #### Unsupported Base Image for `armv7l`

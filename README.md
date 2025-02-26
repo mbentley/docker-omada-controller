@@ -74,8 +74,8 @@ These are multi-arch tags. For the full tag listings, see the Docker Hub tags ab
 
 | Tag(s) | Major.Minor Release | Current Version |
 | :----- | ------------------- | --------------- |
-| `beta`, `beta-5.15` | `beta` | `5.15.20.10` |
-| `beta-5.15-openj9`, `beta-5.15.8.2-openj9` | `5.15.x` Beta w/OpenJ9 | `5.15.20.10` |
+| `beta`, `beta-5.15` | `beta` | `5.15.20.12` |
+| `beta-5.15-openj9`, `beta-5.15.8.2-openj9` | `5.15.x` Beta w/OpenJ9 | `5.15.20.12` |
 | --- | --- | --- |
 | `5.15-openj9`, `5.15.8.2-openj9` | `5.15.x` w/OpenJ9 | `5.15.8.2` |
 | `5.14-openj9`, `5.14.32.4-openj9` | `5.14.x` w/OpenJ9 | `5.14.32.4` |
