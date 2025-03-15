@@ -18,6 +18,7 @@ RUN /install.sh &&\
   rm /install.sh
 
 COPY entrypoint-5.x.sh /entrypoint.sh
+COPY entrypoint-rootless.sh /entrypoint-rootless.sh
 
 WORKDIR /opt/tplink/EAPController/lib
 EXPOSE 8088 8043 8843 29810/udp 29811 29812 29813 29814

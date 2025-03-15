@@ -316,6 +316,9 @@ then
   tar zcvf ../data-html.tar.gz html
 fi
 
+echo "Changing ownership to 508:508 (required for rootless)"
+chown -R 508:508 /opt/tplink/EAPController
+
 echo "**** Cleanup ****"
 rm -rf /tmp/* /var/lib/apt/lists/*
 
