@@ -38,26 +38,16 @@ SKIP_USERLAND_KERNEL_CHECK="${SKIP_USERLAND_KERNEL_CHECK:-false}"
 
 # make sure we are running as 508:508 (maybe)
 
-# make sure permissions are set appropriately on each directory
-for DIR in data logs properties
+# make sure the directories are writable
+for DIR in /opt/tplink/EAPController/data /opt/tplink/EAPController/logs /opt/tplink/EAPController/properties /tmp
 do
-  OWNER="$(stat -c '%u' /opt/tplink/EAPController/${DIR})"
-  GROUP="$(stat -c '%g' /opt/tplink/EAPController/${DIR})"
-
-  if [ "${OWNER}" != "508" ] || [ "${GROUP}" != "508" ]
+  if [ ! -w "${DIR}" ]
   then
-    # notify user that uid:gid are not correct and fix them
-    echo "ERROR: Ownership not set correctly on '/opt/tplink/EAPController/${DIR}'; correct the ownership to ($(id -u):$(id -g))"
+    # notify user that the directory is not writable
+    echo "ERROR: ${DIR} is not writable!"
     exit 1
   fi
 done
-
-# validate permissions on /tmp
-TMP_PERMISSIONS="$(stat -c '%a' /tmp)"
-if [ "${TMP_PERMISSIONS}" != "1777" ]
-then
-  echo "WARN: Permissions are not set correctly on '/tmp' (${TMP_PERMISSIONS}); you may need to change them to 1777"
-fi
 
 # check if properties file exists; create it if it is missing
 DEFAULT_FILES="/opt/tplink/EAPController/properties.defaults/*"
@@ -323,23 +313,19 @@ then
   sleep 2
 fi
 
-
-echo "INFO: Starting Omada Controller as uid $(id -u)"
+echo "INFO: Starting Omada Controller..."
 
 # tail the omada logs if set to true
 if [ "${SHOW_SERVER_LOGS}" = "true" ]
 then
-  #gosu "${PUSERNAME}" tail -F -n 0 /opt/tplink/EAPController/logs/server.log &
   tail -F -n 0 /opt/tplink/EAPController/logs/server.log &
 fi
 
 # tail the mongodb logs if set to true
 if [ "${SHOW_MONGODB_LOGS}" = "true" ]
 then
-  #gosu "${PUSERNAME}" tail -F -n 0 /opt/tplink/EAPController/logs/mongod.log &
   tail -F -n 0 /opt/tplink/EAPController/logs/mongod.log &
 fi
 
 # run the actual command
-#exec gosu "${PUSERNAME}" "${@}"
 exec "${@}"
