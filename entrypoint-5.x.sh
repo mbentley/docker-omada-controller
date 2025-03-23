@@ -303,7 +303,7 @@ fi
 if [ "$(echo "${@}" | grep -q "com.tplink.omada.start.OmadaLinuxMain"; echo $?)" = "0" ]
 then
   echo -e "\n############################"
-  echo "WARNING: CMD from 4.x detected!  It is likely that this container will fail to start properly with a \"Could not find or load main class com.tplink.omada.start.OmadaLinuxMain\" error!"
+  echo "WARN: CMD from 4.x detected!  It is likely that this container will fail to start properly with a \"Could not find or load main class com.tplink.omada.start.OmadaLinuxMain\" error!"
   echo "  See the note on old CMDs at https://github.com/mbentley/docker-omada-controller/blob/master/KNOWN_ISSUES.md#upgrade-issues for details on why and how to resolve the issue."
   echo -e "############################\n"
 fi
@@ -373,7 +373,7 @@ else
 fi
 
 # see if we should try to delete bcpkix-jdk15on-1.70.jar and bcprov-jdk15on-1.70.jar to workaround https://github.com/mbentley/docker-omada-controller/issues/509
-if [ "${WORKAROUND_509}" = "true" ]
+if [ "${WORKAROUND_509}" = "true" ] && [ "${IMAGE_OMADA_VER}" = "5.15.6.7" ]
 then
   echo "INFO: WORKAROUND_509=true; deleting files that block controller startup, if present"
 
@@ -393,6 +393,9 @@ then
   done
 
   echo "INFO: WORKAROUND_509 complete!"
+elif [ "${WORKAROUND_509}" = "true" ] && [ "${IMAGE_OMADA_VER}" != "5.15.6.7" ]
+then
+  echo "WARN: WORKAROUND_509=true; but you're not running an impacted version; skipping workaround. (You should remove this env var as it does nothing!)"
 fi
 
 # show java version
@@ -422,7 +425,7 @@ then
   echo
   echo "##############################################################################"
   echo "##############################################################################"
-  echo "WARNING: autobackup directory not found! Please configure automatic backups!"
+  echo "WARN: autobackup directory not found! Please configure automatic backups!"
   echo "  For instructions, see https://github.com/mbentley/docker-omada-controller#controller-backups"
   echo "##############################################################################"
   echo "##############################################################################"
