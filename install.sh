@@ -316,6 +316,9 @@ then
   tar zcvf ../data-html.tar.gz html
 fi
 
+echo "Setting permissions to 777 for the properties directory (required for rootless to function)"
+chmod -R 777 /opt/tplink/EAPController/properties
+
 echo "**** Cleanup ****"
 rm -rf /tmp/* /var/lib/apt/lists/*
 
