@@ -22,6 +22,7 @@ For references on running a legacy v3 or v4 controller, see the [README for v3 a
     * [Using non-default ports](#using-non-default-ports)
     * [Using port mapping](#using-port-mapping)
     * [Using `net=host`](#using-nethost)
+    * [Running Rootless](#running-rootless)
 * [Optional Variables](#optional-variables)
 * [Persistent Data](#persistent-data)
 * [Custom Certificates](#custom-certificates)
@@ -247,6 +248,18 @@ In order to use the host's network namespace, you must first ensure that there a
 ...
 ```
 
+### Running Rootless
+
+There is an optional ability to run the container in a rootless mode. This version has fewer pre-flight capabilities to do tasks like set permissions for you but works in environments where running containers as root is blocked (i.e. - many Kubernetes environments). To activate the [rootless entrypoint](entrypoint-rootless.sh) the following conditions must be met:
+
+* Set the environment variable `ROOTLESS` to `true`
+* Set the actual UID/GID of the container to be your desired values (they must be numerical)
+  * Note: the `PUID` and `PGID` variables do not apply here
+* Set the appropriate ownership of your persistent data directories for `data` and `logs`
+* Any additional files or data directories, such as the `/certs` path when injecting your own certificates, must be readable by the user in which you're running as
+
+Example Kubernetes manifests are available in [k8s](./k8s).
+
 ## Optional Variables
 
 | Variable | Default | Values | Description | Valid For |
@@ -267,6 +280,7 @@ In order to use the host's network namespace, you must first ensure that there a
 | `PORT_UPGRADE_V1` | `29813` | `1024`-`65535` | When upgrading the firmware for the Omada devices running firmware fully adapted to Omada Controller v4*. | >= `5.x` |
 | `PUID` | `508` | _any_ | Set the `omada` process user ID ` | >= `3.2` |
 | `PUSERNAME` | `omada` | _any_ | Set the username for the process user ID to run as | >= `5.0` |
+| `ROOTLESS` | `false` | `true`, `false` | Sets the entrypoint for [rootless mode](#running-rootless) | >= `5.14` |
 | `SHOW_SERVER_LOGS` | `true` | `true`, `false` | Outputs Omada Controller logs to STDOUT at runtime | >= `4.1` |
 | `SHOW_MONGODB_LOGS` | `false` | `true`, `false` | Outputs MongoDB logs to STDOUT at runtime | >= `4.1` |
 | `SKIP_USERLAND_KERNEL_CHECK` | `false` | `true`, `false` | When set to `true`, skips the userland/kernel match check for `armv7l` & `arm64` | >= `3.2` |

@@ -1,0 +1,87 @@
+# this example runs in a rootless configuration
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: omada-controller
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: omada-controller
+  template:
+    metadata:
+      labels:
+        app: omada-controller
+    spec:
+      securityContext:
+        runAsUser: 508
+        runAsGroup: 508
+        runAsNonRoot: true
+        fsGroup: 508
+        fsGroupChangePolicy: "OnRootMismatch"
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+      - name: omada-controller
+        image: mbentley/omada-controller:5.15
+        imagePullPolicy: Always
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+        env:
+        - name: ROOTLESS
+          value: "true"
+        - name: MANAGE_HTTP_PORT
+          value: "8088"
+        - name: MANAGE_HTTPS_PORT
+          value: "8043"
+        - name: PORTAL_HTTP_PORT
+          value: "8088"
+        - name: PORTAL_HTTPS_PORT
+          value: "8843"
+        - name: PORT_APP_DISCOVERY
+          value: "27001"
+        - name: PORT_ADOPT_V1
+          value: "29812"
+        - name: PORT_UPGRADE_V1
+          value: "29813"
+        - name: PORT_MANAGER_V1
+          value: "29811"
+        - name: PORT_MANAGER_V2
+          value: "29814"
+        - name: PORT_DISCOVERY
+          value: "29810"
+        - name: PORT_TRANSFER_V2
+          value: "29815"
+        - name: PORT_RTTY
+          value: "29816"
+        - name: SHOW_SERVER_LOGS
+          value: "true"
+        - name: SHOW_MONGODB_LOGS
+          value: "false"
+        - name: SSL_CERT_NAME
+          value: tls.crt
+        - name: SSL_KEY_NAME
+          value: tls.key
+        - name: TZ
+          value: Etc/UTC
+        - name: SKIP_USERMOD
+          value: "true"
+        volumeMounts:
+        - name: omada-data
+          mountPath: /opt/tplink/EAPController/data
+        - name: omada-logs
+          mountPath: /opt/tplink/EAPController/logs
+      volumes:
+      - name: omada-data
+        persistentVolumeClaim:
+          claimName: omada-data-pvc
+      - name: omada-logs
+        persistentVolumeClaim:
+          claimName: omada-logs-pvc
+      restartPolicy: Always
