@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: omada-svc
+spec:
+  type: LoadBalancer
+  selector:
+    app: omada-controller
+  ports:
+  - name: manage-http
+    port: 8088
+    targetPort: 8088
+    protocol: TCP
+  - name: manage-https
+    port: 8043
+    targetPort: 8043
+    protocol: TCP
+  - name: portal-https
+    port: 8843
+    targetPort: 8843
+    protocol: TCP
+  - name: app-discovery
+    port: 27001
+    targetPort: 27001
+    protocol: UDP
+  - name: adopt-v1
+    port: 29812
+    targetPort: 29812
+    protocol: TCP
+  - name: upgrade-v1
+    port: 29813
+    targetPort: 29813
+    protocol: TCP
+  - name: manager-v1
+    port: 29811
+    targetPort: 29811
+    protocol: TCP
+  - name: manager-v2
+    port: 29814
+    targetPort: 29814
+    protocol: TCP
+  - name: udp-discovery
+    port: 29810
+    targetPort: 29810
+    protocol: UDP
+  - name: udp-management
+    protocol: UDP
+    port: 19810
+    targetPort: 19810
+  - name: transfer-v2
+    port: 29815
+    targetPort: 29815
+    protocol: TCP
+  - name: rtty
+    port: 29816
+    targetPort: 29816
+    protocol: TCP

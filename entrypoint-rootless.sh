@@ -2,17 +2,9 @@
 
 set -e
 
-# check if rootless; run alternate entrypoint
-if [ "${ROOTLESS}" = "true" ]
-then
-  echo "INFO: ROOTLESS=true; switching to rootless entrypoint..."
-  exec /entrypoint-rootless.sh "${@}"
-fi
-
 # set environment variables
 export TZ
 TZ="${TZ:-Etc/UTC}"
-SMALL_FILES="${SMALL_FILES:-false}"
 
 # PORTS CONFIGURATION
 MANAGE_HTTP_PORT="${MANAGE_HTTP_PORT:-8088}"
@@ -42,67 +34,31 @@ SHOW_SERVER_LOGS="${SHOW_SERVER_LOGS:-true}"
 SHOW_MONGODB_LOGS="${SHOW_MONGODB_LOGS:-false}"
 SSL_CERT_NAME="${SSL_CERT_NAME:-tls.crt}"
 SSL_KEY_NAME="${SSL_KEY_NAME:-tls.key}"
-TLS_1_11_ENABLED="${TLS_1_11_ENABLED:-false}"
-PUID="${PUID:-508}"
-PGID="${PGID:-508}"
-PUSERNAME="${PUSERNAME:-omada}"
-PGROUP="${PGROUP:-omada}"
 SKIP_USERLAND_KERNEL_CHECK="${SKIP_USERLAND_KERNEL_CHECK:-false}"
 
-# validate user/group exist with correct UID/GID
-echo "INFO: Validating user/group (${PUSERNAME}:${PGROUP}) exists with correct UID/GID (${PUID}:${PGID})"
+# set USER_ID and GROUP_ID variables
+USER_ID="$(id -u)"
+GROUP_ID="$(id -g)"
 
-# check to see if group exists; if not, create it
-if grep -q -E "^${PGROUP}:" /etc/group > /dev/null 2>&1
+# make sure we aren't actually running as root
+if [ "${USER_ID}" = "0" ] || [ "${GROUP_ID}" = "0" ]
 then
-  # existing group found; also make sure the omada group matches the GID
-  echo "INFO: Group (${PGROUP}) exists; skipping creation"
-  EXISTING_GID="$(getent group "${PGROUP}" | cut -d: -f3)"
-  if [ "${EXISTING_GID}" != "${PGID}" ]
-  then
-    echo "ERROR: Group (${PGROUP}) has an unexpected GID; was expecting '${PGID}' but found '${EXISTING_GID}'!"
-    exit 1
-  fi
+  echo "ERROR: you're running as root (${USER_ID}:${GROUP_ID}); this defeats the purpose of running rootless!"
+  exit 1
 else
-  # make sure the group doesn't already exist with a different name
-  if awk -F ':' '{print $3}' /etc/group | grep -q "^${PGID}$"
-  then
-    # group ID exists but has a different group name
-    EXISTING_GROUP="$(grep ":${PGID}:" /etc/group | awk -F ':' '{print $1}')"
-    echo "INFO: Group (${PGROUP}) already exists with a different name; renaming '${EXISTING_GROUP}' to '${PGROUP}'"
-    groupmod -n "${PGROUP}" "${EXISTING_GROUP}"
-  else
-    # create the group
-    echo "INFO: Group (${PGROUP}) doesn't exist; creating"
-    groupadd -g "${PGID}" "${PGROUP}"
-  fi
+  echo "INFO: running as ${USER_ID}:${GROUP_ID}"
 fi
 
-# check to see if user exists; if not, create it
-if id -u "${PUSERNAME}" > /dev/null 2>&1
-then
-  # exiting user found; also make sure the omada user matches the UID
-  echo "INFO: User (${PUSERNAME}) exists; skipping creation"
-  EXISTING_UID="$(id -u "${PUSERNAME}")"
-  if [ "${EXISTING_UID}" != "${PUID}" ]
+# make sure the directories are writable
+for DIR in /opt/tplink/EAPController/data /opt/tplink/EAPController/logs /opt/tplink/EAPController/properties /tmp
+do
+  if [ ! -w "${DIR}" ]
   then
-    echo "ERROR: User (${PUSERNAME}) has an unexpected UID; was expecting '${PUID}' but found '${EXISTING_UID}'!"
+    # notify user that the directory is not writable
+    echo "ERROR: ${DIR} is not writable!"
     exit 1
   fi
-else
-  # make sure the user doesn't already exist with a different name
-  if awk -F ':' '{print $3}' /etc/passwd | grep -q "^${PUID}$"
-  then
-    # user ID exists but has a different user name
-    EXISTING_USER="$(grep ":${PUID}:" /etc/passwd | awk -F ':' '{print $1}')"
-    echo "INFO: User (${PUSERNAME}) already exists with a different name; renaming '${EXISTING_USER}' to '${PUSERNAME}'"
-    usermod -g "${PGID}" -d /opt/tplink/EAPController/data -l "${PUSERNAME}" -s /bin/sh -c "" "${EXISTING_USER}"
-  else
-    # create the user
-    echo "INFO: User (${PUSERNAME}) doesn't exist; creating"
-    useradd -u "${PUID}" -g "${PGID}" -d /opt/tplink/EAPController/data -s /bin/sh -c "" "${PUSERNAME}"
-  fi
-fi
+done
 
 # check if properties file exists; create it if it is missing
 DEFAULT_FILES="/opt/tplink/EAPController/properties.defaults/*"
@@ -113,7 +69,7 @@ do
   then
     echo "INFO: Properties file '${BASENAME}' missing, restoring default file..."
     cp "${FILE}" "/opt/tplink/EAPController/properties/${BASENAME}"
-    chown "${PUSERNAME}:${PGROUP}" "/opt/tplink/EAPController/properties/${BASENAME}"
+    chown "${USER_ID}:${GROUP_ID}" "/opt/tplink/EAPController/properties/${BASENAME}"
   fi
 done
 
@@ -123,7 +79,7 @@ then
   # missing directory; extract from original
   echo "INFO: Report HTML directory missing; extracting backup to '/opt/tplink/EAPController/data/html'"
   tar zxvf /opt/tplink/EAPController/data-html.tar.gz -C /opt/tplink/EAPController/data
-  chown -R "${PUSERNAME}:${PGROUP}" /opt/tplink/EAPController/data/html
+  chown -R "${USER_ID}:${GROUP_ID}" /opt/tplink/EAPController/data/html
 fi
 
 # make sure that the pdf directory exists
@@ -132,7 +88,7 @@ then
   # missing directory; extract from original
   echo "INFO: Report PDF directory missing; creating '/opt/tplink/EAPController/data/pdf'"
   mkdir /opt/tplink/EAPController/data/pdf
-  chown -R "${PUSERNAME}:${PGROUP}" /opt/tplink/EAPController/data/pdf
+  chown -R "${USER_ID}:${GROUP_ID}" /opt/tplink/EAPController/data/pdf
 fi
 
 # check to see if there is a db directory; create it if it is missing
@@ -140,20 +96,14 @@ if [ ! -d "/opt/tplink/EAPController/data/db" ]
 then
   echo "INFO: Database directory missing; creating '/opt/tplink/EAPController/data/db'"
   mkdir /opt/tplink/EAPController/data/db
-  chown "${PUSERNAME}:${PGROUP}" /opt/tplink/EAPController/data/db
+  chown "${USER_ID}:${GROUP_ID}" /opt/tplink/EAPController/data/db
   echo "done"
 fi
 
 # set default time zone and notify user of time zone
 echo "INFO: Time zone set to '${TZ}'"
 
-# append smallfiles if set to true
-if [ "${SMALL_FILES}" = "true" ]
-then
-  echo "WARN: smallfiles was passed but is not supported in >= 4.1 with the WiredTiger engine in use by MongoDB"
-  echo "INFO: Skipping setting smallfiles option"
-fi
-
+# set values in omada.properties
 # update stored ports when different of enviroment defined ports (works for numbers only)
 for ELEM in MANAGE_HTTP_PORT MANAGE_HTTPS_PORT PORTAL_HTTP_PORT PORTAL_HTTPS_PORT PORT_ADOPT_V1 PORT_APP_DISCOVERY PORT_UPGRADE_V1 PORT_MANAGER_V1 PORT_MANAGER_V2 PORT_DISCOVERY PORT_TRANSFER_V2 PORT_RTTY
 do
@@ -218,36 +168,14 @@ do
   fi
 done
 
-# make sure permissions are set appropriately on each directory
-for DIR in data logs properties
-do
-  OWNER="$(stat -c '%u' /opt/tplink/EAPController/${DIR})"
-  GROUP="$(stat -c '%g' /opt/tplink/EAPController/${DIR})"
-
-  if [ "${OWNER}" != "${PUID}" ] || [ "${GROUP}" != "${PGID}" ]
-  then
-    # notify user that uid:gid are not correct and fix them
-    echo "WARN: Ownership not set correctly on '/opt/tplink/EAPController/${DIR}'; setting correct ownership (${PUSERNAME}:${PGROUP})"
-    chown -R "${PUSERNAME}:${PGROUP}" "/opt/tplink/EAPController/${DIR}"
-  fi
-done
-
-# validate permissions on /tmp
-TMP_PERMISSIONS="$(stat -c '%a' /tmp)"
-if [ "${TMP_PERMISSIONS}" != "1777" ]
-then
-  echo "WARN: Permissions are not set correctly on '/tmp' (${TMP_PERMISSIONS}); setting correct permissions (1777)"
-  chmod -v 1777 /tmp
-fi
-
 # Import a cert from a possibly mounted secret or file at /cert
 if [ -f "/cert/${SSL_KEY_NAME}" ] && [ -f "/cert/${SSL_CERT_NAME}" ]
 then
   # see where the keystore directory is; check for old location first
   if [ -d /opt/tplink/EAPController/keystore ]
   then
-    # keystore in the parent folder before 5.3.1
-    KEYSTORE_DIR="/opt/tplink/EAPController/keystore"
+    echo "ERROR: rootless isn't supported on versions < 5.3.1"
+    exit 1
   else
     # keystore directory moved to the data directory in 5.3.1
     KEYSTORE_DIR="/opt/tplink/EAPController/data/keystore"
@@ -258,7 +186,7 @@ then
       echo "INFO: Creating keystore directory (${KEYSTORE_DIR})"
       mkdir "${KEYSTORE_DIR}"
       echo "INFO: Setting permissions on ${KEYSTORE_DIR}"
-      chown "${PUSERNAME}:${PGROUP}" "${KEYSTORE_DIR}"
+      chown "${USER_ID}:${GROUP_ID}" "${KEYSTORE_DIR}"
     fi
   fi
 
@@ -276,26 +204,8 @@ then
     -passout pass:tplink
 
   # set ownership/permission on keystore
-  chown "${PUSERNAME}:${PGROUP}" "${KEYSTORE_DIR}/eap.keystore"
+  chown "${USER_ID}:${GROUP_ID}" "${KEYSTORE_DIR}/eap.keystore"
   chmod 400 "${KEYSTORE_DIR}/eap.keystore"
-fi
-
-# re-enable disabled TLS versions 1.0 & 1.1
-if [ "${TLS_1_11_ENABLED}" = "true" ]
-then
-  echo "INFO: Re-enabling TLS 1.0 & 1.1"
-  if [ -f "/etc/java-8-openjdk/security/java.security" ]
-  then
-    # openjdk8
-    sed -i 's#^jdk.tls.disabledAlgorithms=SSLv3, TLSv1, TLSv1.1,#jdk.tls.disabledAlgorithms=SSLv3,#' /etc/java-8-openjdk/security/java.security
-  elif [ -f "/etc/java-17-openjdk/security/java.security" ]
-  then
-    # openjdk17
-    sed -i 's#^jdk.tls.disabledAlgorithms=SSLv3, TLSv1, TLSv1.1,#jdk.tls.disabledAlgorithms=SSLv3,#' /etc/java-17-openjdk/security/java.security
-  else
-    # not running openjdk8 or openjdk17
-    echo "WARN: Unable to re-enable TLS 1.0 & 1.1; unable to detect openjdk version"
-  fi
 fi
 
 # see if any of these files exist; if so, do not start as they are from older versions
@@ -379,32 +289,6 @@ else
   echo "INFO: userland/kernel check passed"
 fi
 
-# see if we should try to delete bcpkix-jdk15on-1.70.jar and bcprov-jdk15on-1.70.jar to workaround https://github.com/mbentley/docker-omada-controller/issues/509
-if [ "${WORKAROUND_509}" = "true" ] && [ "${IMAGE_OMADA_VER}" = "5.15.6.7" ]
-then
-  echo "INFO: WORKAROUND_509=true; deleting files that block controller startup, if present"
-
-  # delete files, if present
-  for FILE in bcpkix-jdk15on-1.70.jar bcprov-jdk15on-1.70.jar
-  do
-    # see if the file is there
-    if [ -f "${FILE}" ]
-    then
-      # found; delete it
-      echo -ne "INFO: deleting '/opt/tplink/EAPController/lib/${FILE}'\nINFO: "
-      rm -v "/opt/tplink/EAPController/lib/${FILE}"
-    else
-      # not found
-      echo "INFO: '/opt/tplink/EAPController/lib/${FILE}' isn't present, skipping"
-    fi
-  done
-
-  echo "INFO: WORKAROUND_509 complete!"
-elif [ "${WORKAROUND_509}" = "true" ] && [ "${IMAGE_OMADA_VER}" != "5.15.6.7" ]
-then
-  echo "WARN: WORKAROUND_509=true; but you're not running an impacted version; skipping workaround. (You should remove this env var as it does nothing!)"
-fi
-
 # show java version
 echo -e "INFO: output of 'java -version':\n$(java -version 2>&1)\n"
 
@@ -440,19 +324,19 @@ then
   sleep 2
 fi
 
-echo "INFO: Starting Omada Controller as user ${PUSERNAME}"
+echo "INFO: Starting Omada Controller..."
 
 # tail the omada logs if set to true
 if [ "${SHOW_SERVER_LOGS}" = "true" ]
 then
-  gosu "${PUSERNAME}" tail -F -n 0 /opt/tplink/EAPController/logs/server.log &
+  tail -F -n 0 /opt/tplink/EAPController/logs/server.log &
 fi
 
 # tail the mongodb logs if set to true
 if [ "${SHOW_MONGODB_LOGS}" = "true" ]
 then
-  gosu "${PUSERNAME}" tail -F -n 0 /opt/tplink/EAPController/logs/mongod.log &
+  tail -F -n 0 /opt/tplink/EAPController/logs/mongod.log &
 fi
 
-# run the actual command as the omada user
-exec gosu "${PUSERNAME}" "${@}"
+# run the actual command
+exec "${@}"
