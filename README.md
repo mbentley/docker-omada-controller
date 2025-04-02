@@ -132,7 +132,7 @@ Backups can also be taken manually on the same screen as the auto backup setting
 
 ### Controller Upgrades
 
-Before performing and upgrade, I would suggest taking a backup through the controller itself. Controller upgrades are done by stopping the existing container gracefully (see the [note below](#preventing-database-corruption) on this topic), removing the existing container, and running a new container with the new version of the controller. This can be done manually, with compose, or with manby other 3rd party tools which auto-update containers.
+Before performing any upgrade, I would suggest taking a backup through the controller itself. Controller upgrades are done by stopping the existing container gracefully (see the [note below](#preventing-database-corruption) on this topic), removing the existing container, and running a new container with the new version of the controller. This can be done manually, with compose, or with many other 3rd party tools which auto-update containers.
 
 ### Preventing Database Corruption
 
