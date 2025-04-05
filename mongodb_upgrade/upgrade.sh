@@ -4,11 +4,11 @@
 #   X validate no /opt/tplink/EAPController/data/db/mongod.lock exists; abort if so
 #   X backup database before upgrade
 #   X rollback database on failure (and update all of the places we might exit to roll back)
+#   X amd64 requirements
+#     X Add AVX check (https://www.mongodb.com/docs/manual/administration/production-notes/#x86_64)
+#   X arm64 requirements
+#     X Check to see if the upgrade fails on arm64 if the instruction set isn't ARMv8.2-A or later (https://www.mongodb.com/docs/manual/administration/production-notes/#arm64)
 #   - validate no /opt/tplink/EAPController/data/mongo.pid exists; abort if so ???
-#   - amd64 requirements
-#     - Add AVX check (https://www.mongodb.com/docs/manual/administration/production-notes/#x86_64)
-#   - arm64 requirements
-#     - Check to see if the upgrade fails on arm64 if the instruction set isn't ARMv8.2-A or later (https://www.mongodb.com/docs/manual/administration/production-notes/#arm64)
 
 catch_error() {
   echo -e "\nERROR: unexpected failure!"
@@ -196,6 +196,43 @@ version_step_upgrade() {
 }
 
 ### start of full upgrade cycle
+# verify the system meets the system requirements for MongoDB 8
+echo -n "INFO: running hardware prerequesite checks to ensure your system supports MongoDB 8..."
+
+# get the architecture
+ARCH="$(uname -m)"
+
+case "${ARCH}" in
+  x86_64)
+    # amd64 checks
+
+    # check for AXV support
+    if ! grep -q -o 'avx[^ ]*' /proc/cpuinfo
+    then
+      echo "ERROR: your system does not support AVX which is a requirement for MongoDB starting with 5.x; you will not be able to upgrade"
+      exit 1
+    fi
+    ;;
+  aarch64|aarch64_be|armv8b|armv8l)
+    # arm64 checks (list of 64 bit arm compatible names from `uname -m`: https://stackoverflow.com/a/45125525)
+
+    # check for armv8.2-a support
+    if ! /atomic > /dev/null
+    then
+      # failed armv8.2-a test
+      echo "ERROR: your system does not support the armv8.2-a or later microarchitecture which is a requirement for MongoDB starting with 5.x; you will not be able to upgrade"
+      exit 1
+    fi
+    ;;
+  *)
+    echo "ERROR: unknown architecture (${ARCH})"
+    exit 1
+    ;;
+esac
+
+# prerequesite checks successful
+echo "done"
+
 # verify no lock file exists
 echo -n "INFO: running pre-flight checks on MongoDB..."
 
@@ -236,7 +273,7 @@ else
 fi
 
 # output message
-echo -e "\nINFO: executing upgrade process from MongoDB 3.6 to 7.0..."
+echo -e "\nINFO: executing upgrade process from MongoDB 3.6 to 8.0..."
 
 ### 3.6 to 4.0
 # set variables
