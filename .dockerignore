@@ -1,3 +1,5 @@
 *.swp
 .git
 .DS_Store
+*.md
+k8s/
