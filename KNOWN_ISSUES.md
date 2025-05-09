@@ -1,5 +1,7 @@
 # Known Issues
 
+* [Controller Software Issues](#controller-software-issues)
+    * [Devices Fail to Adopt](#devices-fail-to-adopt)
 * [Containerization Issues](#containerization-issues)
     * [MongoDB Corruption](#mongodb-corruption)
     * [Notes for `armv7l`](#notes-for-armv7l)
@@ -14,6 +16,16 @@
     * [Slowness in Safari](#slowness-in-safari)
     * [5.14 - Controller Unable to Start](#514---controller-unable-to-start)
     * [5.15 - Controller Unable to Start](#515---controller-unable-to-start)
+
+## Controller Software Issues
+
+### Devices Fail to Adopt
+
+Starting with `5.15.20.16`, some users report that switches and EAPs fail to adopt.  TP-Link support has suggested that users do the following:
+
+> You can log into the management page of the switch in Standalone Mode and go to SYSTEM > Controller Settings. In Controller Inform URL, specify Inform URL/IP Address as the controller’s IP address.
+
+It is not yet clear if this is something that will fix EAPs as once they are adopted, the standalone management page is disabled. If you have additional information, please add it in [this discussion](https://github.com/mbentley/docker-omada-controller/discussions/562).
 
 ## Containerization Issues
 
