@@ -21,11 +21,7 @@
 
 ### Devices Fail to Adopt
 
-Starting with `5.15.20.16`, some users report that switches and EAPs fail to adopt.  TP-Link support has suggested that users do the following:
-
-> You can log into the management page of the switch in Standalone Mode and go to SYSTEM > Controller Settings. In Controller Inform URL, specify Inform URL/IP Address as the controller’s IP address.
-
-It is not yet clear if this is something that will fix EAPs as once they are adopted, the standalone management page is disabled. If you have additional information, please add it in [this discussion](https://github.com/mbentley/docker-omada-controller/discussions/562).
+Users who are using `bridge` mode often report that switches and EAPs fail to adopt. This is due to the controller being technically being on a different network inside the container's bridge network, exporting the ports via NAT. Using port mapping is more complex than using host networking as your devices need to be informed of the controller's IP or hostname. See [this TP-Link FAQ](https://www.tp-link.com/us/support/faq/3087/) for details on how to configure this on your device(s) prior to attempting to adopt them.
 
 ## Containerization Issues
 
