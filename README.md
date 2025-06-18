@@ -6,6 +6,7 @@ For references on running a legacy v3 or v4 controller, see the [README for v3 a
 
 ## Table of Contents
 
+* [Quickstart Guide](#quickstart-guide)
 * [Image Tags](#image-tags)
     * [Multi-arch Tags](#multi-arch-tags)
     * [Tags for Beta/Testing](#tags-for-betatesting)
@@ -23,12 +24,13 @@ For references on running a legacy v3 or v4 controller, see the [README for v3 a
     * [Using port mapping](#using-port-mapping)
     * [Using non-default ports](#using-non-default-ports)
     * [Running Rootless](#running-rootless)
+    * [Using Docker Compose](#using-docker-compose)
+    * [Using k8s](#using-k8s)
 * [Optional Variables](#optional-variables)
 * [Persistent Data](#persistent-data)
 * [Custom SSL Certificates](#custom-ssl-certificates)
 * [Time Zones](#time-zones)
 * [Unprivileged Ports](#unprivileged-ports)
-* [Using Docker Compose](#using-docker-compose)
 * [Omada Controller API Documentation](#omada-controller-api-documentation)
 * [Known Issues](KNOWN_ISSUES.md#known-issues)
     * [Controller Software Issues](KNOWN_ISSUES.md#controller-software-issues)
@@ -47,6 +49,37 @@ For references on running a legacy v3 or v4 controller, see the [README for v3 a
         * [Slowness in Safari](KNOWN_ISSUES.md#slowness-in-safari)
         * [5.14 - Controller Unable to Start](KNOWN_ISSUES.md#514---controller-unable-to-start)
         * [5.15 - Controller Unable to Start](KNOWN_ISSUES.md#515---controller-unable-to-start)
+
+## Quickstart Guide
+
+If you don't know much about Docker or want to just get started as easily as possible, start here as this will guide you through this readme on key concepts and things you want to take into consideration.
+
+1. **Docker**
+    * This guide assumes that you have Docker installed. If you don't, I would suggest starting [here](https://www.docker.com/get-started/).
+1. **Picking an image tag**
+    * Most people will want to use a major.minor tag version (i.e. - `5.15`) as this is the safest option and can almost certainly be considered to be non-breaking when a new version of the image is available.
+    * **USING THE `latest` TAG IS A BAD IDEA - DO NOT DO IT!** Using `latest` may upgrade you to a newer version (i.e. - `5.15` to `6.0`) when it comes out and there is no guarantee that there will not be potentially breaking changes between those versions!
+    * If you need to create PDF reports from the controller, there are [tags with Chromium](#tags-with-chromium) as that is required to generate them. Those images are much larger and only available for `amd64` so only use them if you really need that functionality.
+1. **Picking your networking mode**
+    * There are three main options regarding how your container is exposed to your network, which is required to manage your TP-Link Omada enabled devices:
+      * [Host network driver](#using-nethost) - this is the best and easiest option as it exposes the container using your Docker host's network interface as if you were running the controller outside of a container.
+      * [Bridge network driver](#using-port-mapping) - this is also referred to just as using port mapping where the container runs on it's own isolated network. Many applications work fine in this mode but with the Omada Controller, this makes things more difficult due to how discovery works of TP-Link Omada enabled devices. I would advise against using this method unless you have a good reason to do so as you will need to manually configure your devices to know where the controller is running before they can be adopted (see the FAQ in the link shared)
+      * **macvlan** - this is not covered by this guide as it's a more advanced topic - if you know how and when to use macvlan, I shouldn't have to explain it. If you want to learn, there are several GitHub issues in this repo where macvlan is discussed.
+1. **How to manage your persistent data**
+    * The data for the controller needs to be persisted outside of the container so that your configuration and settings are not lost between restarts, upgrades, etc. See [Persistent Data](#persistent-data) for details on what directories are important for maintaining your persistent data.
+    * There are two main ways to persist data: in Docker managed volumes (which the examples use) or bind mounts. See the Docker docs on [bind mounts](https://docs.docker.com/engine/storage/bind-mounts/) for details on how that works.
+1. **How to run the container**
+    * There are several ways to run your controller container:
+      * [docker run...](#example-usage)
+      * [docker compose](#using-docker-compose)
+      * [k8s](#using-k8s)
+      * **3rd party services** - there are many 3rd party container marketplaces built into NAS devices or other appliances which can simplify the deployment - see those specific tools for instructions as that is beyond the scope of this guide.
+1. **Controller Maintenance and Operations**
+    * [Controller Backups](#controller-backups) - how to configure and take backups
+    * [Controller Upgrades](#controller-upgrades) - how to upgrade the controller by updating the image
+    * [How to properly stop the controller](#preventing-database-corruption) - how to cleanly stop the container to prevent database corruption
+1. **Accessing the Controller**
+    * Once deployed, the Omada Controller will be available on `https://<ip-address-or-hostname>:8043/`, assuming you're using the default ports.
 
 ## Image Tags
 
@@ -134,13 +167,15 @@ Backups can also be taken manually on the same screen as the auto backup setting
 
 ### Controller Upgrades
 
-Before performing any upgrade, I would suggest taking a backup through the controller itself. Controller upgrades are done by stopping the existing container gracefully (see the [note below](#preventing-database-corruption) on this topic), removing the existing container, and running a new container with the new version of the controller. This can be done manually, with compose, or with many other 3rd party tools which auto-update containers.
+Before performing any upgrade, I would suggest taking a backup through the controller itself. Controller upgrades are done by stopping the existing container gracefully (see the [note below](#preventing-database-corruption) on this topic), removing the existing container, and running a new container with the new version of the controller. This can be done manually, with compose, or with many other 3rd party tools which auto-update containers, such as [Watchtower](https://containrrr.dev/watchtower/).
 
 ### Preventing Database Corruption
 
 When stopping your container in order to upgrade the controller, make sure to allow the MongoDB enough time to safely shutdown. This is done using `docker stop -t <value>` where `<value>` is a number in seconds, such as 60, which should allow the controller to cleanly shutdown. Database corruption has been observed when not cleanly shut down. The `docker run` and compose examples now include `--stop-timeout` and `stop_grace_period` which are set to 60s.
 
-## Building images
+## Building Images
+
+There are pre-built [images on Docker Hub](https://hub.docker.com/r/mbentley/omada-controller/tags) - you only need to build your own image if you either don't trust pre-built images or want to do something custom to the image.
 
 <details>
 <summary>Click to expand docker build instructions</summary>
@@ -190,7 +225,7 @@ There are some differences between the build steps for `amd64`, `arm64`, and `ar
 
 ## Example Usage
 
-See [Optional Variables](#optional-variables) for details on the environment variables that can modify the behavior of the controller inside the container. To run this Docker image and keep persistent data in named volumes:
+These example below are based on `docker run...` commands. See [Using Docker Compose](#using-docker-compose) for compose examples or [Using k8s](#using-k8s) for example k8s manifests. See [Optional Variables](#optional-variables) for details on the environment variables that can modify the behavior of the controller inside the container. To run this Docker image and keep persistent data in named volumes:
 
 ### Using `net=host`
 
@@ -250,7 +285,19 @@ There is an optional ability to run the container in a rootless mode. This versi
 * Set the appropriate ownership of your persistent data directories for `data` and `logs`
 * Any additional files or data directories, such as the `/certs` path when injecting your own certificates, must be readable by the user in which you're running as
 
-Example Kubernetes manifests are available in [k8s](./k8s).
+### Using Docker Compose
+
+There are a few Docker Compose files available that can serve as a guide if you want to use compose to managed the lifecycle of your container. Depending on which network mode of operation you want to use, there are example for each: [host networking](https://github.com/mbentley/docker-omada-controller/blob/master/docker-compose.yml) or [bridge/port mapping](https://github.com/mbentley/docker-omada-controller/blob/master/docker-compose_bridge.yml).
+
+```bash
+<download the compose file you wish to use>
+<edit the compose file to match your persistent data needs>
+docker compose up -d
+```
+
+### Using k8s
+
+There are some Kubernetes manifest examples in the [k8s](./k8s) directory of this repository which can help as a guide for how to run the controller. It's assumed that you will know how to modify and use these manifests on k8s if you choose that as your deployment option.
 
 ## Optional Variables
 
@@ -301,16 +348,6 @@ By default, this image uses the `Etc/UTC` time zone. You may update the time zon
 ## Unprivileged Ports
 
 This Docker image runs as a non-root user by default. In order to bind unprivileged ports (ports < 1024 by default), you must include `--sysctl net.ipv4.ip_unprivileged_port_start=0` in your `docker run` command to allow ports below 1024 to be bound by non-root users.
-
-## Using Docker Compose
-
-There is a [Docker Compose file](https://github.com/mbentley/docker-omada-controller/blob/master/docker-compose.yml) available for those who would like to use compose to manage the lifecycle of their container:
-
-```bash
-wget https://raw.githubusercontent.com/mbentley/docker-omada-controller/master/docker-compose.yml
-<edit the compose file to match your persistent data needs>
-docker compose up -d
-```
 
 ## Omada Controller API Documentation
 
