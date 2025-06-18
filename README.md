@@ -71,15 +71,25 @@ If you don't know much about Docker or want to just get started as easily as pos
 1. **How to run the container**
     * There are several ways to run your controller container:
       * [docker run...](#example-usage)
+        * Examples for both host (_prefered_) and bridge network modes
+        * Uses the latest major.minor (i.e. - `5.15`) tag
+        * Only requires Docker to be set up
       * [docker compose](#using-docker-compose)
+        * Examples for both host (_prefered_) and bridge network modes
+        * Uses the latest major.minor (i.e. - `5.15`) tag
+        * Requires Docker and [Docker Compose](https://docs.docker.com/compose/) to be set up
       * [k8s](#using-k8s)
-      * **3rd party services** - there are many 3rd party container marketplaces built into NAS devices or other appliances which can simplify the deployment - see those specific tools for instructions as that is beyond the scope of this guide.
+        * Deployment is k8s is an advanced topic; only use this if you know what you are doing and can support yourself.
+      * **3rd party services**
+        * There are many 3rd party container marketplaces built into NAS devices or other appliances which can simplify the deployment - see those specific tools for instructions as that is beyond the scope of this guide.
 1. **Controller Maintenance and Operations**
     * [Controller Backups](#controller-backups) - how to configure and take backups
     * [Controller Upgrades](#controller-upgrades) - how to upgrade the controller by updating the image
     * [How to properly stop the controller](#preventing-database-corruption) - how to cleanly stop the container to prevent database corruption
 1. **Accessing the Controller**
     * Once deployed, the Omada Controller will be available on `https://<ip-address-or-hostname>:8043/`, assuming you're using the default ports.
+1. **Have further questions?**
+    * Open a [Discussion in the Help category](https://github.com/mbentley/docker-omada-controller/discussions/categories/help) and the community will give you a hand, when they are able.
 
 ## Image Tags
 
