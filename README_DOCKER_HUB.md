@@ -2,6 +2,10 @@
 
 Docker image for [TP-Link Omada Controller](https://www.tp-link.com/us/support/download/omada-software-controller/) to control [TP-Link Omada Hardware](https://www.tp-link.com/en/business-networking/all-omada/)
 
+## Just Getting Started?
+
+Check out the [Quickstart Guide](https://github.com/mbentley/docker-omada-controller?tab=readme-ov-file#quickstart-guide) for the basics of what you need to know about running the TP-Link Omada Controller in a container and how to operate it successfully.
+
 ## Full README
 
 For the full readme which includes a list of tags, including usage examples, upgrade details, known issues, and more, refer to the [README in the GitHub repository](https://github.com/mbentley/docker-omada-controller/blob/master/README.md).
