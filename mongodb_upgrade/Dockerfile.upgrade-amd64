@@ -14,25 +14,25 @@ RUN cd /tmp &&\
   wget -q https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1804-4.2.23.tgz &&\
   wget -q https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1804-4.4.18.tgz &&\
   wget -q https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu2004-5.0.31.tgz &&\
-  wget -q https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu2004-6.0.20.tgz &&\
-  wget -q https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu2004-7.0.16.tgz &&\
-  wget -q https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu2004-8.0.4.tgz &&\
+  wget -q https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu2004-6.0.25.tgz &&\
+  wget -q https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu2004-7.0.22.tgz &&\
+  wget -q https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu2004-8.0.12.tgz &&\
   wget -q https://downloads.mongodb.com/compass/mongosh-2.3.9-linux-x64.tgz &&\
   tar xvf mongodb-linux-x86_64-ubuntu1804-4.0.28.tgz mongodb-linux-x86_64-ubuntu1804-4.0.28/bin/mongod mongodb-linux-x86_64-ubuntu1804-4.0.28/bin/mongo &&\
   tar xvf mongodb-linux-x86_64-ubuntu1804-4.2.23.tgz mongodb-linux-x86_64-ubuntu1804-4.2.23/bin/mongod mongodb-linux-x86_64-ubuntu1804-4.2.23/bin/mongo &&\
   tar xvf mongodb-linux-x86_64-ubuntu1804-4.4.18.tgz mongodb-linux-x86_64-ubuntu1804-4.4.18/bin/mongod mongodb-linux-x86_64-ubuntu1804-4.4.18/bin/mongo &&\
   tar xvf mongodb-linux-x86_64-ubuntu2004-5.0.31.tgz mongodb-linux-x86_64-ubuntu2004-5.0.31/bin/mongod mongodb-linux-x86_64-ubuntu2004-5.0.31/bin/mongo &&\
-  tar xvf mongodb-linux-x86_64-ubuntu2004-6.0.20.tgz mongodb-linux-x86_64-ubuntu2004-6.0.20/bin/mongod &&\
-  tar xvf mongodb-linux-x86_64-ubuntu2004-7.0.16.tgz mongodb-linux-x86_64-ubuntu2004-7.0.16/bin/mongod &&\
-  tar xvf mongodb-linux-x86_64-ubuntu2004-8.0.4.tgz mongodb-linux-x86_64-ubuntu2004-8.0.4/bin/mongod &&\
+  tar xvf mongodb-linux-x86_64-ubuntu2004-6.0.25.tgz mongodb-linux-x86_64-ubuntu2004-6.0.25/bin/mongod &&\
+  tar xvf mongodb-linux-x86_64-ubuntu2004-7.0.22.tgz mongodb-linux-x86_64-ubuntu2004-7.0.22/bin/mongod &&\
+  tar xvf mongodb-linux-x86_64-ubuntu2004-8.0.12.tgz mongodb-linux-x86_64-ubuntu2004-8.0.12/bin/mongod &&\
   tar xvf mongosh-2.3.9-linux-x64.tgz mongosh-2.3.9-linux-x64/bin/mongosh &&\
   mv mongodb-linux-x86_64-ubuntu1804-4.0.28/bin/mongod mongod-4.0.28 &&\
   mv mongodb-linux-x86_64-ubuntu1804-4.2.23/bin/mongod mongod-4.2.23 &&\
   mv mongodb-linux-x86_64-ubuntu1804-4.4.18/bin/mongod mongod-4.4.18 &&\
   mv mongodb-linux-x86_64-ubuntu2004-5.0.31/bin/mongod mongod-5.0.31 &&\
-  mv mongodb-linux-x86_64-ubuntu2004-6.0.20/bin/mongod mongod-6.0.20 &&\
-  mv mongodb-linux-x86_64-ubuntu2004-7.0.16/bin/mongod mongod-7.0.16 &&\
-  mv mongodb-linux-x86_64-ubuntu2004-8.0.4/bin/mongod mongod-8.0.4 &&\
+  mv mongodb-linux-x86_64-ubuntu2004-6.0.25/bin/mongod mongod-6.0.25 &&\
+  mv mongodb-linux-x86_64-ubuntu2004-7.0.22/bin/mongod mongod-7.0.22 &&\
+  mv mongodb-linux-x86_64-ubuntu2004-8.0.12/bin/mongod mongod-8.0.12 &&\
   mv mongodb-linux-x86_64-ubuntu1804-4.0.28/bin/mongo mongo-4.0.28 &&\
   mv mongodb-linux-x86_64-ubuntu1804-4.2.23/bin/mongo mongo-4.2.23 &&\
   mv mongodb-linux-x86_64-ubuntu1804-4.4.18/bin/mongo mongo-4.4.18 &&\
