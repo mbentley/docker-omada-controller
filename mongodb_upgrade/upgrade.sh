@@ -329,7 +329,7 @@ version_step_upgrade
 
 ### 5.0 to 6.0
 # set variables
-MONGO_VER="6.0.20"
+MONGO_VER="6.0.25"
 MONGO_MAJ_MIN="$(echo "${MONGO_VER}" | awk -F '.' '{print $1"."$2}')"
 MONGO_CLIENT="mongosh"
 EXPECTED_COMPAT_VERSION="5.0"
@@ -339,8 +339,15 @@ version_step_upgrade
 
 
 ### 6.0 to 7.0
+if [ "$(uname -m)" = "aarch64" ]
+then
+  echo -e "\nINFO: upgrading libc6 to support MongoDB 7.x & 8.x..."
+  dpkg -i /libc6_2.31-0ubuntu9.18_arm64.deb
+  dpkg -i /libgcc-s1_10.5.0-1ubuntu1~20.04_arm64.deb /libcrypt1_4.4.10-10ubuntu4_arm64.deb /gcc-10-base_10.5.0-1ubuntu1~20.04_arm64.deb /libc6_2.31-0ubuntu9.18_arm64.deb
+  echo "done"
+fi
 # set variables
-MONGO_VER="7.0.16"
+MONGO_VER="7.0.22"
 MONGO_MAJ_MIN="$(echo "${MONGO_VER}" | awk -F '.' '{print $1"."$2}')"
 MONGO_CLIENT="mongosh"
 EXPECTED_COMPAT_VERSION="6.0"
@@ -351,7 +358,7 @@ version_step_upgrade
 
 ### 7.0 to 8.0
 # set variables
-MONGO_VER="8.0.4"
+MONGO_VER="8.0.12"
 MONGO_MAJ_MIN="$(echo "${MONGO_VER}" | awk -F '.' '{print $1"."$2}')"
 MONGO_CLIENT="mongosh"
 EXPECTED_COMPAT_VERSION="7.0"
