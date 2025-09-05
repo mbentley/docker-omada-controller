@@ -2,7 +2,7 @@
 
 set -e
 
-# omada controller dependency and package installer script for version 5.x
+# omada controller dependency and package installer script for version 5.x and 6.x
 
 # set default variables
 OMADA_DIR="/opt/tplink/EAPController"
@@ -78,28 +78,29 @@ case "${NO_MONGODB}" in
     # include mongodb
     case "${ARCH}" in
       amd64|arm64|"")
-        # check to see if this is 22.04 or not
-        if [ "$(eval "$(grep '^VERSION_ID=' /etc/os-release)"; echo "${VERSION_ID}")" = "22.04" ]
-        then
-          # 22.04
-          # install gnupg
-          apt-get install --no-install-recommends -y gnupg
+        # check to see if this is ubuntu 22.04 or 24.04
+        case $(eval "$(grep '^VERSION_ID=' /etc/os-release)"; echo "${VERSION_ID}") in
+          22.04|24.04)
+            # install gnupg
+            apt-get install --no-install-recommends -y gnupg
 
-          # download & install public key
-          wget -q -O - https://www.mongodb.org/static/pgp/server-8.0.asc | gpg -o /etc/apt/keyrings/mongodb-server-8.0.gpg --dearmor
+            # download & install public key
+            wget -q -O - https://www.mongodb.org/static/pgp/server-8.0.asc | gpg -o /etc/apt/keyrings/mongodb-server-8.0.gpg --dearmor
 
-          # add repo
-          echo "deb [ arch=${ARCH} signed-by=/etc/apt/keyrings/mongodb-server-8.0.gpg ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/8.0 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-8.0.list
+            # add repo
+            echo "deb [ arch=${ARCH} signed-by=/etc/apt/keyrings/mongodb-server-8.0.gpg ] https://repo.mongodb.org/apt/ubuntu $(eval "$(grep '^VERSION_CODENAME=' /etc/os-release)"; echo "${VERSION_CODENAME}")/mongodb-org/8.0 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-8.0.list
 
-          # update apt sources
-          apt-get update
+            # update apt sources
+            apt-get update
 
-          # add the required packages
-          PKGS+=( mongodb-org-server )
-        else
+            # add the required packages
+            PKGS+=( mongodb-org-server )
+            ;;
+          *)
           # not 22.04; use the package from the ubuntu repo
           PKGS+=( mongodb-server-core )
-        fi
+            ;;
+        esac
         ;;
       armv7l)
         PKGS+=( mongodb )
@@ -116,7 +117,7 @@ case "${ARCH}:${NO_MONGODB}" in
   amd64:*|arm64:*|armv7l:true|"":*)
     # use openjdk-17 for v5.4 and above; all others use openjdk-8
     case "${OMADA_MAJOR_VER}" in
-      5)
+      5|6)
         # pick specific package based on the major.minor version
         case "${OMADA_MAJOR_MINOR_VER}" in
           5.0|5.1|5.3)
@@ -274,6 +275,10 @@ mkdir "${OMADA_DIR}" -vp
 
 # starting with 5.0.x, the installation has no webapps directory; these values are pulled from the install.sh
 case "${OMADA_MAJOR_VER}" in
+  6)
+    # v6
+    NAMES=( bin data lib properties install.sh uninstall.sh )
+    ;;
   5)
     # see if we are running 5.3.x or greater by checking the minor version
     if [ "${OMADA_MAJOR_MINOR_VER#*.}" -ge 3 ]
@@ -286,7 +291,7 @@ case "${OMADA_MAJOR_VER}" in
     fi
     ;;
   *)
-    # isn't v5.x
+    # isn't v5.x or 6.x
     NAMES=( bin data properties keystore lib webapps install.sh uninstall.sh )
     ;;
 esac
@@ -299,7 +304,7 @@ done
 
 # only add standlone options for controller version 5.x and above
 case "${OMADA_MAJOR_VER}" in
-  5)
+  5|6)
     # add additional properties to the properties file
     { \
       echo "" ;\
@@ -328,7 +333,7 @@ esac
 
 # starting with 5.0.x, the work directory is no longer needed
 case "${OMADA_MAJOR_VER}" in
-  5)
+  5|6)
     # create logs directory
     mkdir "${OMADA_DIR}/logs"
     ;;

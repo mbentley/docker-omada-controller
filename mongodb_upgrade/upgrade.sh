@@ -87,6 +87,16 @@ abort_and_rollback() {
   exit 1
 }
 
+run_db_repair() {
+  MESSAGE="${*}"
+
+  # run repair on db
+  echo -n "INFO: ${MESSAGE}..."
+  # shellcheck disable=SC2086
+  /tmp/mongod-${MONGO_VER} --dbpath /opt/tplink/EAPController/data/db -pidfilepath /opt/tplink/EAPController/data/mongo.pid --bind_ip 127.0.0.1 ${JOURNAL} --logpath /opt/tplink/EAPController/data/mongodb_upgrade.log --logappend --repair || abort_and_rollback
+  echo "done"
+}
+
 version_step_upgrade() {
   # start upgrade
   echo -e "\nINFO: starting upgrade to ${MONGO_MAJ_MIN}..."
@@ -102,7 +112,7 @@ version_step_upgrade() {
   esac
 
   # run repair on db to upgrade
-  #/tmp/mongod-${MONGO_VER} --dbpath /opt/tplink/EAPController/data/db -pidfilepath /opt/tplink/EAPController/data/mongo.pid --bind_ip 127.0.0.1 ${JOURNAL} --logpath /opt/tplink/EAPController/data/mongodb_upgrade.log --logappend --repair || abort_and_rollback
+  #run_db_repair
 
   # start db
   echo -n "INFO: starting mongod ${MONGO_VER}..."
@@ -272,15 +282,18 @@ else
   exit 1
 fi
 
-# output message
-echo -e "\nINFO: executing upgrade process from MongoDB 3.6 to 8.0..."
-
 ### 3.6 to 4.0
 # set variables
 MONGO_VER="4.0.28"
 MONGO_MAJ_MIN="$(echo "${MONGO_VER}" | awk -F '.' '{print $1"."$2}')"
 MONGO_CLIENT="mongo-${MONGO_VER}"
 EXPECTED_COMPAT_VERSION="3.6"
+
+# run repair
+run_db_repair "starting MongoDB repair pre-upgrade to ensure consistency"
+
+# output message
+echo -e "\nINFO: executing upgrade process from MongoDB 3.6 to 8.0..."
 
 # run upgrade
 version_step_upgrade
