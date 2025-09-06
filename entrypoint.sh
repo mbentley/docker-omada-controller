@@ -2,6 +2,8 @@
 
 set -e
 
+# omada controller entrypoint script for versions 5.x and 6.x
+
 # check if rootless; run alternate entrypoint
 if [ "${ROOTLESS}" = "true" ]
 then
