@@ -78,9 +78,9 @@ case "${NO_MONGODB}" in
     # include mongodb
     case "${ARCH}" in
       amd64|arm64|"")
-        # check to see if this is ubuntu 22.04 or 24.04
-        case $(eval "$(grep '^VERSION_ID=' /etc/os-release)"; echo "${VERSION_ID}") in
-          22.04|24.04)
+        # check to see if we are installing v6
+        case "${OMADA_MAJOR_VER}" in
+          6)
             # install gnupg
             apt-get install --no-install-recommends -y gnupg
 
@@ -88,7 +88,7 @@ case "${NO_MONGODB}" in
             wget -q -O - https://www.mongodb.org/static/pgp/server-8.0.asc | gpg -o /etc/apt/keyrings/mongodb-server-8.0.gpg --dearmor
 
             # add repo
-            echo "deb [ arch=${ARCH} signed-by=/etc/apt/keyrings/mongodb-server-8.0.gpg ] https://repo.mongodb.org/apt/ubuntu $(eval "$(grep '^VERSION_CODENAME=' /etc/os-release)"; echo "${VERSION_CODENAME}")/mongodb-org/8.0 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-8.0.list
+            echo "deb [arch=${ARCH} signed-by=/etc/apt/keyrings/mongodb-server-8.0.gpg] https://repo.mongodb.org/apt/ubuntu $(eval "$(grep '^VERSION_CODENAME=' /etc/os-release)"; echo "${VERSION_CODENAME}")/mongodb-org/8.0 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-8.0.list
 
             # update apt sources
             apt-get update
@@ -97,7 +97,7 @@ case "${NO_MONGODB}" in
             PKGS+=( mongodb-org-server )
             ;;
           *)
-          # not 22.04; use the package from the ubuntu repo
+          # not v6; use the package from the ubuntu repo
           PKGS+=( mongodb-server-core )
             ;;
         esac
