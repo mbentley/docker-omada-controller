@@ -72,12 +72,17 @@ docker run -it --rm \
 1. Scale down the controller:
 
     ```
-    kubectl scale deployment omada-controller --replicas=0
+    kubectl -n "${OMADA_NS}" scale deployment omada-controller --replicas=0
     ```
 
 1. Temporarily allow privileged pods; update the namespace required (if required):
 
     ```
+    # Store original values
+    ORIGINAL_ENFORCE=$(kubectl get namespace "${OMADA_NS}" -o jsonpath='{.metadata.labels.pod-security\.kubernetes\.io/enforce}' 2>/dev/null || echo "")
+    ORIGINAL_AUDIT=$(kubectl get namespace "${OMADA_NS}" -o jsonpath='{.metadata.labels.pod-security\.kubernetes\.io/audit}' 2>/dev/null || echo "")
+    ORIGINAL_WARN=$(kubectl get namespace "${OMADA_NS}" -o jsonpath='{.metadata.labels.pod-security\.kubernetes\.io/warn}' 2>/dev/null || echo "")
+
     # Set the omada-controller namespace to privileged (temporarily)
     kubectl label namespace "${OMADA_NS}" pod-security.kubernetes.io/enforce=privileged --overwrite
     kubectl label namespace "${OMADA_NS}" pod-security.kubernetes.io/audit=privileged --overwrite
@@ -119,10 +124,10 @@ docker run -it --rm \
 1. Remove the namespace security labels (if required):
 
     ```
-    # After migration, restore to restricted (optional)
-    kubectl label namespace "${OMADA_NS}" pod-security.kubernetes.io/enforce=restricted --overwrite
-    kubectl label namespace "${OMADA_NS}" pod-security.kubernetes.io/audit=restricted --overwrite
-    kubectl label namespace "${OMADA_NS}" pod-security.kubernetes.io/warn=restricted --overwrite
+    # Restore or remove labels based on original values
+    [ -n "${ORIGINAL_ENFORCE}" ] && kubectl label namespace "${OMADA_NS}" pod-security.kubernetes.io/enforce="${ORIGINAL_ENFORCE}" --overwrite || kubectl label namespace "${OMADA_NS}" pod-security.kubernetes.io/enforce- 2>/dev/null || true
+    [ -n "${ORIGINAL_AUDIT}" ] && kubectl label namespace "${OMADA_NS}" pod-security.kubernetes.io/audit="${ORIGINAL_AUDIT}" --overwrite || kubectl label namespace "${OMADA_NS}" pod-security.kubernetes.io/audit- 2>/dev/null || true
+    [ -n "${ORIGINAL_WARN}" ] && kubectl label namespace "${OMADA_NS}" pod-security.kubernetes.io/warn="${ORIGINAL_WARN}" --overwrite || kubectl label namespace "${OMADA_NS}" pod-security.kubernetes.io/warn- 2>/dev/null || true
     ```
 
 
