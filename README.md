@@ -114,7 +114,7 @@ For a full tag list, search the [Docker Hub tags list](https://hub.docker.com/r/
 
 | Tag(s) | Major.Minor Release | Current Version |
 | :----- | ------------------- | --------------- |
-| `latest`, `5.15` | `5.15.x` | `5.15.24.19` |
+| `latest`, `5`, `5.15` | `5.15.x` | `5.15.24.19` |
 | `5.14` | `5.14.x` | `5.14.32.4` |
 
 ### Tags with Chromium
@@ -128,7 +128,7 @@ These are multi-arch tags. For the full tag listings, see the Docker Hub tags ab
 | Tag(s) | Major.Minor Release | Current Version |
 | :----- | ------------------- | --------------- |
 | `beta`, `beta-6.0` | `beta` | `6.0.0.19` |
-| `beta-5.15-openj9`, `beta-5.15.24.15-openj9` | `5.15.x` Beta w/OpenJ9 | `5.15.24.15` |
+| `beta-openj9`, `beta-6.0-openj9`, `beta-6.0.0.19-openj9` | `6.0.x` Beta w/OpenJ9 | `6.0.0.19` |
 | --- | --- | --- |
 | `5.15-openj9`, `5.15.24.19-openj9` | `5.15.x` w/OpenJ9 | `5.15.24.19` |
 | `5.14-openj9`, `5.14.32.4-openj9` | `5.14.x` w/OpenJ9 | `5.14.32.4` |
