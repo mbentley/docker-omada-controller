@@ -375,7 +375,7 @@ echo -e "\nINFO: running post-upgrade tasks..."
 
 # set ownership
 echo -n "INFO: fixing ownership of database files..."
-chown -R "$(stat -c "%u:%g" /opt/tplink/EAPController/data)" /opt/tplink/EAPController/data
+chown -R "$(stat -c "%u:%g" /opt/tplink/EAPController/data/db)" /opt/tplink/EAPController/data
 echo "done"
 
 echo -e "\nINFO: the MongoDB backup file (mongodb-preupgrade.tar) is still in your persistent data directory in case you need to roll back but this can be removed once you have verified your controller is functioning correctly"

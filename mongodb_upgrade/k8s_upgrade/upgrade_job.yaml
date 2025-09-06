@@ -1,0 +1,62 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: omada-mongodb-migration
+  # This job runs in your current namespace after temporarily setting it to privileged
+  labels:
+    app: omada-controller
+    job-type: mongodb-migration
+spec:
+  # Ensure the job only runs once successfully
+  completions: 1
+  parallelism: 1
+  # Don't retry on failure - let human intervene
+  backoffLimit: 0
+  # Clean up completed jobs after 24 hours
+  ttlSecondsAfterFinished: 86400
+  template:
+    metadata:
+      labels:
+        app: omada-controller
+        job-type: mongodb-migration
+    spec:
+      # Job pods should not be restarted automatically
+      restartPolicy: Never
+
+      # Run as root for package installation and file ownership changes
+      securityContext:
+        runAsUser: 0
+        runAsGroup: 0
+        runAsNonRoot: false
+        fsGroup: 508  # Keep same fsGroup for volume access
+        fsGroupChangePolicy: "OnRootMismatch"
+        seccompProfile:
+          type: RuntimeDefault
+
+      containers:
+      - name: mongodb-migration
+        image: mbentley/omada-controller:mongodb-upgrade-3.6-to-8
+        imagePullPolicy: Always
+
+        securityContext:
+          runAsUser: 0
+          runAsGroup: 0
+          runAsNonRoot: false
+          allowPrivilegeEscalation: true
+          capabilities:
+            add:
+            - CHOWN
+            - DAC_OVERRIDE
+            - FOWNER
+            drop:
+            - ALL
+
+        # Mount the same data volume as your main application
+        volumeMounts:
+        - name: omada-data
+          mountPath: /opt/tplink/EAPController/data
+
+      volumes:
+      - name: omada-data
+        persistentVolumeClaim:
+          claimName: omada-data-pvc

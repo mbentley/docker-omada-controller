@@ -23,7 +23,7 @@ For the volume mount, either use the volume you use from your persistent `data` 
 
 `multi-arch`:
 
-## Docker named volume
+### Docker named volume
 
 ```bash
 docker run -it --rm \
@@ -31,7 +31,7 @@ docker run -it --rm \
   mbentley/omada-controller:mongodb-upgrade-3.6-to-8
 ```
 
-## Bind mount to the host
+### Bind mount to the host
 
 ```bash
 docker run -it --rm \
@@ -58,6 +58,86 @@ docker run -it --rm \
   mbentley/omada-controller:mongodb-upgrade-3.6-to-8-arm64
 ```
 </details>
+
+### Kubernetes
+
+**Warning**: these instructions for k8s have not yet been tested!
+
+1. Set the namespace variable to allow for copy and paste (optional):
+
+    ```
+    export OMADA_NS="omada-controller"
+    ```
+
+1. Scale down the controller:
+
+    ```
+    kubectl scale deployment omada-controller --replicas=0
+    ```
+
+1. Temporarily allow privileged pods; update the namespace required (if required):
+
+    ```
+    # Set the omada-controller namespace to privileged (temporarily)
+    kubectl label namespace "${OMADA_NS}" pod-security.kubernetes.io/enforce=privileged --overwrite
+    kubectl label namespace "${OMADA_NS}" pod-security.kubernetes.io/audit=privileged --overwrite
+    kubectl label namespace "${OMADA_NS}" pod-security.kubernetes.io/warn=privileged --overwrite
+    ```
+
+1. Verify the deployment is stopped:
+
+    ```
+    kubectl -n "${OMADA_NS}" get pods -l app=omada-controller
+    ```
+
+1. Apply the migration job:
+
+    ```
+    kubectl -n "${OMADA_NS}" apply -f https://raw.githubusercontent.com/mbentley/docker-omada-controller/refs/heads/master/mongodb_upgrade/k8s_upgrade/upgrade_job.yaml
+    ```
+
+1. Monitor the migration progress:
+
+    ```
+    # Watch the job status
+    kubectl -n "${OMADA_NS}" get job omada-mongodb-migration -w
+
+    # Follow the migration logs
+    kubectl -n "${OMADA_NS}" logs -f job/omada-mongodb-migration
+    ```
+
+1. Verify migration completion:
+
+    ```
+    # Check if job completed successfully
+    kubectl -n "${OMADA_NS}" get job omada-mongodb-migration
+
+    # Review final logs
+    kubectl -n "${OMADA_NS}" logs job/omada-mongodb-migration
+    ```
+
+1. Remove the namespace security labels (if required):
+
+    ```
+    # After migration, restore to restricted (optional)
+    kubectl label namespace "${OMADA_NS}" pod-security.kubernetes.io/enforce=restricted --overwrite
+    kubectl label namespace "${OMADA_NS}" pod-security.kubernetes.io/audit=restricted --overwrite
+    kubectl label namespace "${OMADA_NS}" pod-security.kubernetes.io/warn=restricted --overwrite
+    ```
+
+
+1. Update and apply your k8s deployment manifest with the new v6 image and then manually scale the deployment back up (if required):
+
+    ```
+    kubectl -n "${OMADA_NS}" scale deployment omada-controller --replicas=1
+    ```
+
+1. Job clean up (optional):
+
+    ```
+    # job will automatically be removed after 24 hours but you can clean it up manually
+    kubectl -n "${OMADA_NS}" delete job omada-mongodb-migration
+    ```
 
 ## Build the Images (not required)
 
