@@ -64,6 +64,8 @@ echo "**** Selecting packages based on the architecture and version ****"
 # common package dependencies
 PKGS=(
   gosu
+  libharfbuzz0b
+  libfontconfig1
   net-tools
   tzdata
   wget
