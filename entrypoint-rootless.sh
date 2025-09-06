@@ -262,31 +262,37 @@ then
   fi
 fi
 
-# check to see if we are running v6 but have mongodb persistent data from an older mongodb
-if [ "${IMAGE_MAJOR_VER}" = "6" ] && [ "${LAST_RAN_MAJOR_VER}" != "6" ]
+# see if this is our first run
+if [ "${LAST_RAN_OMADA_VER}" = "0.0.0" ]
 then
-  echo "INFO: Comparing your MongoDB version with the persistent data..."
-  # get wiredtiger version
-  WT_VERSION="$(grep -o 'WiredTiger [0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*' /opt/tplink/EAPController/data/db/WiredTiger.turtle | cut -d' ' -f2)"
-
-  if [ -z "${WT_VERSION}" ]
-  then
-    echo "ERROR: Unable to parse the WiredTiger version!"
-    exit 1
-  fi
-
-  # check if the wiredtiger version is not 11.3.0
-  if [ "${WT_VERSION}" != "11.3.0" ]
-  then
-    echo "ERROR: Your persistent data for MongoDB is using WiredTiger ${WT_VERSION} (an older MongoDB) but this version of the image has MongoDB $(mongod --version | grep "db version" | awk -F 'n v' '{print $2}')!"
-    echo "  You either need to revert back to a previous v5 tag or manually execute the MongoDB database upgrade."
-    echo "  See https://github.com/mbentley/docker-omada-controller/tree/update-base-and-mongo/mongodb_upgrade#help-my-controller-stopped-working for instructions on what to do"
-    exit 1
-  else
-    echo "INFO: Success! Your MongoDB version matches your persistent data; continuing with entrypoint startup..."
-  fi
+  echo "INFO: skipping MongoDB data version check; first time running..."
 else
-  echo "INFO: Skipping MongoDB version check; image version != 6 and the last ran version != 6 (this is normal)"
+  # check to see if we are running v6 but have mongodb persistent data from an older mongodb
+  if [ "${IMAGE_MAJOR_VER}" = "6" ] && [ "${LAST_RAN_MAJOR_VER}" != "6" ]
+  then
+    echo "INFO: Comparing your MongoDB version with the persistent data..."
+    # get wiredtiger version
+    WT_VERSION="$(grep -o 'WiredTiger [0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*' /opt/tplink/EAPController/data/db/WiredTiger.turtle | cut -d' ' -f2)"
+
+    if [ -z "${WT_VERSION}" ]
+    then
+      echo "ERROR: Unable to parse the WiredTiger version!"
+      exit 1
+    fi
+
+    # check if the wiredtiger version is not 11.3.0
+    if [ "${WT_VERSION}" != "11.3.0" ]
+    then
+      echo "ERROR: Your persistent data for MongoDB is using WiredTiger ${WT_VERSION} (an older MongoDB) but this version of the image has MongoDB $(mongod --version | grep "db version" | awk -F 'n v' '{print $2}')!"
+      echo "  You either need to revert back to a previous v5 tag or manually execute the MongoDB database upgrade."
+      echo "  See https://github.com/mbentley/docker-omada-controller/tree/update-base-and-mongo/mongodb_upgrade#help-my-controller-stopped-working for instructions on what to do"
+      exit 1
+    else
+      echo "INFO: Success! Your MongoDB version matches your persistent data; continuing with entrypoint startup..."
+    fi
+  else
+    echo "INFO: Skipping MongoDB version check; image version != 6 and the last ran version != 6 (this is normal)"
+  fi
 fi
 
 # use sort to check which version is newer; should sort the newest version to the top
