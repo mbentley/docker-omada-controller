@@ -1,15 +1,5 @@
 #!/bin/bash
 
-# TODO
-#   X validate no /opt/tplink/EAPController/data/db/mongod.lock exists; abort if so
-#   X backup database before upgrade
-#   X rollback database on failure (and update all of the places we might exit to roll back)
-#   X amd64 requirements
-#     X Add AVX check (https://www.mongodb.com/docs/manual/administration/production-notes/#x86_64)
-#   X arm64 requirements
-#     X Check to see if the upgrade fails on arm64 if the instruction set isn't ARMv8.2-A or later (https://www.mongodb.com/docs/manual/administration/production-notes/#arm64)
-#   - validate no /opt/tplink/EAPController/data/mongo.pid exists; abort if so ???
-
 catch_error() {
   echo -e "\nERROR: unexpected failure!"
   exit 1
@@ -60,7 +50,7 @@ abort_and_rollback() {
     # roll back to the previous backup of mongodb
     cd /opt/tplink/EAPController/data || catch_error
 
-    # remove partially migrated db
+    # remove partially upgraded db
     rm -rf db
 
     # restore backup
