@@ -61,8 +61,6 @@ docker run -it --rm \
 
 ### Kubernetes
 
-**Warning**: these instructions for k8s have not yet been tested!
-
 1. Set the namespace variable to allow for copy and paste (optional):
 
     ```
