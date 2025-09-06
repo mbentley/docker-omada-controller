@@ -7,6 +7,7 @@ For references on running a legacy v3 or v4 controller, see the [README for v3 a
 ## Table of Contents
 
 * [Quickstart Guide](#quickstart-guide)
+* [v5 to v6 Upgrade Guide](#v5-to-v6-upgrade-guide)
 * [Image Tags](#image-tags)
     * [Multi-arch Tags](#multi-arch-tags)
     * [Tags for Beta/Testing](#tags-for-betatesting)
@@ -90,6 +91,18 @@ If you don't know much about Docker or want to just get started as easily as pos
     * Once deployed, the Omada Controller will be available on `https://<ip-address-or-hostname>:8043/`, assuming you're using the default ports.
 1. **Have further questions?**
     * Open a [Discussion in the Help category](https://github.com/mbentley/docker-omada-controller/discussions/categories/help) and the community will give you a hand, when they are able.
+
+## v5 to v6 Upgrade Guide
+
+**Note**: the upgrade from v5 to v6 is **ONLY** available for the beta version of the controller at the moment. The upgrade requires a manual step of a MongoDB upgrade which is automated but it has to be run as a separate container while the controller is stopped.
+
+There are a few reasons for the manual upgrade:
+
+* The base OS image needs to be updated as Ubuntu 20.04 is no longer receiving security updates
+* MongoDB 8 currently receives updates and is supposed to be more reliable and perform better than the old 3.6 version
+* In order to upgrade MongoDB, it has to be done in steps and to make the upgrade from 3.6 to 8, many versions have to be executed and there are VERY specific operating system versions that support all of the needed versions which allows the complete upgrade to be done in one manual container run
+
+For instructions on how to proceed with the upgrade, see [the MongoDB upgrade guide](./mongodb_upgrade/). If you tried to run the v6 controller without doing the upgrade, see [HELP! My Controller Stopped Working!](./mongodb_upgrade/#help-my-controller-stopped-working) for steps to get back to a working state or how to perform the upgrade.
 
 ## Image Tags
 

@@ -1,0 +1,55 @@
+# rebased/repackaged base image that only updates existing packages
+FROM mbentley/ubuntu:18.04
+LABEL maintainer="Matt Bentley <mbentley@mbentley.net>"
+LABEL org.opencontainers.image.source="https://github.com/mbentley/docker-omada-controller"
+
+ARG DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update &&\
+  apt-get install --no-install-recommends -y ca-certificates jq libcurl3 wget &&\
+  wget -q http://launchpadlibrarian.net/548254972/libssl1.0.0_1.0.2g-1ubuntu4.20_arm64.deb &&\
+  dpkg -i libssl1.0.0_1.0.2g-1ubuntu4.20_arm64.deb &&\
+  rm libssl1.0.0_1.0.2g-1ubuntu4.20_arm64.deb &&\
+  wget -q http://launchpadlibrarian.net/656257140/libcurl4_7.58.0-2ubuntu3.24_arm64.deb &&\
+  wget -q http://ports.ubuntu.com/ubuntu-ports/pool/main/g/glibc/libc6_2.31-0ubuntu9.18_arm64.deb &&\
+  wget -q http://ports.ubuntu.com/ubuntu-ports/pool/main/g/gcc-10/libgcc-s1_10.5.0-1ubuntu1~20.04_arm64.deb &&\
+  wget -q http://ports.ubuntu.com/ubuntu-ports/pool/main/libx/libxcrypt/libcrypt1_4.4.10-10ubuntu4_arm64.deb &&\
+  wget -q http://ports.ubuntu.com/ubuntu-ports/pool/main/g/gcc-10/gcc-10-base_10.5.0-1ubuntu1~20.04_arm64.deb &&\
+  rm -rf /var/lib/apt/lists/*
+
+RUN cd /tmp &&\
+  wget -q https://fastdl.mongodb.org/linux/mongodb-linux-arm64-ubuntu1604-4.0.28.tgz &&\
+  wget -q https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-ubuntu1804-4.2.23.tgz &&\
+  wget -q https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-ubuntu1804-4.4.18.tgz &&\
+  wget -q https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-ubuntu1804-5.0.31.tgz &&\
+  wget -q https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-ubuntu1804-6.0.25.tgz &&\
+  wget -q https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-ubuntu2004-7.0.22.tgz &&\
+  wget -q https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-ubuntu2004-8.0.12.tgz &&\
+  wget -q https://downloads.mongodb.com/compass/mongosh-2.3.9-linux-arm64.tgz &&\
+  tar xvf mongodb-linux-arm64-ubuntu1604-4.0.28.tgz mongodb-linux-aarch64-ubuntu1604-4.0.28/bin/mongod mongodb-linux-aarch64-ubuntu1604-4.0.28/bin/mongo &&\
+  tar xvf mongodb-linux-aarch64-ubuntu1804-4.2.23.tgz mongodb-linux-aarch64-ubuntu1804-4.2.23/bin/mongod mongodb-linux-aarch64-ubuntu1804-4.2.23/bin/mongo &&\
+  tar xvf mongodb-linux-aarch64-ubuntu1804-4.4.18.tgz mongodb-linux-aarch64-ubuntu1804-4.4.18/bin/mongod mongodb-linux-aarch64-ubuntu1804-4.4.18/bin/mongo &&\
+  tar xvf mongodb-linux-aarch64-ubuntu1804-5.0.31.tgz mongodb-linux-aarch64-ubuntu1804-5.0.31/bin/mongod mongodb-linux-aarch64-ubuntu1804-5.0.31/bin/mongo &&\
+  tar xvf mongodb-linux-aarch64-ubuntu1804-6.0.25.tgz mongodb-linux-aarch64-ubuntu1804-6.0.25/bin/mongod &&\
+  tar xvf mongodb-linux-aarch64-ubuntu2004-7.0.22.tgz mongodb-linux-aarch64-ubuntu2004-7.0.22/bin/mongod &&\
+  tar xvf mongodb-linux-aarch64-ubuntu2004-8.0.12.tgz mongodb-linux-aarch64-ubuntu2004-8.0.12/bin/mongod &&\
+  tar xvf mongosh-2.3.9-linux-arm64.tgz mongosh-2.3.9-linux-arm64/bin/mongosh &&\
+  mv mongodb-linux-aarch64-ubuntu1604-4.0.28/bin/mongod mongod-4.0.28 &&\
+  mv mongodb-linux-aarch64-ubuntu1804-4.2.23/bin/mongod mongod-4.2.23 &&\
+  mv mongodb-linux-aarch64-ubuntu1804-4.4.18/bin/mongod mongod-4.4.18 &&\
+  mv mongodb-linux-aarch64-ubuntu1804-5.0.31/bin/mongod mongod-5.0.31 &&\
+  mv mongodb-linux-aarch64-ubuntu1804-6.0.25/bin/mongod mongod-6.0.25 &&\
+  mv mongodb-linux-aarch64-ubuntu2004-7.0.22/bin/mongod mongod-7.0.22 &&\
+  mv mongodb-linux-aarch64-ubuntu2004-8.0.12/bin/mongod mongod-8.0.12 &&\
+  mv mongodb-linux-aarch64-ubuntu1604-4.0.28/bin/mongo mongo-4.0.28 &&\
+  mv mongodb-linux-aarch64-ubuntu1804-4.2.23/bin/mongo mongo-4.2.23 &&\
+  mv mongodb-linux-aarch64-ubuntu1804-4.4.18/bin/mongo mongo-4.4.18 &&\
+  mv mongodb-linux-aarch64-ubuntu1804-5.0.31/bin/mongo mongo-5.0.31 &&\
+  mv mongosh-2.3.9-linux-arm64/bin/mongosh mongosh &&\
+  rm -rf mongodb-* mongosh-*
+
+COPY upgrade.sh /
+COPY armv8.2-a_test/atomic /atomic
+
+WORKDIR /opt/tplink/EAPController/lib
+ENTRYPOINT ["/upgrade.sh"]
