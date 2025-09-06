@@ -60,7 +60,7 @@ If you don't know much about Docker or want to just get started as easily as pos
 1. **Picking an image tag**
     * Most people will want to use a major.minor tag version (i.e. - `5.15`) as this is the safest option and can almost certainly be considered to be non-breaking when a new version of the image is available.
     * **USING THE `latest` TAG IS A BAD IDEA - DO NOT DO IT!** Using `latest` may upgrade you to a newer version (i.e. - `5.15` to `6.0`) when it comes out and there is no guarantee that there will not be potentially breaking changes between those versions!
-    * If you need to create PDF reports from the controller, there are [tags with Chromium](#tags-with-chromium) as that is required to generate them. Those images are much larger and only available for `amd64` so only use them if you really need that functionality.
+    * ~~If you need to create PDF reports from the controller, there are [tags with Chromium](#tags-with-chromium) as that is required to generate them. Those images are much larger and only available for `amd64` so only use them if you really need that functionality.~~ Reports are now CSV and XLSX so they do not require Chromium.
 1. **Picking your networking mode**
     * There are three main options regarding how your container is exposed to your network, which is required to manage your TP-Link Omada enabled devices:
       * [Host network driver](#using-nethost) - this is the best and easiest option as it exposes the container using your Docker host's network interface as if you were running the controller outside of a container.
@@ -119,13 +119,7 @@ For a full tag list, search the [Docker Hub tags list](https://hub.docker.com/r/
 
 ### Tags with Chromium
 
-**Note**: These are currently published for the `amd64` architecture only. These tags extend the tags above to add Chromium which is required to generate reports from the controller.
-
-| Tag(s) | Major.Minor Release |
-| :----- | ------------------- |
-| `latest-chromium`, `5.15-chromium` | `5.15.x` |
-| `5.14-chromium` | `5.14.x` |
-| `beta-chromium`, | `beta` |
+Going forward, Chromium is no longer required as of 5.14. If you were using a Chromium tag, go back to a normal tag. All reports should now either by CSV or XLSX format.
 
 ### Tags for Beta/Testing
 
