@@ -22,7 +22,7 @@ These steps are needed for either scenario you want to test.
       --build-arg ARCH="amd64" \
       --platform linux/amd64 \
       --progress plain \
-      -f Dockerfile.v5.x \
+      -f Dockerfile \
       -t mbentley/omada-controller:5.13-external-mongo-test-amd64 \
       -t mbentley/omada-controller:5.13-external-mongo-test .
 
@@ -33,7 +33,7 @@ These steps are needed for either scenario you want to test.
       --build-arg ARCH="arm64" \
       --platform linux/arm64 \
       --progress plain \
-      -f Dockerfile.v5.x \
+      -f Dockerfile \
       -t mbentley/omada-controller:5.13-external-mongo-test-arm64 \
       -t mbentley/omada-controller:5.13-external-mongo-test .
 
@@ -44,7 +44,7 @@ These steps are needed for either scenario you want to test.
       --build-arg ARCH="armv7l" \
       --platform linux/arm/v7 \
       --progress plain \
-      -f Dockerfile.v5.x \
+      -f Dockerfile \
       -t mbentley/omada-controller:5.13-external-mongo-test-armv7l \
       -t mbentley/omada-controller:5.13-external-mongo-test .
     ```

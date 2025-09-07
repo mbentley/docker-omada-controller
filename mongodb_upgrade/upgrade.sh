@@ -209,7 +209,8 @@ case "${ARCH}" in
     # check for AXV support
     if ! grep -q -o 'avx[^ ]*' /proc/cpuinfo
     then
-      echo "ERROR: your system does not support AVX which is a requirement for MongoDB starting with 5.x; you will not be able to upgrade"
+      echo -e "\nERROR: your system does not support AVX which is a requirement for MongoDB starting with 5.x; you will not be able to upgrade MongoDB"
+      # TODO: add link to README that explains the options
       exit 1
     fi
     ;;
@@ -220,7 +221,8 @@ case "${ARCH}" in
     if ! /atomic > /dev/null
     then
       # failed armv8.2-a test
-      echo "ERROR: your system does not support the armv8.2-a or later microarchitecture which is a requirement for MongoDB starting with 5.x; you will not be able to upgrade"
+      echo "ERROR: your system does not support the armv8.2-a or later microarchitecture which is a requirement for MongoDB starting with 5.x; you will not be able to upgrade MongoDB"
+      # TODO: add link to README that explains the options
       exit 1
     fi
     ;;

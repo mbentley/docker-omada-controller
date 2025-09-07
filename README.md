@@ -209,7 +209,7 @@ There are some differences between the build steps for `amd64`, `arm64`, and `ar
   docker build \
     --build-arg INSTALL_VER="5.15.24.19" \
     --build-arg ARCH="amd64" \
-    -f Dockerfile.v5.x \
+    -f Dockerfile \
     -t mbentley/omada-controller:5.15-amd64 .
   ```
 
@@ -221,7 +221,7 @@ There are some differences between the build steps for `amd64`, `arm64`, and `ar
   docker build \
     --build-arg INSTALL_VER="5.15.24.19" \
     --build-arg ARCH="arm64" \
-    -f Dockerfile.v5.x \
+    -f Dockerfile \
     -t mbentley/omada-controller:5.15-arm64 .
   ```
 
@@ -236,7 +236,7 @@ There are some differences between the build steps for `amd64`, `arm64`, and `ar
     --build-arg INSTALL_VER="5.15.8.2" \
     --build-arg ARCH="armv7l" \
     --build-arg BASE="ubuntu:16.04" \
-    -f Dockerfile.v5.x \
+    -f Dockerfile \
     -t mbentley/omada-controller:5.15-armv7l .
   ```
 
