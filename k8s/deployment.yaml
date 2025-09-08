@@ -60,6 +60,8 @@ spec:
           value: "29815"
         - name: PORT_RTTY
           value: "29816"
+        - name: PORT_DEVICE_MONITOR
+          value: "29817"
         - name: SHOW_SERVER_LOGS
           value: "true"
         - name: SHOW_MONGODB_LOGS

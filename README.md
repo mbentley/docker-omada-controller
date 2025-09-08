@@ -282,7 +282,7 @@ docker run -d \
   -p 19810:19810/udp \
   -p 27001:27001/udp \
   -p 29810:29810/udp \
-  -p 29811-29816:29811-29816 \
+  -p 29811-29817:29811-29817 \
   -e TZ=Etc/UTC \
   -v omada-data:/opt/tplink/EAPController/data \
   -v omada-logs:/opt/tplink/EAPController/logs \
@@ -331,14 +331,15 @@ There are some Kubernetes manifest examples in the [k8s](./k8s) directory of thi
 | `PGROUP` | `omada` | _any_ | Set the group name for the process group ID to run as | >= `5.0` |
 | `PORTAL_HTTP_PORT` | `8088` | `1024`-`65535` | User portal HTTP port; for ports < 1024, see [Unprivileged Ports](#unprivileged-ports) | >= `4.1` |
 | `PORTAL_HTTPS_PORT` | `8843` | `1024`-`65535` | User portal HTTPS port; for ports < 1024, see [Unprivileged Ports](#unprivileged-ports) | >= `4.1` |
-| `PORT_ADOPT_V1` | `29812` | `1024`-`65535` | Omada Controller and Omada Discovery Utility manage the Omada devices running firmware fully adapted to Omada Controller v4* | >= `5.x` |
 | `PORT_APP_DISCOVERY` | `27001` | `1024`-`65535` | Omada Controller can be discovered by the Omada APP within the same network through this port | >= `5.x` |
 | `PORT_DISCOVERY` | `29810` | `1024`-`65535` | Omada Controller and Omada Discovery Utility discover Omada devices | >= `5.x` |
 | `PORT_MANAGER_V1` | `29811` | `1024`-`65535` | Omada Controller and Omada Discovery Utility manage the Omada devices running firmware fully adapted to Omada Controller v4* | >= `5.x` |
+| `PORT_ADOPT_V1` | `29812` | `1024`-`65535` | Omada Controller and Omada Discovery Utility manage the Omada devices running firmware fully adapted to Omada Controller v4* | >= `5.x` |
+| `PORT_UPGRADE_V1` | `29813` | `1024`-`65535` | When upgrading the firmware for the Omada devices running firmware fully adapted to Omada Controller v4*. | >= `5.x` |
 | `PORT_MANAGER_V2` | `29814` | `1024`-`65535` | Omada Controller and Omada Discovery Utility manage the Omada devices running firmware fully adapted to Omada Controller v5* | >= `5.x` |
 | `PORT_TRANSFER_V2` | `29815` | `1024`-`65535` | Omada Controller receives Device Info and Packet Capture files from the Omada devices | >= `5.9` |
 | `PORT_RTTY` | `29816` | `1024`-`65535` | Omada Controller establishes the remote control terminal session with the Omada devices | >= `5.9` |
-| `PORT_UPGRADE_V1` | `29813` | `1024`-`65535` | When upgrading the firmware for the Omada devices running firmware fully adapted to Omada Controller v4*. | >= `5.x` |
+| `PORT_DEVICE_MONITOR` | `29817` | `1024`-`65535` | Omada Controller ??? (currently unknown the full purpose) | >= `6.0` |
 | `PUID` | `508` | _any_ | Set the `omada` process user ID ` | >= `3.2` |
 | `PUSERNAME` | `omada` | _any_ | Set the username for the process user ID to run as | >= `5.0` |
 | `ROOTLESS` | `false` | `true`, `false` | Sets the entrypoint for [rootless mode](#running-rootless) | >= `5.14` |

@@ -55,3 +55,7 @@ spec:
     port: 29816
     targetPort: 29816
     protocol: TCP
+  - name: device-monitor
+    port: 29817
+    targetPort: 29817
+    protocol: TCP

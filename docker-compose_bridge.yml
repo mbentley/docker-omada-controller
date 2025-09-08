@@ -1,7 +1,7 @@
 services:
   omada-controller:
     container_name: omada-controller
-    image: mbentley/omada-controller:5.15
+    image: mbentley/omada-controller:5
     restart: unless-stopped
     ulimits:
       nofile:
@@ -16,7 +16,7 @@ services:
       - 19810:19810/udp
       - 27001:27001/udp
       - 29810:29810/udp
-      - 29811-29816:29811-29816
+      - 29811-29817:29811-29817
     environment:
       - PUID=508
       - PGID=508
@@ -25,13 +25,14 @@ services:
       - PORTAL_HTTP_PORT=8088
       - PORTAL_HTTPS_PORT=8843
       - PORT_APP_DISCOVERY=27001
+      - PORT_DISCOVERY=29810
+      - PORT_MANAGER_V1=29811
       - PORT_ADOPT_V1=29812
       - PORT_UPGRADE_V1=29813
-      - PORT_MANAGER_V1=29811
       - PORT_MANAGER_V2=29814
-      - PORT_DISCOVERY=29810
       - PORT_TRANSFER_V2=29815
       - PORT_RTTY=29816
+      - PORT_DEVICE_MONITOR=29817
       - SHOW_SERVER_LOGS=true
       - SHOW_MONGODB_LOGS=false
       - SSL_CERT_NAME=tls.crt

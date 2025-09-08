@@ -61,3 +61,8 @@ spec:
     targetPort: rtty
     port: 29816
     protocol: TCP
+
+  - name: device-monitor
+    targetPort: device-monitor
+    port: 29817
+    protocol: TCP
