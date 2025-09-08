@@ -103,7 +103,7 @@ This expects that you are in this project's root where the `Dockerfile` is.  Upd
       -p 19810:19810/udp \
       -p 27001:27001/udp \
       -p 29810:29810/udp \
-      -p 29811-29816:29811-29816 \
+      -p 29811-29817:29811-29817 \
       --mount type=volume,source=omada-data,destination=/opt/tplink/EAPController/data \
       --mount type=volume,source=omada-logs,destination=/opt/tplink/EAPController/logs \
       -e MONGO_EXTERNAL="true" \
@@ -142,7 +142,7 @@ While I have this WIP for migrating from all in one, it would be much simplier t
       -p 19810:19810/udp \
       -p 27001:27001/udp \
       -p 29810:29810/udp \
-      -p 29811-29816:29811-29816 \
+      -p 29811-29817:29811-29817 \
       --mount type=volume,source=omada-data,destination=/opt/tplink/EAPController/data \
       --mount type=volume,source=omada-logs,destination=/opt/tplink/EAPController/logs \
       mbentley/omada-controller:5.15 &&\
@@ -185,7 +185,7 @@ While I have this WIP for migrating from all in one, it would be much simplier t
       -p 19810:19810/udp \
       -p 27001:27001/udp \
       -p 29810:29810/udp \
-      -p 29811-29816:29811-29816 \
+      -p 29811-29817:29811-29817 \
       --mount type=volume,source=omada-data,destination=/opt/tplink/EAPController/data \
       --mount type=volume,source=omada-logs,destination=/opt/tplink/EAPController/logs \
       -e MONGO_EXTERNAL="true" \

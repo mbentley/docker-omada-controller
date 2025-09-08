@@ -96,6 +96,11 @@ spec:
             containerPort: 29816
             protocol: TCP
 
+          # Starting from v6.0, Omada Controller establishes the device monitor port
+          - name: device-monitor
+            containerPort: 29817
+            protocol: TCP
+
         env:
         - name: MONGODB_PASSWORD
           valueFrom:
