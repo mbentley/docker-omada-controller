@@ -355,10 +355,13 @@ then
   fi
 fi
 
-# see if this is our first run
+# see if this is our first run or if we are using an external MongoDB
 if [ "${LAST_RAN_OMADA_VER}" = "0.0.0" ]
 then
-  echo "INFO: skipping MongoDB data version check; first time running..."
+  echo "INFO: skipping MongoDB data version check; first time running"
+elif [ "${MONGO_EXTERNAL}" = "true" ]
+then
+  echo "INFO: skipping MongoDB data version check; using external MongoDB"
 else
   # check to see if we are running v6 but have mongodb persistent data from an older mongodb
   if [ "${IMAGE_MAJOR_VER}" = "6" ] && [ "${LAST_RAN_MAJOR_VER}" != "6" ]
