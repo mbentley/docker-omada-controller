@@ -207,7 +207,7 @@ case "${ARCH}" in
     # amd64 checks
 
     # check for AXV support
-    if ! grep -q -o 'avx[^ ]*' /proc/cpuinfo
+    if ! grep -qE '^flags.* avx( .*|$)' /proc/cpuinfo
     then
       echo -e "\nERROR: your system does not support AVX which is a requirement for MongoDB starting with 5.x; you will not be able to upgrade MongoDB"
       # TODO: add link to README that explains the options
@@ -218,7 +218,7 @@ case "${ARCH}" in
     # arm64 checks (list of 64 bit arm compatible names from `uname -m`: https://stackoverflow.com/a/45125525)
 
     # check for armv8.2-a support
-    if ! /atomic > /dev/null
+    if ! grep -qE '^Features.* (fphp|dcpop|sha3|sm3|sm4|asimddp|sha512|sve)( .*|$)' /proc/cpuinfo
     then
       # failed armv8.2-a test
       echo "ERROR: your system does not support the armv8.2-a or later microarchitecture which is a requirement for MongoDB starting with 5.x; you will not be able to upgrade MongoDB"
