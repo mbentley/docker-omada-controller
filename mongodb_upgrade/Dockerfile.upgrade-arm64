@@ -49,7 +49,6 @@ RUN cd /tmp &&\
   rm -rf mongodb-* mongosh-*
 
 COPY upgrade.sh /
-COPY armv8.2-a_test/atomic /atomic
 
 WORKDIR /opt/tplink/EAPController/lib
 ENTRYPOINT ["/upgrade.sh"]
