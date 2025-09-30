@@ -10,7 +10,7 @@
 
 ## Common Steps
 
-You can build a Docker image without MongoDB using the `NO_MONGODB=true` build arg but it's not necessary to run MongoDB as an external container as it will simply not start if you pass the `MONGO_EXTERNAL` environment variable at runtime.
+You can optionally build a Docker image without MongoDB using the `NO_MONGODB=true` build arg but it's not necessary to run MongoDB as an external container as it will simply not start if you pass the `MONGO_EXTERNAL` environment variable at runtime.
 
 <details>
 <summary>Click to expand the docker build examples</summary>
@@ -64,13 +64,15 @@ You can build a Docker image without MongoDB using the `NO_MONGODB=true` build a
     docker network create -d bridge omada
     ```
 
+    **Note**: If you're using host or macvlan networking, you obviously do not need to create a bridge but you should take care to make MongoDB listen on localhost so it's not wide open to your network.
+
 ## MongoDB + Omada Controller (fresh install)
 
 This expects that you are in this project's root where the `Dockerfile` is.  Update the path for the MongoDB `/docker-entrypoint-initdb.d` bind mount if you want/need to but these commands should all work from there.
 
 1. Start MongoDB
 
-    * As of late 2025, TP-Links supports MongoDB 3-8 for the controller. Update the MongoDB image version tag as you wish. I have yet to test it extensively though, just gone through basic setup.
+    * As of late 2025, TP-Links supports MongoDB 3-8 for the controller. Update the MongoDB image version tag as you wish.
     * If you are not using bridge mode, you can omit the network to just have MongoDB exposed as you need. Password authentication is still in use to secure MongoDB in that case.
     * The `omada` user in MongoDB will have the following credentials: user: `omada` & pwd: `0m4d4`.  This is defined in the `omada.js` file that it used to initialize the databases and you can modify if as you wish.
 
@@ -114,57 +116,60 @@ This expects that you are in this project's root where the `Dockerfile` is.  Upd
     docker logs -f omada-controller
     ```
 
-1. Cleanup After Testing
-
-    If you want to clean everything up, this command will kill the containers, remove the volumes, and remove the bridge network:
-
-    ```bash
-    docker rm -f mongodb omada-controller ;\
-      docker volume rm omada-mongo-config omada-mongo-data omada-data omada-logs ;\
-      docker network rm omada
-    ```
-
 ### Fresh Install Example using Compose
 
 There is an example compose file for a fresh install using an external MongoDB at [docker-compose_fresh-install.yml](./docker-compose_fresh-install.yml).
 
 ## Migration from All in One
 
-While I have this WIP for migrating from all in one, it would be much simplier to take a backup from the Omada Controller and then do a restore of the config to a new controller install with a modern MongoDB version as the migration from version to version is very tedious.
+While I have these steps for a migration, it _may_ be easier for you to take a backup from the Omada Controller and then do a restore of the config to a new controller install with an external MongoDB but this should be a quick process.
+
+In this example, we will:
+
+* Stop the existing all in one controller running v5
+* Start an external MongoDB v3, attached to the existing persistent data
+* Start a new v5 controller, instructing it how to connect to the external MongoDB
+
+Upgrading MongoDB from v3 to v4 is currently out of scope of these steps. To minimize the moving pieces, you should **NOT** attempt to upgrade from v5 to v6 during this process. Once you move to an external v5, you can upgrade your controller to v6 as staying on v5 will give you a much easier rollback in case of issues moving to an external MongoDB.
+
+Here is an example of how one would have ran a standard all in one container (mongodb + controller). **YOU DO NOT NEED TO RUN THIS** - this is just the example to show how we would change the run options to move to the separate containers.
+
+```bash
+docker run -d \
+  --name omada-controller \
+  --ulimit nofile=4096:8192 \
+  --network omada \
+  --stop-timeout 60 \
+  -p 8088:8088 \
+  -p 8043:8043 \
+  -p 8843:8843 \
+  -p 19810:19810/udp \
+  -p 27001:27001/udp \
+  -p 29810:29810/udp \
+  -p 29811-29817:29811-29817 \
+  --mount type=volume,source=omada-data,destination=/opt/tplink/EAPController/data \
+  --mount type=volume,source=omada-logs,destination=/opt/tplink/EAPController/logs \
+  mbentley/omada-controller:5.15
+```
 
 ### Example using a bridge network
 
-1. Run standard all in one container (mongodb + controller)
+1. [Take a backup!](../#controller-backups)
 
-    ```bash
-    docker run -d \
-      --name omada-controller \
-      --ulimit nofile=4096:8192 \
-      --network omada \
-      --stop-timeout 60 \
-      -p 8088:8088 \
-      -p 8043:8043 \
-      -p 8843:8843 \
-      -p 19810:19810/udp \
-      -p 27001:27001/udp \
-      -p 29810:29810/udp \
-      -p 29811-29817:29811-29817 \
-      --mount type=volume,source=omada-data,destination=/opt/tplink/EAPController/data \
-      --mount type=volume,source=omada-logs,destination=/opt/tplink/EAPController/logs \
-      mbentley/omada-controller:5.15 &&\
-    docker logs -f omada-controller
-    ```
-
-1. Stop & remove it
+1. Stop & remove your existing container
 
     ```bash
     docker stop -t 60 omada-controller &&\
       docker rm omada-controller
     ```
 
-1. Start mongodb, attached to the same data from the all in one image (updating the dbpath)
+1. Start mongodb, attached to the same data from the all in one image, making the required updates to match your configuration:
 
-    Note: this uses `mongo:3` because you otherwise have to perform an upgrade which is currently outside of the scope of this test.
+    * Update the volume path to match your own volume or your bind mounted location
+    * Update the UID/GID to match what you run your controller as - this example uses the defaults
+    * Take note of the overridden CMD - we need to set the path to where the existing persistent data lives
+
+    **Note**: this uses `mongo:3` because you otherwise have to perform an upgrade which is currently outside of the scope of this guide.
 
     ```bash
     docker run -d \
@@ -177,7 +182,10 @@ While I have this WIP for migrating from all in one, it would be much simplier t
       mongo:3 --dbpath /data/db/db
     ```
 
-1. Start the controller
+1. Start the new controller
+
+    * You will need to add the `MONGO_EXTERNAL=true` and `EAP_MONGOD_URI` environment variables.
+    * Your `EAP_MONGOD_URI` value should refer to MongoDB container by `mongodb` as the controller should be able to communicate to the MongoDB over the bridge network.
 
     ```bash
     docker run -d \
@@ -195,21 +203,12 @@ While I have this WIP for migrating from all in one, it would be much simplier t
       --mount type=volume,source=omada-data,destination=/opt/tplink/EAPController/data \
       --mount type=volume,source=omada-logs,destination=/opt/tplink/EAPController/logs \
       -e MONGO_EXTERNAL="true" \
-      -e EAP_MONGOD_URI="mongodb://mongodb.omada:27017/omada" \
+      -e EAP_MONGOD_URI="mongodb://mongodb:27017/omada" \
       mbentley/omada-controller:5.15 &&\
     docker logs -f omada-controller
     ```
 
-1. Cleanup After Testing
-
-    If you want to clean everything up, this command will kill the containers, remove the volumes, and remove the bridge network:
-
-    ```bash
-    docker rm -f mongodb omada-controller ;\
-      docker volume prune -f ;\
-      docker volume rm omada-data omada-logs ;\
-      docker network rm omada
-    ```
+You should now have a working controller - check the logs and watch for proper startup and a message stating that your controller has started.
 
 ### Example using `--network host`
 
@@ -217,7 +216,20 @@ If you're using `--network host` and you want to use the existing data without h
 
 These instructions start from the point where you have an existing controller and it's stopped. In this example, it's using the v6 beta which is already using MongoDB 8.0.
 
+1. [Take a backup!](../#controller-backups)
+
+1. Stop & remove your existing container
+
+    ```bash
+    docker stop -t 60 omada-controller &&\
+      docker rm omada-controller
+    ```
+
 1. Start MongoDB
+
+    * Update the volume path to match your own volume or your bind mounted location
+    * Update the UID/GID to match what you run your controller as - this example uses the defaults
+    * Take note of the overridden CMD - we need to set the path to where the existing persistent data lives and set the bind IP so we don't listen without authentication across your network
 
     ```bash
     docker run -d \
@@ -230,7 +242,8 @@ These instructions start from the point where you have an existing controller an
 
 1. Start the controller
 
-Note the connection string referring to `localhost`.
+    * You will need to add the `MONGO_EXTERNAL=true` and `EAP_MONGOD_URI` environment variables.
+    * Your `EAP_MONGOD_URI` value should refer to MongoDB container by `localhost`.
 
     ```bash
     docker run -d \
@@ -241,9 +254,11 @@ Note the connection string referring to `localhost`.
       --mount type=volume,source=omada-logs,destination=/opt/tplink/EAPController/logs \
       -e MONGO_EXTERNAL="true" \
       -e EAP_MONGOD_URI="mongodb://127.0.0.1:27017/omada" \
-      mbentley/omada-controller:beta-6.0 &&\
+      mbentley/omada-controller:5.15 &&\
     docker logs -f omada-controller
     ```
+
+You should now have a working controller - check the logs and watch for proper startup and a message stating that your controller has started.
 
 ### Migration Examples using Compose
 

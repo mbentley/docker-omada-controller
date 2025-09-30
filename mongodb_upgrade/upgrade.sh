@@ -70,8 +70,8 @@ abort_and_rollback() {
   fi
 
   echo "INFO: successfully rolled back MongoDB using the pre-backup archive"
-
-  # TODO: information on what to do should go here with final error
+  echo "INFO: you can safely start back up your v5 container if you need to get your controller back up and running at this point"
+  echo "INFO: if you require assistance, create a Help discussion (https://github.com/mbentley/docker-omada-controller/discussions/new?category=help) with as much information as possible"
 
   # exit
   exit 1
@@ -210,7 +210,7 @@ case "${ARCH}" in
     if ! grep -qE '^flags.* avx( .*|$)' /proc/cpuinfo
     then
       echo -e "\nERROR: your system does not support AVX which is a requirement for MongoDB starting with 5.x; you will not be able to upgrade MongoDB"
-      # TODO: add link to README that explains the options
+      echo "  See https://github.com/mbentley/docker-omada-controller/blob/master/KNOWN_ISSUES.md#your-system-does-not-support-avx-or-armv82-a for details on what exactly this means and your upgrade options"
       exit 1
     fi
     ;;
@@ -222,7 +222,7 @@ case "${ARCH}" in
     then
       # failed armv8.2-a test
       echo "ERROR: your system does not support the armv8.2-a or later microarchitecture which is a requirement for MongoDB starting with 5.x; you will not be able to upgrade MongoDB"
-      # TODO: add link to README that explains the options
+      echo "  See https://github.com/mbentley/docker-omada-controller/blob/master/KNOWN_ISSUES.md#your-system-does-not-support-avx-or-armv82-a for details on what exactly this means and your upgrade options"
       exit 1
     fi
     ;;
