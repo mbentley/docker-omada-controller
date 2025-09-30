@@ -43,8 +43,6 @@ services:
     depends_on:
       bootstrap:
         condition: service_completed_successfully
-    ports:
-      - "27017:27017"
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: password
