@@ -1,0 +1,47 @@
+services:
+  mongodb:
+    image: mongo:3
+    container_name: mongodb
+    stop_grace_period: 60s
+    user: "508:508"
+    network_mode: host
+    command: ["--dbpath","/data/db/db","--bind_ip","127.0.0.1"]
+    healthcheck:
+      test: ["CMD", "mongo", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+      start_interval: 5s
+    volumes:
+      - omada-data:/data/db
+    tmpfs:
+      - /data/configdb
+
+  omada-controller:
+    #image: mbentley/omada-controller:beta
+    image: mbentley/omada-controller:5.15
+    container_name: omada-controller
+    stop_grace_period: 60s
+    depends_on:
+      mongodb:
+        condition: service_healthy
+        restart: true
+    ulimits:
+      nofile:
+        soft: 4096
+        hard: 8192
+    network_mode: host
+    environment:
+      MONGO_EXTERNAL: "true"
+      #EAP_MONGOD_URI: "mongodb://localhost:27017/omada"
+      EAP_MONGOD_URI: "mongodb://127.0.0.1:27017/omada"
+    volumes:
+      - omada-data:/opt/tplink/EAPController/data
+      - omada-logs:/opt/tplink/EAPController/logs
+
+volumes:
+  omada-data:
+    external: true
+  omada-logs:
+    external: true
