@@ -4,7 +4,9 @@
 * [MongoDB + Omada Controller (fresh install)](#mongodb--omada-controller-fresh-install)
 * [Migration from All in One](#migration-from-all-in-one)
   * [Example using a bridge network](#example-using-a-bridge-network)
+    * [Fresh Install Example using Compose](#fresh-install-example-using-compose)
   * [Example using `--network host`](#example-using---network-host)
+    * [Migration Examples using Compose](#migration-examples-using-compose)
 
 ## Common Steps
 
@@ -121,6 +123,10 @@ This expects that you are in this project's root where the `Dockerfile` is.  Upd
       docker volume rm omada-mongo-config omada-mongo-data omada-data omada-logs ;\
       docker network rm omada
     ```
+
+### Fresh Install Example using Compose
+
+There is an example compose file for a fresh install using an external MongoDB at [docker-compose_fresh-install.yml](./docker-compose_fresh-install.yml).
 
 ## Migration from All in One
 
@@ -239,6 +245,10 @@ Note the connection string referring to `localhost`.
     docker logs -f omada-controller
     ```
 
+### Migration Examples using Compose
+
+There are example compose files for migrations to an external MongoDB at [docker-compose_migration-bridge.yml](./docker-compose_migration-bridge.yml) and [docker-compose_migration-host.yml](./docker-compose_migration-host.yml) for bridge and host networking, respectively.
+
 ## Kubernetes Deployment Guide
 
 In advanced setups, deploying applications in container orchestrators like Kubernetes is common,
@@ -247,7 +257,6 @@ even in homelabs to enhance reliability.
 Below, we’ll use both Helm and Kustomize to deploy **MongoDB** and **Omada Controller**.
 
 ### Deploy MongoDB
-
 
 We use a custom Helm chart that wraps Bitnami's MongoDB chart.
 
