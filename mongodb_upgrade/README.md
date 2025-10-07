@@ -1,5 +1,7 @@
 # MongoDB Upgrade from 3.6 to 8.0
 
+**Warning**: MongoDB versions 5 and above require specific CPU features/capabilities: AVX for amd64 CPUs and armv8.2-a for arm64 CPUs. The upgrade script will check for compatibility. For more information about your options to still be able to upgrade to v6, see the [known issues](../KNOWN_ISSUES.md#your-system-does-not-support-avx-or-armv82-a).
+
 ## About the Upgrade Process
 
 This will upgrade MongoDB 3.6 to 8.0. Due to how MongoDB works, in order to upgrade, it must be done in steps which is why there is a special container image.
