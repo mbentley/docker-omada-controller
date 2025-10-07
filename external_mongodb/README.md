@@ -118,7 +118,7 @@ This expects that you are in this project's root where the `Dockerfile` is.  Upd
 
 ### Fresh Install Example using Compose
 
-There is an example compose file for a fresh install using an external MongoDB at [docker-compose_fresh-install.yml](./docker-compose_fresh-install.yml).
+There is an example compose file for a fresh install using an external MongoDB at [docker-compose_fresh-install-host.yml](./docker-compose_fresh-install-host.yml) and [docker-compose_fresh-install-bridge.yml](./docker-compose_fresh-install-bridge.yml) for host and bridge networking, respectively.
 
 ## Migration from All in One
 
@@ -262,7 +262,7 @@ You should now have a working controller - check the logs and watch for proper s
 
 ### Migration Examples using Compose
 
-There are example compose files for migrations to an external MongoDB at [docker-compose_migration-bridge.yml](./docker-compose_migration-bridge.yml) and [docker-compose_migration-host.yml](./docker-compose_migration-host.yml) for bridge and host networking, respectively.
+There are example compose files for migrations to an external MongoDB at [docker-compose_migration-host.yml](./docker-compose_migration-host.yml) and [docker-compose_migration-bridge.yml](./docker-compose_migration-bridge.yml) for host and bridge networking, respectively.
 
 ## Kubernetes Deployment Guide
 
