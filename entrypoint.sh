@@ -465,6 +465,51 @@ case ${JAVA_VERSION_1}.${JAVA_VERSION_2} in
     ;;
 esac
 
+# inject cloudsdk JAR at the beginning of the classpath to ensure correct certificate loads first
+# check if we're actually starting the Omada controller (not just running some other command)
+if echo "${@}" | grep -q "com.tplink.smb.omada.starter.OmadaLinuxMain"
+then
+  echo "INFO: Omada Controller startup detected; proceeding with cloudsdk JAR injection"
+
+  # find the cloudsdk JAR dynamically (version-agnostic)
+  CLOUDSDK_JAR="$(find /opt/tplink/EAPController/lib -maxdepth 1 -name "cloudsdk-*.jar" | head -n 1)"
+
+  if [ -n "${CLOUDSDK_JAR}" ]
+  then
+    echo "INFO: Found cloudsdk JAR: ${CLOUDSDK_JAR}"
+
+    # parse CMD arguments to find and modify the -cp parameter
+    NEW_ARGS=()
+    NEXT_IS_CP=false
+
+    for ARG in "${@}"
+    do
+      if [ "${NEXT_IS_CP}" = "true" ]
+      then
+        # this is the classpath value; inject cloudsdk JAR at the beginning
+        NEW_ARGS+=("${CLOUDSDK_JAR}:${ARG}")
+        NEXT_IS_CP=false
+        echo "INFO: Modified classpath to: ${CLOUDSDK_JAR}:${ARG}"
+      elif [ "${ARG}" = "-cp" ] || [ "${ARG}" = "-classpath" ]
+      then
+        # found the classpath flag
+        NEW_ARGS+=("${ARG}")
+        NEXT_IS_CP=true
+      else
+        # regular argument
+        NEW_ARGS+=("${ARG}")
+      fi
+    done
+
+    # replace the original arguments with modified ones
+    set -- "${NEW_ARGS[@]}"
+  else
+    echo "WARN: cloudsdk JAR not found; classpath injection skipped (cloud connection may fail!)"
+  fi
+else
+  echo "INFO: Not starting Omada Controller; skipping cloudsdk JAR injection"
+fi
+
 # check for autobackup
 if [ ! -d "/opt/tplink/EAPController/data/autobackup" ]
 then
