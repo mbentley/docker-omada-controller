@@ -103,3 +103,5 @@ In order to run v6 Omada Controller using the images I publish, you need to migr
 Longer term, you may want to upgrade to v6 but you still can't just upgrade because you're stuck with a CPU that doesn't have the required capabilities to support a modern MongoDB. This can be achieved by running MongoDB external to the Omada Controller application. If you're ready to try to migrate from the all in one deployment to separate MongoDB and Omada Controller containers, check out the [Migration from All in One](./external_mongodb#migration-from-all-in-one) instructions. As always, make sure that you take a backup before you do anything like this as I am sure you do before all upgrades, right?
 
 Much longer term, I would suggest upgrading your system to support these instruction sets or features required but I understand that means financial investment.
+
+Proxmox users: you may need to create a new CPU model that exposes AVX. Please see [this post](https://forum.proxmox.com/threads/cpu-with-avx-support.146138/post-716615) on the Proxmox forum.
