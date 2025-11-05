@@ -58,7 +58,7 @@ If you don't know much about Docker or want to just get started as easily as pos
 1. **Docker**
     * This guide assumes that you have Docker installed. If you don't, I would suggest starting [here](https://www.docker.com/get-started/).
 1. **Picking an image tag**
-    * Most people will want to use a major.minor tag version (i.e. - `5.15`) as this is the safest option and can almost certainly be considered to be non-breaking when a new version of the image is available.
+    * Most people will want to use a major.minor tag version (i.e. - `6.0`) as this is the safest option and can almost certainly be considered to be non-breaking when a new version of the image is available.
     * If updating the tag between minor versions is not ideal for you, there is also the major tag version (i.e. - `5`) which should be safe from most non-breaking changes.
     * **USING THE `latest` TAG IS A BAD IDEA - DO NOT DO IT!** Using `latest` may upgrade you to a newer version (i.e. - `5.15` to `6.0`) when it comes out and there is no guarantee that there will not be potentially breaking changes between those versions! Instead, use one of the two tag types above.
     * ~~If you need to create PDF reports from the controller, there are [tags with Chromium](#tags-with-chromium) as that is required to generate them. Those images are much larger and only available for `amd64` so only use them if you really need that functionality.~~ Reports are now CSV and XLSX so they do not require Chromium.
@@ -74,11 +74,11 @@ If you don't know much about Docker or want to just get started as easily as pos
     * There are several ways to run your controller container:
       * [docker run...](#example-usage)
         * Examples for both host (_prefered_) and bridge network modes
-        * Uses the latest major.minor (i.e. - `5.15`) tag
+        * Uses the latest major.minor (i.e. - `6.0`) tag
         * Only requires Docker to be set up
       * [docker compose](#using-docker-compose)
         * Examples for both host (_prefered_) and bridge network modes
-        * Uses the latest major.minor (i.e. - `5.15`) tag
+        * Uses the latest major.minor (i.e. - `6.0`) tag
         * Requires Docker and [Docker Compose](https://docs.docker.com/compose/) to be set up
       * [k8s](#using-k8s)
         * Deployment is k8s is an advanced topic; only use this if you know what you are doing and can support yourself.
@@ -95,7 +95,7 @@ If you don't know much about Docker or want to just get started as easily as pos
 
 ## v5 to v6 Upgrade Guide
 
-**Note**: the upgrade from v5 to v6 is **ONLY** available for the beta version of the controller at the moment. The upgrade requires a manual step of a MongoDB upgrade which is automated but it has to be run as a separate container while the controller is stopped.
+**Note**: The upgrade requires a manual step of a MongoDB upgrade which is automated but it has to be run as a separate container while the controller is stopped.
 
 There are a few reasons for the manual upgrade:
 
@@ -115,6 +115,7 @@ For a full tag list, search the [Docker Hub tags list](https://hub.docker.com/r/
 
 | Tag(s) | Major.Minor Release | Current Version |
 | :----- | ------------------- | --------------- |
+| `6`, `6.0` | `6.0.x` | `6.0.0.24` |
 | `latest`, `5`, `5.15` | `5.15.x` | `5.15.24.19` |
 
 ### Tags with Chromium
@@ -130,6 +131,7 @@ These are multi-arch tags. For the full tag listings, see the Docker Hub tags ab
 | `beta`, `beta-6.0`, `beta-6.0.0.24` | `6.0.x` Beta | `6.0.0.24` |
 | `beta-openj9`, `beta-6.0-openj9`, `beta-6.0.0.24-openj9` | `6.0.x` Beta w/OpenJ9 | `6.0.0.24` |
 | --- | --- | --- |
+| `6.0-openj9`, `6.0.0.24-openj9` | `6.0.x` w/OpenJ9 | `6.0.0.24` |
 | `5.15-openj9`, `5.15.24.19-openj9` | `5.15.x` w/OpenJ9 | `5.15.24.19` |
 
 ### Explicit Architecture Tags
@@ -138,7 +140,7 @@ If for some reason you can't use the multi-arch tags, there are explicitly tagge
 
 ### Explicit Version Tags
 
-If you need a specific version of the controller, starting with 5.13 and 5.14, there are explicitly tagged images with the exact version (i.e. - `5.15.24.19`) in the tag name. Check [Docker Hub](https://hub.docker.com/r/mbentley/omada-controller/tags) for the full list of tags.
+If you need a specific version of the controller, starting with 5.13 and 5.14, there are explicitly tagged images with the exact version (i.e. - `6.0.0.24`) in the tag name. Check [Docker Hub](https://hub.docker.com/r/mbentley/omada-controller/tags) for the full list of tags.
 
 ## Archived Tags
 
@@ -208,10 +210,11 @@ There are some differences between the build steps for `amd64`, `arm64`, and `ar
 
   ```
   docker build \
-    --build-arg INSTALL_VER="5.15.24.19" \
+    --build-arg BASE=mbentley/ubuntu:24.04 \
+    --build-arg INSTALL_VER="6.0.0.24" \
     --build-arg ARCH="amd64" \
     -f Dockerfile \
-    -t mbentley/omada-controller:5.15-amd64 .
+    -t mbentley/omada-controller:6.0-amd64 .
   ```
 
 ### `arm64`
@@ -220,10 +223,11 @@ There are some differences between the build steps for `amd64`, `arm64`, and `ar
 
   ```
   docker build \
-    --build-arg INSTALL_VER="5.15.24.19" \
+    --build-arg BASE=mbentley/ubuntu:24.04 \
+    --build-arg INSTALL_VER="6.0.0.24" \
     --build-arg ARCH="arm64" \
     -f Dockerfile \
-    -t mbentley/omada-controller:5.15-arm64 .
+    -t mbentley/omada-controller:6.0-arm64 .
   ```
 
 ### `armv7l`
@@ -261,7 +265,7 @@ docker run -d \
   -e TZ=Etc/UTC \
   -v omada-data:/opt/tplink/EAPController/data \
   -v omada-logs:/opt/tplink/EAPController/logs \
-  mbentley/omada-controller:5.15
+  mbentley/omada-controller:6.0
 ```
 
 ### Using port mapping
@@ -286,7 +290,7 @@ docker run -d \
   -e TZ=Etc/UTC \
   -v omada-data:/opt/tplink/EAPController/data \
   -v omada-logs:/opt/tplink/EAPController/logs \
-  mbentley/omada-controller:5.15
+  mbentley/omada-controller:6.0
 ```
 
 ### Using non-default ports

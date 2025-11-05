@@ -20,8 +20,7 @@ services:
       - omada
 
   omada-controller:
-    #image: mbentley/omada-controller:beta
-    image: mbentley/omada-controller:5.15
+    image: mbentley/omada-controller:6.0
     container_name: omada-controller
     stop_grace_period: 60s
     depends_on:
