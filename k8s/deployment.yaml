@@ -26,7 +26,7 @@ spec:
           type: RuntimeDefault
       containers:
       - name: omada-controller
-        image: mbentley/omada-controller:5.15
+        image: mbentley/omada-controller:6.0
         imagePullPolicy: Always
         securityContext:
           allowPrivilegeEscalation: false
