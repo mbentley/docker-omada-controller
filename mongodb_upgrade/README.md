@@ -1,6 +1,6 @@
 # MongoDB Upgrade from 3.6 to 8.0
 
-**Warning**: MongoDB versions 5 and above require specific CPU features/capabilities: AVX for amd64 CPUs and armv8.2-a for arm64 CPUs. The upgrade script will check for compatibility. For more information about your options to still be able to upgrade to v6, see the [known issues](../KNOWN_ISSUES.md#your-system-does-not-support-avx-or-armv82-a).
+**Warning**: MongoDB versions 5 and above require specific CPU features/capabilities: AVX for amd64 CPUs and armv8.2-a for arm64 CPUs. The upgrade script will check for compatibility. For more information about your options to still be able to upgrade to v6, see the [known issues](../KNOWN_ISSUES.md#your-system-does-not-support-avx-or-armv82-a). Also for Proxmox users, you may need to explictly expose the AVX instruction set. Check out the [known issues](../KNOWN_ISSUES.md#your-system-does-not-support-avx-or-armv82-a) for instructions.
 
 ## About the Upgrade Process
 
@@ -14,6 +14,7 @@ This will upgrade MongoDB 3.6 to 8.0. Due to how MongoDB works, in order to upgr
 ### Upgrade Steps
 
 1. Stop your controller container
+1. [Create a backup of your controler data](../README.md#controller-backups)
 1. [Execute the Upgrade](#execute-the-upgrade) by running the upgrade container with the correct volume path to your persistent data
 1. Start the v6 version of the controller container which has MongoDB 8.x
 
@@ -60,6 +61,8 @@ docker run -it --rm \
   mbentley/omada-controller:mongodb-upgrade-3.6-to-8-arm64
 ```
 </details>
+
+Now that the migration is complete, you can update your tag to reflect the `6.0` image tag. Also make sure that you have updated your deployment to also expose port `tcp/19817` as that was added in v6.
 
 ### Kubernetes
 

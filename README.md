@@ -103,7 +103,9 @@ There are a few reasons for the manual upgrade:
 * MongoDB 8 currently receives updates and is supposed to be more reliable and perform better than the old 3.6 version
 * In order to upgrade MongoDB, it has to be done in steps and to make the upgrade from 3.6 to 8, many versions have to be executed and there are VERY specific operating system versions that support all of the needed versions which allows the complete upgrade to be done in one manual container run
 
-For instructions on how to proceed with the upgrade, see [the MongoDB upgrade guide](./mongodb_upgrade/). If you tried to run the v6 controller without doing the upgrade, see [HELP! My Controller Stopped Working!](./mongodb_upgrade/#help-my-controller-stopped-working) for steps to get back to a working state or how to perform the upgrade.
+Now that you understand why there is manual step required, see [the MongoDB upgrade guide](./mongodb_upgrade/) for detailed instructions on how to proceed with the upgrade.
+
+If you tried to run the v6 controller without doing the upgrade, see [HELP! My Controller Stopped Working!](./mongodb_upgrade/#help-my-controller-stopped-working) for steps to get back to a working state or what you need to do to get back to a state where you can perform the upgrade.
 
 ## Image Tags
 
