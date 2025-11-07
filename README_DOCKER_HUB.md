@@ -6,6 +6,10 @@ Docker image for [TP-Link Omada Controller](https://www.tp-link.com/us/support/d
 
 Check out the [Quickstart Guide](https://github.com/mbentley/docker-omada-controller?tab=readme-ov-file#quickstart-guide) for the basics of what you need to know about running the TP-Link Omada Controller in a container and how to operate it successfully.
 
+## v5 to v6 Upgrade Guide
+
+The upgrade from v5 to v6 requires a manual step of running an upgrade container for MongoDB. Check out the [v5 to v6 Upgrade Guide](https://github.com/mbentley/docker-omada-controller?tab=readme-ov-file#v5-to-v6-upgrade-guide) in the full README for detailed instructions.
+
 ## Full README
 
 For the full readme which includes a list of tags, including usage examples, upgrade details, known issues, and more, refer to the [README in the GitHub repository](https://github.com/mbentley/docker-omada-controller/blob/master/README.md).
