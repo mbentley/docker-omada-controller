@@ -42,5 +42,7 @@ RUN cd /tmp &&\
 
 COPY upgrade.sh /
 
+ENV DEBUG=false
+
 WORKDIR /opt/tplink/EAPController/lib
 ENTRYPOINT ["/upgrade.sh"]

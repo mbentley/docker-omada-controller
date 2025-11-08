@@ -119,11 +119,50 @@ version_step_upgrade() {
   # get current compat version
   if [ "${MONGO_CLIENT}" = "mongosh" ]
   then
-    # mongosh
-    CURRENT_COMPAT_VERSION="$(/tmp/${MONGO_CLIENT} --quiet --json --eval 'db.adminCommand( { getParameter: 1, featureCompatibilityVersion: 1 } )' | jq -r .featureCompatibilityVersion.version)"
+    # mongosh - outputs clean multi-line JSON, no filtering needed
+    if [ "${DEBUG}" = "true" ]
+    then
+      echo "DEBUG: Running mongosh to get compatibility version..."
+      RAW_OUTPUT="$(/tmp/${MONGO_CLIENT} --quiet --json --eval 'db.adminCommand( { getParameter: 1, featureCompatibilityVersion: 1 } )')"
+      echo "DEBUG: Raw output from mongosh:"
+      echo "===START RAW OUTPUT==="
+      echo "${RAW_OUTPUT}"
+      echo "===END RAW OUTPUT==="
+      echo "DEBUG: Raw output (with escaped characters):"
+      printf '%q\n' "${RAW_OUTPUT}"
+      echo "DEBUG: Running through jq..."
+      CURRENT_COMPAT_VERSION="$(echo "${RAW_OUTPUT}" | jq -r .featureCompatibilityVersion.version)"
+      echo "DEBUG: jq result: '${CURRENT_COMPAT_VERSION}'"
+      echo "DEBUG: jq result (with escaped characters):"
+      printf '%q\n' "${CURRENT_COMPAT_VERSION}"
+    else
+      CURRENT_COMPAT_VERSION="$(/tmp/${MONGO_CLIENT} --quiet --json --eval 'db.adminCommand( { getParameter: 1, featureCompatibilityVersion: 1 } )' | jq -r .featureCompatibilityVersion.version)"
+    fi
   else
-    # mongo client
-    CURRENT_COMPAT_VERSION="$(echo 'db.adminCommand( { getParameter: 1, featureCompatibilityVersion: 1 } )' | /tmp/${MONGO_CLIENT} --quiet | jq -r .featureCompatibilityVersion.version)"
+    # mongo client - may output warnings before the result, filter to line containing "ok" which is the result
+    if [ "${DEBUG}" = "true" ]
+    then
+      echo "DEBUG: Running mongo client to get compatibility version..."
+      RAW_OUTPUT="$(echo 'db.adminCommand( { getParameter: 1, featureCompatibilityVersion: 1 } )' | /tmp/${MONGO_CLIENT} --quiet)"
+      echo "DEBUG: Raw output from mongo client:"
+      echo "===START RAW OUTPUT==="
+      echo "${RAW_OUTPUT}"
+      echo "===END RAW OUTPUT==="
+      echo "DEBUG: Raw output (with escaped characters):"
+      printf '%q\n' "${RAW_OUTPUT}"
+      echo "DEBUG: After grep for '\"ok\"':"
+      GREP_OUTPUT="$(echo "${RAW_OUTPUT}" | grep -F '"ok"')"
+      echo "===START GREP OUTPUT==="
+      echo "${GREP_OUTPUT}"
+      echo "===END GREP OUTPUT==="
+      echo "DEBUG: Running through jq..."
+      CURRENT_COMPAT_VERSION="$(echo "${GREP_OUTPUT}" | jq -r .featureCompatibilityVersion.version)"
+      echo "DEBUG: jq result: '${CURRENT_COMPAT_VERSION}'"
+      echo "DEBUG: jq result (with escaped characters):"
+      printf '%q\n' "${CURRENT_COMPAT_VERSION}"
+    else
+      CURRENT_COMPAT_VERSION="$(echo 'db.adminCommand( { getParameter: 1, featureCompatibilityVersion: 1 } )' | /tmp/${MONGO_CLIENT} --quiet | grep -F '"ok"' | jq -r .featureCompatibilityVersion.version)"
+    fi
   fi
 
   # make sure that the current compat version is correct
@@ -158,11 +197,54 @@ version_step_upgrade() {
   echo -n "INFO: verifying feature compatibility version is now ${MONGO_MAJ_MIN}..."
   if [ "${MONGO_CLIENT}" = "mongosh" ]
   then
-    # mongosh
-    NEW_COMPAT_VERSION="$(/tmp/${MONGO_CLIENT} --quiet --json --eval 'db.adminCommand( { getParameter: 1, featureCompatibilityVersion: 1 } )' | jq -r .featureCompatibilityVersion.version)"
+    # mongosh - outputs clean multi-line JSON, no filtering needed
+    if [ "${DEBUG}" = "true" ]
+    then
+      echo ""
+      echo "DEBUG: Running mongosh to verify new compatibility version..."
+      RAW_OUTPUT="$(/tmp/${MONGO_CLIENT} --quiet --json --eval 'db.adminCommand( { getParameter: 1, featureCompatibilityVersion: 1 } )')"
+      echo "DEBUG: Raw output from mongosh:"
+      echo "===START RAW OUTPUT==="
+      echo "${RAW_OUTPUT}"
+      echo "===END RAW OUTPUT==="
+      echo "DEBUG: Raw output (with escaped characters):"
+      printf '%q\n' "${RAW_OUTPUT}"
+      echo "DEBUG: Running through jq..."
+      NEW_COMPAT_VERSION="$(echo "${RAW_OUTPUT}" | jq -r .featureCompatibilityVersion.version)"
+      echo "DEBUG: jq result: '${NEW_COMPAT_VERSION}'"
+      echo "DEBUG: jq result (with escaped characters):"
+      printf '%q\n' "${NEW_COMPAT_VERSION}"
+      echo -n "INFO: verifying feature compatibility version is now ${MONGO_MAJ_MIN}..."
+    else
+      NEW_COMPAT_VERSION="$(/tmp/${MONGO_CLIENT} --quiet --json --eval 'db.adminCommand( { getParameter: 1, featureCompatibilityVersion: 1 } )' | jq -r .featureCompatibilityVersion.version)"
+    fi
   else
-    # mongo client
-    NEW_COMPAT_VERSION="$(echo 'db.adminCommand( { getParameter: 1, featureCompatibilityVersion: 1 } )' | /tmp/${MONGO_CLIENT} --quiet | jq -r .featureCompatibilityVersion.version)"
+    # mongo client - may output warnings before the result, filter to line containing "ok" which is the result
+    if [ "${DEBUG}" = "true" ]
+    then
+      echo ""
+      echo "DEBUG: Running mongo client to verify new compatibility version..."
+      RAW_OUTPUT="$(echo 'db.adminCommand( { getParameter: 1, featureCompatibilityVersion: 1 } )' | /tmp/${MONGO_CLIENT} --quiet)"
+      echo "DEBUG: Raw output from mongo client:"
+      echo "===START RAW OUTPUT==="
+      echo "${RAW_OUTPUT}"
+      echo "===END RAW OUTPUT==="
+      echo "DEBUG: Raw output (with escaped characters):"
+      printf '%q\n' "${RAW_OUTPUT}"
+      echo "DEBUG: After grep for '\"ok\"':"
+      GREP_OUTPUT="$(echo "${RAW_OUTPUT}" | grep -F '"ok"')"
+      echo "===START GREP OUTPUT==="
+      echo "${GREP_OUTPUT}"
+      echo "===END GREP OUTPUT==="
+      echo "DEBUG: Running through jq..."
+      NEW_COMPAT_VERSION="$(echo "${GREP_OUTPUT}" | jq -r .featureCompatibilityVersion.version)"
+      echo "DEBUG: jq result: '${NEW_COMPAT_VERSION}'"
+      echo "DEBUG: jq result (with escaped characters):"
+      printf '%q\n' "${NEW_COMPAT_VERSION}"
+      echo -n "INFO: verifying feature compatibility version is now ${MONGO_MAJ_MIN}..."
+    else
+      NEW_COMPAT_VERSION="$(echo 'db.adminCommand( { getParameter: 1, featureCompatibilityVersion: 1 } )' | /tmp/${MONGO_CLIENT} --quiet | grep -F '"ok"' | jq -r .featureCompatibilityVersion.version)"
+    fi
   fi
 
   # make sure that the new compat version is correct
@@ -196,15 +278,13 @@ version_step_upgrade() {
 }
 
 ### start of full upgrade cycle
-# verify the system meets the system requirements for MongoDB 8
-echo -n "INFO: running hardware prerequesite checks to ensure your system supports MongoDB 8..."
-
-# get the architecture
+# verify the system meets the system requirements for MongoDB 8; get the architecture and run the check for the correct architecture
 ARCH="$(uname -m)"
 
 case "${ARCH}" in
   x86_64)
     # amd64 checks
+    echo -n "INFO: running hardware prerequisite check for AVX support on ${ARCH} to ensure your system can run MongoDB 8..."
 
     # check for AXV support
     if ! grep -qE '^flags.* avx( .*|$)' /proc/cpuinfo
@@ -216,6 +296,7 @@ case "${ARCH}" in
     ;;
   aarch64|aarch64_be|armv8b|armv8l)
     # arm64 checks (list of 64 bit arm compatible names from `uname -m`: https://stackoverflow.com/a/45125525)
+    echo -n "INFO: running hardware prerequisite check for armv8.2-a support on ${ARCH} to ensure your system can run MongoDB 8..."
 
     # check for armv8.2-a support
     if ! grep -qE '^Features.* (fphp|dcpop|sha3|sm3|sm4|asimddp|sha512|sve)( .*|$)' /proc/cpuinfo
@@ -232,7 +313,7 @@ case "${ARCH}" in
     ;;
 esac
 
-# prerequesite checks successful
+# prerequisite checks successful
 echo "done"
 
 # verify no lock file exists
