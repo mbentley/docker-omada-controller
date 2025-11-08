@@ -73,11 +73,11 @@ If you don't know much about Docker or want to just get started as easily as pos
 1. **How to run the container**
     * There are several ways to run your controller container:
       * [docker run...](#example-usage)
-        * Examples for both host (_prefered_) and bridge network modes
+        * Examples for both host (_preferred_) and bridge network modes
         * Uses the latest major.minor (i.e. - `6.0`) tag
         * Only requires Docker to be set up
       * [docker compose](#using-docker-compose)
-        * Examples for both host (_prefered_) and bridge network modes
+        * Examples for both host (_preferred_) and bridge network modes
         * Uses the latest major.minor (i.e. - `6.0`) tag
         * Requires Docker and [Docker Compose](https://docs.docker.com/compose/) to be set up
       * [k8s](#using-k8s)
