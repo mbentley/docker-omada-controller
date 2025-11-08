@@ -1,20 +1,27 @@
 # MongoDB Upgrade from 3.6 to 8.0
 
-**Warning**: MongoDB versions 5 and above require specific CPU features/capabilities: AVX for amd64 CPUs and armv8.2-a for arm64 CPUs. The upgrade script will check for compatibility. For more information about your options to still be able to upgrade to v6, see the [known issues](../KNOWN_ISSUES.md#your-system-does-not-support-avx-or-armv82-a). Also for Proxmox users, you may need to explictly expose the AVX instruction set. Check out the [known issues](../KNOWN_ISSUES.md#your-system-does-not-support-avx-or-armv82-a) for instructions.
+**Warning**: MongoDB versions 5 and above require specific CPU features/capabilities: AVX for amd64 CPUs and armv8.2-a for arm64 CPUs. The upgrade script will check for compatibility. For more information about your options to still be able to upgrade to v6, see the [known issues](../KNOWN_ISSUES.md#your-system-does-not-support-avx-or-armv82-a). Also for Proxmox users, you may need to explicitly expose the AVX instruction set. Check out the [known issues](../KNOWN_ISSUES.md#your-system-does-not-support-avx-or-armv82-a) for instructions.
 
 ## About the Upgrade Process
 
-This will upgrade MongoDB 3.6 to 8.0. Due to how MongoDB works, in order to upgrade, it must be done in steps which is why there is a special container image.
+This will upgrade MongoDB 3.6 to 8.0. MongoDB must do step upgrades as there is no process that allows you to jump significant versions so it must be done in steps. To make this easier, I have created a special container image which contains all of the MongoDB versions required for the upgrade. The upgrade images can be found in two varieties - multi-arch and specific architectures. Almost everyone should be able to run the multi-arch image and Docker will automatically pull the correct version but just in case, I've tagged images for each architecture. Simply replace the image tag as desired. The images are:
+
+* **multi-arch** - `mbentley/omada-controller:mongodb-upgrade-3.6-to-8`
+* **amd64** - `mbentley/omada-controller:mongodb-upgrade-3.6-to-8-amd64`
+* **arm64** - `mbentley/omada-controller:mongodb-upgrade-3.6-to-8-arm64`
+
+Now for some details about the upgrade script you should know about:
 
 * The upgrade will take a backup of your persistent data before doing anything which can be used to restore your database in case of issues
 * In any case of an error during the upgrade, the upgrade process will automatically roll back the upgrade.
-  * If the upgrade does fail, roll back to a specific image tag with the previous version and consider doing the upgrade by taking a controller native backup, setting up a brand new controller, and restoring your backup.
+  * If the upgrade does fail, you will be able to start your original container again with the previous version and it will continue to run just as it did before for the time being.
   * If you need help, open a [Discussion in the Help category](https://github.com/mbentley/docker-omada-controller/discussions/categories/help) and the community will give you a hand, when they are able.
+* If the upgrade processes concerns you, you may want to consider doing the upgrade by taking a controller native backup, setting up a brand new controller, and restoring your backup config file.
 
 ### Upgrade Steps
 
 1. Stop your controller container
-1. [Create a backup of your controler data](../README.md#controller-backups)
+1. [Create a backup of your controller data](../README.md#controller-backups)
 1. [Execute the Upgrade](#execute-the-upgrade) by running the upgrade container with the correct volume path to your persistent data
 1. Start the v6 version of the controller container which has MongoDB 8.x
 
@@ -25,8 +32,6 @@ This will upgrade MongoDB 3.6 to 8.0. Due to how MongoDB works, in order to upgr
 If the upgrade fails, you can re-run the upgrade, adding the environment variable `DEBUG=true` so that you get additional information from the upgrade script to provide in a help discussion.
 
 For the volume mount, either use the volume you use from your persistent `data` directory or bind mount the path to your data. This should be the exact same path that you use for your `data` directory of the controller.
-
-`multi-arch`:
 
 ### Docker named volume
 
@@ -47,28 +52,6 @@ docker run -it --rm \
   -v /path/to/your/omada-data:/opt/tplink/EAPController/data \
   mbentley/omada-controller:mongodb-upgrade-3.6-to-8
 ```
-
-<details>
-<summary>Run commands for architecture specific image tags</summary>
-
-`amd64`:
-
-```bash
-docker run -it --rm \
-  -e DEBUG=false \
-  -v omada-data:/opt/tplink/EAPController/data \
-  mbentley/omada-controller:mongodb-upgrade-3.6-to-8-amd64
-```
-
-`arm64`:
-
-```bash
-docker run -it --rm \
-  -e DEBUG=false \
-  -v omada-data:/opt/tplink/EAPController/data \
-  mbentley/omada-controller:mongodb-upgrade-3.6-to-8-arm64
-```
-</details>
 
 Now that the migration is complete, you can update your tag to reflect the `6.0` image tag. Also make sure that you have updated your deployment to also expose port `tcp/29817` as that was added in v6.
 
