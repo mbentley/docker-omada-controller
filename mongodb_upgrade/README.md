@@ -30,6 +30,8 @@ For the volume mount, either use the volume you use from your persistent `data` 
 
 ### Docker named volume
 
+If you run `docker compose` and you are not sure of what the name of the volume is for your persistent data, you can check by using `docker compose volumes` as compose typically will add a project name prefix to the name. If your compose file is not the default, use the syntax `docker compose -f <file-name>.yml volumes`. Replace `omada-data` with the name of your persistent data volume in the command below.
+
 ```bash
 docker run -it --rm \
   -e DEBUG=false \
