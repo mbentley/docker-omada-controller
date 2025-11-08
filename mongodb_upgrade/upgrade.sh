@@ -119,7 +119,7 @@ version_step_upgrade() {
   # get current compat version
   if [ "${MONGO_CLIENT}" = "mongosh" ]
   then
-    # mongosh - outputs clean multi-line JSON, no filtering needed
+    # mongosh - filter output to only the JSON (from first { to first }), removing any warnings
     if [ "${DEBUG}" = "true" ]
     then
       echo "DEBUG: Running mongosh to get compatibility version..."
@@ -130,13 +130,18 @@ version_step_upgrade() {
       echo "===END RAW OUTPUT==="
       echo "DEBUG: Raw output (with escaped characters):"
       printf '%q\n' "${RAW_OUTPUT}"
+      echo "DEBUG: After awk filtering (from first { to first }):"
+      FILTERED_OUTPUT="$(echo "${RAW_OUTPUT}" | awk '/^{/{p=1} p{print; if(/^}/)exit}')"
+      echo "===START FILTERED OUTPUT==="
+      echo "${FILTERED_OUTPUT}"
+      echo "===END FILTERED OUTPUT==="
       echo "DEBUG: Running through jq..."
-      CURRENT_COMPAT_VERSION="$(echo "${RAW_OUTPUT}" | jq -r .featureCompatibilityVersion.version)"
+      CURRENT_COMPAT_VERSION="$(echo "${FILTERED_OUTPUT}" | jq -r .featureCompatibilityVersion.version)"
       echo "DEBUG: jq result: '${CURRENT_COMPAT_VERSION}'"
       echo "DEBUG: jq result (with escaped characters):"
       printf '%q\n' "${CURRENT_COMPAT_VERSION}"
     else
-      CURRENT_COMPAT_VERSION="$(/tmp/${MONGO_CLIENT} --quiet --json --eval 'db.adminCommand( { getParameter: 1, featureCompatibilityVersion: 1 } )' | jq -r .featureCompatibilityVersion.version)"
+      CURRENT_COMPAT_VERSION="$(/tmp/${MONGO_CLIENT} --quiet --json --eval 'db.adminCommand( { getParameter: 1, featureCompatibilityVersion: 1 } )' | awk '/^{/{p=1} p{print; if(/^}/)exit}' | jq -r .featureCompatibilityVersion.version)"
     fi
   else
     # mongo client - may output warnings before the result, filter to line containing "ok" which is the result
@@ -197,7 +202,7 @@ version_step_upgrade() {
   echo -n "INFO: verifying feature compatibility version is now ${MONGO_MAJ_MIN}..."
   if [ "${MONGO_CLIENT}" = "mongosh" ]
   then
-    # mongosh - outputs clean multi-line JSON, no filtering needed
+    # mongosh - filter output to only the JSON (from first { to first }), removing any warnings
     if [ "${DEBUG}" = "true" ]
     then
       echo ""
@@ -209,14 +214,19 @@ version_step_upgrade() {
       echo "===END RAW OUTPUT==="
       echo "DEBUG: Raw output (with escaped characters):"
       printf '%q\n' "${RAW_OUTPUT}"
+      echo "DEBUG: After awk filtering (from first { to first }):"
+      FILTERED_OUTPUT="$(echo "${RAW_OUTPUT}" | awk '/^{/{p=1} p{print; if(/^}/)exit}')"
+      echo "===START FILTERED OUTPUT==="
+      echo "${FILTERED_OUTPUT}"
+      echo "===END FILTERED OUTPUT==="
       echo "DEBUG: Running through jq..."
-      NEW_COMPAT_VERSION="$(echo "${RAW_OUTPUT}" | jq -r .featureCompatibilityVersion.version)"
+      NEW_COMPAT_VERSION="$(echo "${FILTERED_OUTPUT}" | jq -r .featureCompatibilityVersion.version)"
       echo "DEBUG: jq result: '${NEW_COMPAT_VERSION}'"
       echo "DEBUG: jq result (with escaped characters):"
       printf '%q\n' "${NEW_COMPAT_VERSION}"
       echo -n "INFO: verifying feature compatibility version is now ${MONGO_MAJ_MIN}..."
     else
-      NEW_COMPAT_VERSION="$(/tmp/${MONGO_CLIENT} --quiet --json --eval 'db.adminCommand( { getParameter: 1, featureCompatibilityVersion: 1 } )' | jq -r .featureCompatibilityVersion.version)"
+      NEW_COMPAT_VERSION="$(/tmp/${MONGO_CLIENT} --quiet --json --eval 'db.adminCommand( { getParameter: 1, featureCompatibilityVersion: 1 } )' | awk '/^{/{p=1} p{print; if(/^}/)exit}' | jq -r .featureCompatibilityVersion.version)"
     fi
   else
     # mongo client - may output warnings before the result, filter to line containing "ok" which is the result
