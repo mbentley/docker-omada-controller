@@ -22,6 +22,8 @@ This will upgrade MongoDB 3.6 to 8.0. Due to how MongoDB works, in order to upgr
 
 **Note**: Most people should just use the images from Docker Hub and use the multi-arch tag which will automatically use the correct image for your architecture. If you build the images on your own, update the tag accordingly.
 
+If the upgrade fails, you can re-run the upgrade, adding the environment variable `DEBUG=true` so that you get additional information from the upgrade script to provide in a help discussion.
+
 For the volume mount, either use the volume you use from your persistent `data` directory or bind mount the path to your data. This should be the exact same path that you use for your `data` directory of the controller.
 
 `multi-arch`:
@@ -30,6 +32,7 @@ For the volume mount, either use the volume you use from your persistent `data` 
 
 ```bash
 docker run -it --rm \
+  -e DEBUG=false \
   -v omada-data:/opt/tplink/EAPController/data \
   mbentley/omada-controller:mongodb-upgrade-3.6-to-8
 ```
@@ -38,6 +41,7 @@ docker run -it --rm \
 
 ```bash
 docker run -it --rm \
+  -e DEBUG=false \
   -v /path/to/your/omada-data:/opt/tplink/EAPController/data \
   mbentley/omada-controller:mongodb-upgrade-3.6-to-8
 ```
@@ -49,6 +53,7 @@ docker run -it --rm \
 
 ```bash
 docker run -it --rm \
+  -e DEBUG=false \
   -v omada-data:/opt/tplink/EAPController/data \
   mbentley/omada-controller:mongodb-upgrade-3.6-to-8-amd64
 ```
@@ -57,6 +62,7 @@ docker run -it --rm \
 
 ```bash
 docker run -it --rm \
+  -e DEBUG=false \
   -v omada-data:/opt/tplink/EAPController/data \
   mbentley/omada-controller:mongodb-upgrade-3.6-to-8-arm64
 ```
