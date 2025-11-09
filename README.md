@@ -57,7 +57,7 @@ If you don't know much about Docker or want to just get started as easily as pos
 
 1. **Docker**
     * This guide assumes that you have Docker installed. If you don't, I would suggest starting [here](https://www.docker.com/get-started/).
-1. Verifying your CPU supports the required features for v6 of the image and above
+1. **Verifying your CPU supports the required features for v6 of the image and above**
     * Due to the MongoDB 8 system requirements, specific CPU features are required to run v6 of the controller image and above.
     * Included in this repo is a shell script ([mongodb8_cpu_support_check.sh](./mongodb8_cpu_support_check.sh)) which can be executed to test for the required CPU features
     * If this script indicates that your CPU is not supported, check out the [KNOWN ISSUES section on this for clean installs](./KNOWN_ISSUES.md#clean-install) for how you can proceed with the v6 controller image.
@@ -68,26 +68,26 @@ If you don't know much about Docker or want to just get started as easily as pos
     * ~~If you need to create PDF reports from the controller, there are [tags with Chromium](#tags-with-chromium) as that is required to generate them. Those images are much larger and only available for `amd64` so only use them if you really need that functionality.~~ Reports are now CSV and XLSX so they do not require Chromium.
 1. **Picking your networking mode**
     * There are three main options regarding how your container is exposed to your network, which is required to manage your TP-Link Omada enabled devices:
-      * [Host network driver](#using-nethost) - this is the best and easiest option as it exposes the container using your Docker host's network interface as if you were running the controller outside of a container.
-      * [Bridge network driver](#using-port-mapping) - this is also referred to just as using port mapping where the container runs on it's own isolated network. Many applications work fine in this mode but with the Omada Controller, this makes things more difficult due to how discovery works of TP-Link Omada enabled devices. I would advise against using this method unless you have a good reason to do so as you will need to manually configure your devices to know where the controller is running before they can be adopted (see the FAQ in the link shared)
-      * **macvlan** - this is not covered by this guide as it's a more advanced topic - if you know how and when to use macvlan, I shouldn't have to explain it. If you want to learn, there are several GitHub issues in this repo where macvlan is discussed.
+        * [Host network driver](#using-nethost) - this is the best and easiest option as it exposes the container using your Docker host's network interface as if you were running the controller outside of a container.
+        * [Bridge network driver](#using-port-mapping) - this is also referred to just as using port mapping where the container runs on it's own isolated network. Many applications work fine in this mode but with the Omada Controller, this makes things more difficult due to how discovery works of TP-Link Omada enabled devices. I would advise against using this method unless you have a good reason to do so as you will need to manually configure your devices to know where the controller is running before they can be adopted (see the FAQ in the link shared)
+        * **macvlan** - this is not covered by this guide as it's a more advanced topic - if you know how and when to use macvlan, I shouldn't have to explain it. If you want to learn, there are several GitHub issues in this repo where macvlan is discussed.
 1. **How to manage your persistent data**
     * The data for the controller needs to be persisted outside of the container so that your configuration and settings are not lost between restarts, upgrades, etc. See [Persistent Data](#persistent-data) for details on what directories are important for maintaining your persistent data.
     * There are two main ways to persist data: in Docker managed volumes (which the examples use) or bind mounts. See the Docker docs on [bind mounts](https://docs.docker.com/engine/storage/bind-mounts/) for details on how that works.
 1. **How to run the container**
     * There are several ways to run your controller container:
-      * [docker run...](#example-usage)
-        * Examples for both host (_preferred_) and bridge network modes
-        * Uses the latest major.minor (i.e. - `6.0`) tag
-        * Only requires Docker to be set up
-      * [docker compose](#using-docker-compose)
-        * Examples for both host (_preferred_) and bridge network modes
-        * Uses the latest major.minor (i.e. - `6.0`) tag
-        * Requires Docker and [Docker Compose](https://docs.docker.com/compose/) to be set up
-      * [k8s](#using-k8s)
-        * Deployment is k8s is an advanced topic; only use this if you know what you are doing and can support yourself.
-      * **3rd party services**
-        * There are many 3rd party container marketplaces built into NAS devices or other appliances which can simplify the deployment - see those specific tools for instructions as that is beyond the scope of this guide.
+        * [docker run...](#example-usage)
+            * Examples for both host (_preferred_) and bridge network modes
+            * Uses the latest major.minor (i.e. - `6.0`) tag
+            * Only requires Docker to be set up
+        * [docker compose](#using-docker-compose)
+            * Examples for both host (_preferred_) and bridge network modes
+            * Uses the latest major.minor (i.e. - `6.0`) tag
+            * Requires Docker and [Docker Compose](https://docs.docker.com/compose/) to be set up
+        * [k8s](#using-k8s)
+            * Deployment is k8s is an advanced topic; only use this if you know what you are doing and can support yourself.
+        * **3rd party services**
+            * There are many 3rd party container marketplaces built into NAS devices or other appliances which can simplify the deployment - see those specific tools for instructions as that is beyond the scope of this guide.
 1. **Controller Maintenance and Operations**
     * [Controller Backups](#controller-backups) - how to configure and take backups
     * [Controller Upgrades](#controller-upgrades) - how to upgrade the controller by updating the image
@@ -311,7 +311,7 @@ There is an optional ability to run the container in a rootless mode. This versi
 
 * Set the environment variable `ROOTLESS` to `true`
 * Set the actual UID/GID of the container to be your desired values (they must be numerical)
-  * Note: the `PUID` and `PGID` variables do not apply here
+    * Note: the `PUID` and `PGID` variables do not apply here
 * Set the appropriate ownership of your persistent data directories for `data` and `logs`
 * Any additional files or data directories, such as the `/certs` path when injecting your own certificates, must be readable by the user in which you're running as
 
