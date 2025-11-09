@@ -1,0 +1,228 @@
+# Default values for omada-controller.
+
+# The default image settings for the omada-controller chart
+image:
+  repository: mbentley/omada-controller
+  pullPolicy: Always
+  # Allows values file overriding of image tag. Defaults to chart appVersion if not set.
+  tag: ""
+
+# This is for the secrets for pulling an image from a private repository.
+imagePullSecrets: []
+# This is to override the chart name.
+nameOverride: ""
+fullnameOverride: ""
+
+# The number of replicas to run. Each replica is a separate Omada Controller instance, with its own
+# storage and database. Omada Controllers do not cluster, so multiple replicas will not share state.
+# In general, it is preferred to deploy this helm chart once per Omada Controller instance, rather than
+# using multiple replicas.
+replicaCount: 1
+
+# Whether to use the default ServiceAccount or create a new one
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Automatically mount a ServiceAccount's API credentials?
+  automount: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+# This is for setting Kubernetes Annotations to a Pod.
+# For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
+podAnnotations: {}
+# This is for setting Kubernetes Labels to a Pod.
+# For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+podLabels: {}
+
+# Configuration options for the Omada Controller application. See the omada-controller documentation 
+# for details on these options.
+config:
+  ports:
+    # Management portal for HTTP
+    manageHttp: 8088
+    # Management portal for HTTPS (Default)
+    manageHttps: 8043
+    # User captive portal for HTTP
+    portalHttp: 8088
+    # User captive portal for HTTPS
+    portalHttps: 8843
+    # UDP Port allowing the Omada App to discover the Controller while on the same network
+    appDiscovery: 27001
+    # Port used for device adoption (v1)
+    adoptV1: 29812
+    # Port used for device upgrade (v1)
+    upgradeV1: 29813
+    # Port used for device management (v1)
+    managerV1: 29811
+    # Port used for device management (v2)
+    managerV2: 29814
+    # UDP Port used for device discovery
+    discovery: 29810
+    # UDP Port used for device management (NOTE: Not overridable in Omada Controller settings)
+    udpManagement: 19810
+    # Port used for device transfer (v2)
+    transferV2: 29815
+    # Port used for rtty connections
+    rtty: 29816
+    # Port used for device monitoring (New in Omada 6)
+    deviceMonitor: 29817
+  
+  # Configures the Omada Controller to run in rootless mode. When this is enabled, the pod
+  # and container security contexts are set to non-root user IDs.
+  rootless: true
+
+  # Show MongoDB logs in the container logs
+  showMongoDBLogs: false
+
+  # Show Omada Controller server logs in the container logs
+  showServerLogs: true
+
+  # SSL certificate and key file names located in the /opt/tplink/EAPController/cert folder.
+  # You can mount your own TLS secret to this folder via extraVolumes and extraVolumeMounts.
+  # It is generally simpler to use a Kubernetes Ingress resource to handle TLS termination.
+  sslCertName: tls.crt
+  sslKeyName: tls.key
+  
+  # Re-enables TLS 1.0 & 1.1 if set to `true`
+  tls1Enabled: false
+
+  # The timezone for the Omada Controller application
+  timezone: Etc/UTC
+
+  # External MongoDB connection URL. If set, the Omada Controller will use an external
+  # MongoDB instance instead of the bundled MongoDB. The URL should be in the format:
+  #  mongodb://user:pass@host:port/database
+  externalMongoDBUrl: ""
+
+# Additional environment variables to set in the Omada Controller container
+extraEnvVars: {}
+  # CUSTOM_ENV_VAR: "custom_value"
+  # ANOTHER_ENV_VAR: "another_value"
+
+# Configure the Kubernetes Service Object for the Omada Controller. It is recommended to use
+# a LoadBalancer or ClusterIP service type with an Ingress controller.
+service:
+  # It is recommended to use a LoadBalancer service type with an Ingress controller
+  type: LoadBalancer
+  # Extra labels to add to the Service
+  labels: {}
+  # Extra annotations to add to the Service
+  annotations: {}
+
+# Configure Ingress for the Omada Controller service. Requires an Ingress controller within the cluster.
+# By default, this ingress controller will terminate TLS and forward traffic to the Omada Controller,
+# on its HTTPS management port. As such, you will need to configure your specific Ingress controller to use TLS
+# when communicating with the server. Omada forces a redirect from HTTP to HTTPS for the management portal,
+# so using the HTTP backend does not work very well.
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+    # nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+
+  # Hosts which will redirect the the management port
+  managementHosts: []
+    # - host: omada.example.com
+    #   paths:
+    #     - path: /
+    #       pathType: Prefix
+  
+  # Hosts which will redirect to the captive portal port
+  portalHosts: []
+    # - host: omada-portal.example.com
+    #   paths:
+    #     - path: /
+    #       pathType: Prefix
+  tls: []
+  #  - secretName: omada-example-com-tls
+  #    hosts:
+  #      - omada.example.com
+
+# Configure Resource Requests and Limits for the Omada Controller container. This is left
+# unconfigured by default
+resources: {}
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+# A liveness probe to check if the Omada Controller is running. If the liveness probe fails,
+# Kubernetes will restart the pod. This is disabled by default, in favor of the readiness probe.
+livenessProbe: {}
+  # httpGet:
+  #   path: /login
+  #   port: manage-https
+  #   scheme: HTTPS
+
+# A readiness probe to check if the Omada Controller is ready to serve requests. If the readiness probe fails,
+# the pod will be removed from service endpoints until it passes.
+readinessProbe:
+  httpGet:
+    path: /login
+    port: manage-https
+    scheme: HTTPS
+
+# Configure a startup probe to check when the Omada Controller is ready to serve requests.
+# Omada Controller can take a while to start up, especially on first run when it is 
+# initializing its database. The startup probe helps Kubernetes avoid killing the pod
+# before it is ready. Once the startup probe succeeds, the liveness and readiness probes take over.
+startupProbe:
+  httpGet:
+    path: /login
+    port: manage-https
+    scheme: HTTPS
+  failureThreshold: 30
+  periodSeconds: 10
+
+# Configure persistence settings for Omada Controller data and logs. 
+# Separate volume claims are created for data and logs to allow for different
+# storage class or size settings.
+persistence:
+  # Configures the volumeClaimTemplate for the Omada Controller data volume
+  data:
+    enabled: true
+    storageClassName: ""
+    accessModes:
+      - ReadWriteOnce
+    size: 1Gi
+
+  # Configures the volumeClaimTemplate for the Omada Controller logs volume
+  logs:
+    enabled: true
+    storageClassName: ""
+    accessModes:
+      - ReadWriteOnce
+    size: 1Gi
+  
+  # Allows mounting additional volumes into the Omada Controller. Can be used
+  # to mount TLS secrets, configmaps, or for additional customization of storage
+  # instead of using the persistence.data and persistence.logs options. If running
+  # without an ingress, you could use something like cert-manager to create a TLS
+  # secret and mount it here to provide custom TLS certificates to the Omada Controller.
+  extraVolumes: []
+    # - name: custom-cert
+    #   secret:
+    #     secretName: omada-tls-secret
+  extraVolumeMounts: []
+    # - name: custom-cert
+    #   mountPath: /opt/tplink/EAPController/cert
+
+# Used to bind the pod to a specific node or set of nodes
+nodeSelector: {}
+
+# Tolerations for pod assignment to nodes with taints
+tolerations: []
+
+# Affinity for pod assignment to nodes
+affinity: {}
+
+# Additional user-supplied manifests to include. Will be rendered as templates.
+# Strings and YAML objects are supported. Use this to add a CertificateRequest
+# for cert-manager, or other custom resources needed by your deployment.
+extraManifests: []

@@ -1,0 +1,63 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "omada-controller.fullname" . }}
+  {{- with .Values.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 8 }}
+  {{- end }}
+  labels:
+    {{- include "omada-controller.labels" . | nindent 4 }}
+    {{- with .Values.service.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+  - name: manage-https
+    port: {{ .Values.config.ports.manageHttps }}
+    targetPort: manage-https
+  - name: manage-http
+    port: {{ .Values.config.ports.manageHttp }}
+    targetPort: manage-http
+  - name: portal-https
+    port: {{ .Values.config.ports.portalHttps }}
+    targetPort: portal-https
+  - name: portal-http
+    port: {{ .Values.config.ports.portalHttp }}
+    targetPort: portal-http
+  - name: app-discovery
+    port: {{ .Values.config.ports.appDiscovery }}
+    targetPort: app-discovery
+    protocol: UDP
+  - name: adopt-v1
+    port: {{ .Values.config.ports.adoptV1 }}
+    targetPort: adopt-v1
+  - name: upgrade-v1
+    port: {{ .Values.config.ports.upgradeV1 }}
+    targetPort: upgrade-v1
+  - name: manager-v1
+    port: {{ .Values.config.ports.managerV1 }}
+    targetPort: manager-v1
+  - name: manager-v2
+    port: {{ .Values.config.ports.managerV2 }}
+    targetPort: manager-v2
+  - name: udp-discovery
+    port: {{ .Values.config.ports.discovery }}
+    targetPort: udp-discovery
+    protocol: UDP
+  - name: udp-management
+    port: {{ .Values.config.ports.udpManagement }}
+    targetPort: udp-management
+    protocol: UDP
+  - name: transfer-v2
+    port: {{ .Values.config.ports.transferV2 }}
+    targetPort: transfer-v2
+  - name: rtty
+    port: {{ .Values.config.ports.rtty }}
+    targetPort: rtty
+  - name: device-monitor
+    port: {{ .Values.config.ports.deviceMonitor }}
+    targetPort: device-monitor
+  selector:
+    {{- include "omada-controller.selectorLabels" . | nindent 4 }}
