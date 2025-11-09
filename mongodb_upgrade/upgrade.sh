@@ -87,6 +87,43 @@ run_db_repair() {
   echo "done"
 }
 
+debug_mongo_pipeline() {
+  # Only output if DEBUG is enabled
+  [ "${DEBUG}" != "true" ] && return
+
+  DESCRIPTION="$1"
+  RAW_OUTPUT="$2"
+  FILTER_TYPE="$3"
+  FILTERED_OUTPUT="$4"
+  FINAL_RESULT="$5"
+
+  # Add blank line before debug output
+  echo ""
+
+  echo "DEBUG: ${DESCRIPTION}"
+  echo "DEBUG: Raw output from ${MONGO_CLIENT}:"
+  echo "===START RAW OUTPUT==="
+  echo "${RAW_OUTPUT}"
+  echo "===END RAW OUTPUT==="
+  echo "DEBUG: Raw output (with escaped characters):"
+  printf '%q\n' "${RAW_OUTPUT}"
+
+  if [ "${FILTER_TYPE}" = "awk" ]
+  then
+    echo "DEBUG: After awk filtering (from first { to first }):"
+  else
+    echo "DEBUG: After grep for '\"ok\"':"
+  fi
+
+  echo "===START ${FILTER_TYPE^^} OUTPUT==="
+  echo "${FILTERED_OUTPUT}"
+  echo "===END ${FILTER_TYPE^^} OUTPUT==="
+  echo "DEBUG: Running through jq..."
+  echo "DEBUG: jq result: '${FINAL_RESULT}'"
+  echo "DEBUG: jq result (with escaped characters):"
+  printf '%q\n' "${FINAL_RESULT}"
+}
+
 version_step_upgrade() {
   # start upgrade
   echo -e "\nINFO: starting upgrade to ${MONGO_MAJ_MIN}..."
@@ -120,54 +157,16 @@ version_step_upgrade() {
   if [ "${MONGO_CLIENT}" = "mongosh" ]
   then
     # mongosh - filter output to only the JSON (from first { to first }), removing any warnings
-    if [ "${DEBUG}" = "true" ]
-    then
-      echo "DEBUG: Running mongosh to get compatibility version..."
-      RAW_OUTPUT="$(/tmp/${MONGO_CLIENT} --quiet --json --eval 'db.adminCommand( { getParameter: 1, featureCompatibilityVersion: 1 } )')"
-      echo "DEBUG: Raw output from mongosh:"
-      echo "===START RAW OUTPUT==="
-      echo "${RAW_OUTPUT}"
-      echo "===END RAW OUTPUT==="
-      echo "DEBUG: Raw output (with escaped characters):"
-      printf '%q\n' "${RAW_OUTPUT}"
-      echo "DEBUG: After awk filtering (from first { to first }):"
-      FILTERED_OUTPUT="$(echo "${RAW_OUTPUT}" | awk '/^{/{p=1} p{print; if(/^}/)exit}')"
-      echo "===START FILTERED OUTPUT==="
-      echo "${FILTERED_OUTPUT}"
-      echo "===END FILTERED OUTPUT==="
-      echo "DEBUG: Running through jq..."
-      CURRENT_COMPAT_VERSION="$(echo "${FILTERED_OUTPUT}" | jq -r .featureCompatibilityVersion.version)"
-      echo "DEBUG: jq result: '${CURRENT_COMPAT_VERSION}'"
-      echo "DEBUG: jq result (with escaped characters):"
-      printf '%q\n' "${CURRENT_COMPAT_VERSION}"
-    else
-      CURRENT_COMPAT_VERSION="$(/tmp/${MONGO_CLIENT} --quiet --json --eval 'db.adminCommand( { getParameter: 1, featureCompatibilityVersion: 1 } )' | awk '/^{/{p=1} p{print; if(/^}/)exit}' | jq -r .featureCompatibilityVersion.version)"
-    fi
+    RAW_OUTPUT="$(/tmp/${MONGO_CLIENT} --quiet --json --eval 'db.adminCommand( { getParameter: 1, featureCompatibilityVersion: 1 } )')"
+    FILTERED_OUTPUT="$(echo "${RAW_OUTPUT}" | awk '/^{/{p=1} p{print; if(/^}/)exit}')"
+    CURRENT_COMPAT_VERSION="$(echo "${FILTERED_OUTPUT}" | jq -r .featureCompatibilityVersion.version)"
+    debug_mongo_pipeline "Running mongosh to get compatibility version" "${RAW_OUTPUT}" "awk" "${FILTERED_OUTPUT}" "${CURRENT_COMPAT_VERSION}"
   else
     # mongo client - may output warnings before the result, filter to line containing "ok" which is the result
-    if [ "${DEBUG}" = "true" ]
-    then
-      echo "DEBUG: Running mongo client to get compatibility version..."
-      RAW_OUTPUT="$(echo 'db.adminCommand( { getParameter: 1, featureCompatibilityVersion: 1 } )' | /tmp/${MONGO_CLIENT} --quiet)"
-      echo "DEBUG: Raw output from mongo client:"
-      echo "===START RAW OUTPUT==="
-      echo "${RAW_OUTPUT}"
-      echo "===END RAW OUTPUT==="
-      echo "DEBUG: Raw output (with escaped characters):"
-      printf '%q\n' "${RAW_OUTPUT}"
-      echo "DEBUG: After grep for '\"ok\"':"
-      GREP_OUTPUT="$(echo "${RAW_OUTPUT}" | grep -F '"ok"')"
-      echo "===START GREP OUTPUT==="
-      echo "${GREP_OUTPUT}"
-      echo "===END GREP OUTPUT==="
-      echo "DEBUG: Running through jq..."
-      CURRENT_COMPAT_VERSION="$(echo "${GREP_OUTPUT}" | jq -r .featureCompatibilityVersion.version)"
-      echo "DEBUG: jq result: '${CURRENT_COMPAT_VERSION}'"
-      echo "DEBUG: jq result (with escaped characters):"
-      printf '%q\n' "${CURRENT_COMPAT_VERSION}"
-    else
-      CURRENT_COMPAT_VERSION="$(echo 'db.adminCommand( { getParameter: 1, featureCompatibilityVersion: 1 } )' | /tmp/${MONGO_CLIENT} --quiet | grep -F '"ok"' | jq -r .featureCompatibilityVersion.version)"
-    fi
+    RAW_OUTPUT="$(echo 'db.adminCommand( { getParameter: 1, featureCompatibilityVersion: 1 } )' | /tmp/${MONGO_CLIENT} --quiet)"
+    FILTERED_OUTPUT="$(echo "${RAW_OUTPUT}" | grep -F '"ok"')"
+    CURRENT_COMPAT_VERSION="$(echo "${FILTERED_OUTPUT}" | jq -r .featureCompatibilityVersion.version)"
+    debug_mongo_pipeline "Running mongo client to get compatibility version" "${RAW_OUTPUT}" "grep" "${FILTERED_OUTPUT}" "${CURRENT_COMPAT_VERSION}"
   fi
 
   # make sure that the current compat version is correct
@@ -203,58 +202,16 @@ version_step_upgrade() {
   if [ "${MONGO_CLIENT}" = "mongosh" ]
   then
     # mongosh - filter output to only the JSON (from first { to first }), removing any warnings
-    if [ "${DEBUG}" = "true" ]
-    then
-      echo ""
-      echo "DEBUG: Running mongosh to verify new compatibility version..."
-      RAW_OUTPUT="$(/tmp/${MONGO_CLIENT} --quiet --json --eval 'db.adminCommand( { getParameter: 1, featureCompatibilityVersion: 1 } )')"
-      echo "DEBUG: Raw output from mongosh:"
-      echo "===START RAW OUTPUT==="
-      echo "${RAW_OUTPUT}"
-      echo "===END RAW OUTPUT==="
-      echo "DEBUG: Raw output (with escaped characters):"
-      printf '%q\n' "${RAW_OUTPUT}"
-      echo "DEBUG: After awk filtering (from first { to first }):"
-      FILTERED_OUTPUT="$(echo "${RAW_OUTPUT}" | awk '/^{/{p=1} p{print; if(/^}/)exit}')"
-      echo "===START FILTERED OUTPUT==="
-      echo "${FILTERED_OUTPUT}"
-      echo "===END FILTERED OUTPUT==="
-      echo "DEBUG: Running through jq..."
-      NEW_COMPAT_VERSION="$(echo "${FILTERED_OUTPUT}" | jq -r .featureCompatibilityVersion.version)"
-      echo "DEBUG: jq result: '${NEW_COMPAT_VERSION}'"
-      echo "DEBUG: jq result (with escaped characters):"
-      printf '%q\n' "${NEW_COMPAT_VERSION}"
-      echo -n "INFO: verifying feature compatibility version is now ${MONGO_MAJ_MIN}..."
-    else
-      NEW_COMPAT_VERSION="$(/tmp/${MONGO_CLIENT} --quiet --json --eval 'db.adminCommand( { getParameter: 1, featureCompatibilityVersion: 1 } )' | awk '/^{/{p=1} p{print; if(/^}/)exit}' | jq -r .featureCompatibilityVersion.version)"
-    fi
+    RAW_OUTPUT="$(/tmp/${MONGO_CLIENT} --quiet --json --eval 'db.adminCommand( { getParameter: 1, featureCompatibilityVersion: 1 } )')"
+    FILTERED_OUTPUT="$(echo "${RAW_OUTPUT}" | awk '/^{/{p=1} p{print; if(/^}/)exit}')"
+    NEW_COMPAT_VERSION="$(echo "${FILTERED_OUTPUT}" | jq -r .featureCompatibilityVersion.version)"
+    debug_mongo_pipeline "Running mongosh to verify new compatibility version" "${RAW_OUTPUT}" "awk" "${FILTERED_OUTPUT}" "${NEW_COMPAT_VERSION}"
   else
     # mongo client - may output warnings before the result, filter to line containing "ok" which is the result
-    if [ "${DEBUG}" = "true" ]
-    then
-      echo ""
-      echo "DEBUG: Running mongo client to verify new compatibility version..."
-      RAW_OUTPUT="$(echo 'db.adminCommand( { getParameter: 1, featureCompatibilityVersion: 1 } )' | /tmp/${MONGO_CLIENT} --quiet)"
-      echo "DEBUG: Raw output from mongo client:"
-      echo "===START RAW OUTPUT==="
-      echo "${RAW_OUTPUT}"
-      echo "===END RAW OUTPUT==="
-      echo "DEBUG: Raw output (with escaped characters):"
-      printf '%q\n' "${RAW_OUTPUT}"
-      echo "DEBUG: After grep for '\"ok\"':"
-      GREP_OUTPUT="$(echo "${RAW_OUTPUT}" | grep -F '"ok"')"
-      echo "===START GREP OUTPUT==="
-      echo "${GREP_OUTPUT}"
-      echo "===END GREP OUTPUT==="
-      echo "DEBUG: Running through jq..."
-      NEW_COMPAT_VERSION="$(echo "${GREP_OUTPUT}" | jq -r .featureCompatibilityVersion.version)"
-      echo "DEBUG: jq result: '${NEW_COMPAT_VERSION}'"
-      echo "DEBUG: jq result (with escaped characters):"
-      printf '%q\n' "${NEW_COMPAT_VERSION}"
-      echo -n "INFO: verifying feature compatibility version is now ${MONGO_MAJ_MIN}..."
-    else
-      NEW_COMPAT_VERSION="$(echo 'db.adminCommand( { getParameter: 1, featureCompatibilityVersion: 1 } )' | /tmp/${MONGO_CLIENT} --quiet | grep -F '"ok"' | jq -r .featureCompatibilityVersion.version)"
-    fi
+    RAW_OUTPUT="$(echo 'db.adminCommand( { getParameter: 1, featureCompatibilityVersion: 1 } )' | /tmp/${MONGO_CLIENT} --quiet)"
+    FILTERED_OUTPUT="$(echo "${RAW_OUTPUT}" | grep -F '"ok"')"
+    NEW_COMPAT_VERSION="$(echo "${FILTERED_OUTPUT}" | jq -r .featureCompatibilityVersion.version)"
+    debug_mongo_pipeline "Running mongo client to verify new compatibility version" "${RAW_OUTPUT}" "grep" "${FILTERED_OUTPUT}" "${NEW_COMPAT_VERSION}"
   fi
 
   # make sure that the new compat version is correct
