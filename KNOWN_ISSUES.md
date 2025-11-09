@@ -16,8 +16,9 @@
     * [Slowness in Safari](#slowness-in-safari)
     * [5.14 - Controller Unable to Start](#514---controller-unable-to-start)
     * [5.15 - Controller Unable to Start](#515---controller-unable-to-start)
-* [MongoDB Upgrade Issues](#mongodb-upgrade-issues)
-    * [Your system does not support AVX or armv8.2-a](#your-system-does-not-support-avx-or-armv82-a)
+* [Your system does not support AVX or armv8.2-a](#your-system-does-not-support-avx-or-armv82-a)
+    * [Clean Installs](#clean-installs)
+    * [Upgrades](#upgrades)
 
 ## Controller Software Issues
 
@@ -94,14 +95,18 @@ Upon upgrade to 5.14, the controller may not start. You may see error messages t
 
 **Warning**: do **NOT** use this override environment variable unless you need it. It may cause unexpected issues in the future. Remove the environment variable if you're no longer running on 5.15.6.x. Upon upgrade to 5.15.6.x, the controller may not start. You may see error messages right around the `Valid radius server keystore is missing. Generating one ...` message that include phrases like: `Exception in thread "main" java.lang.NoSuchFieldError: id_alg_zlibCompress` among others. This is a problem with the controller software itself that TP-Link is aware of. If you're impacted, see the first post in [this issue](https://github.com/mbentley/docker-omada-controller/issues/509) for more information. An environment variable can be set as `WORKAROUND_509=true` on the container definition and it will delete two library files that are causing the issue.
 
-## MongoDB Upgrade Issues
+## Your system does not support AVX or armv8.2-a
 
-### Your system does not support AVX or armv8.2-a
+In order to run v6 Omada Controller using the images I publish, you will need to be able to run MongoDB 8 but unfortunately MongoDB does not run on older CPUs if they lack specific instructions or features. There are options which will allow you to run v6 of the controller but longer term, I would suggest upgrading your system to support these instruction sets or features required but I understand that means financial investment.
 
-In order to run v6 Omada Controller using the images I publish, you need to migrate MongoDB from v3 to v8 but unfortunately MongoDB does not run on older CPUs if they lack specific instructions or features. Details about the migration process can be found in [mongodb_upgrade](./mongodb_upgrade#about-the-upgrade-process) but if you're here, it's probably because one of these two checks for AVX (amd64) or armv8.2-a (arm64) have failed when you attempted to upgrade, meaning that your CPU is not supported. The quick way to get your controller back up and running is to move back to the v5 image as a failed upgrade will not have modified any of your data and you can start your v5 controller container back up and be running just fine.
+**Proxmox users**: if your host's CPU supports AVX, you may need to select a new virtual CPU model that exposes the instruction set to the underlying VM. Please see [this post](https://forum.proxmox.com/threads/cpu-with-avx-support.146138/post-716615) on the Proxmox forum.
+
+### Clean Installs
+
+For a clean install where you do not have proper CPU support, you can run MongoDB externally. See the [external MongoDB fresh install section](./external_mongodb#mongodb--omada-controller-fresh-install) for instructions on how to do so.
+
+### Upgrades
+
+When upgrading the controller to v6, you need to upgrade MongoDB from v3 to v8. Details about the migration process can be found in [mongodb_upgrade](./mongodb_upgrade#about-the-upgrade-process) but if you're here, it's probably because one of these two checks for AVX (amd64) or armv8.2-a (arm64) have failed when you attempted to upgrade, meaning that your CPU is not supported. The quick way to get your controller back up and running is to move back to the v5 image as a failed upgrade will not have modified any of your data and you can start your v5 controller container back up and be running just fine.
 
 Longer term, you may want to upgrade to v6 but you still can't just upgrade because you're stuck with a CPU that doesn't have the required capabilities to support a modern MongoDB. This can be achieved by running MongoDB external to the Omada Controller application. If you're ready to try to migrate from the all in one deployment to separate MongoDB and Omada Controller containers, check out the [Migration from All in One](./external_mongodb#migration-from-all-in-one) instructions. As always, make sure that you take a backup before you do anything like this as I am sure you do before all upgrades, right?
-
-Much longer term, I would suggest upgrading your system to support these instruction sets or features required but I understand that means financial investment.
-
-Proxmox users: you may need to create a new CPU model that exposes AVX. Please see [this post](https://forum.proxmox.com/threads/cpu-with-avx-support.146138/post-716615) on the Proxmox forum.

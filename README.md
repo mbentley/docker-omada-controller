@@ -57,6 +57,10 @@ If you don't know much about Docker or want to just get started as easily as pos
 
 1. **Docker**
     * This guide assumes that you have Docker installed. If you don't, I would suggest starting [here](https://www.docker.com/get-started/).
+1. Verifying your CPU supports the required features for v6 of the image and above
+    * Due to the MongoDB 8 system requirements, specific CPU features are required to run v6 of the controller image and above.
+    * Included in this repo is a shell script ([mongodb8_cpu_support_check.sh](./mongodb8_cpu_support_check.sh)) which can be executed to test for the required CPU features
+    * If this script indicates that your CPU is not supported, check out the [KNOWN ISSUES section on this for clean installs](./KNOWN_ISSUES.md#clean-install) for how you can proceed with the v6 controller image.
 1. **Picking an image tag**
     * Most people will want to use a major.minor tag version (i.e. - `6.0`) as this is the safest option and can almost certainly be considered to be non-breaking when a new version of the image is available.
     * If updating the tag between minor versions is not ideal for you, there is also the major tag version (i.e. - `5`) which should be safe from most non-breaking changes.
