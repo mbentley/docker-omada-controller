@@ -4,7 +4,9 @@
 
 ## About the Upgrade Process
 
-This will upgrade MongoDB 3.6 to 8.0. MongoDB must do step upgrades as there is no process that allows you to jump significant versions so it must be done in steps. To make this easier, I have created a special container image which contains all of the MongoDB versions required for the upgrade. The upgrade images can be found in two varieties - multi-arch and specific architectures. Almost everyone should be able to run the multi-arch image and Docker will automatically pull the correct version but just in case, I've tagged images for each architecture. Simply replace the image tag as desired. The images are:
+**Note**: if you're not comfortable running the upgrade, you may want to consider doing a site migration through the controller or by taking a backup through your v5 controller and setting up a brand new controller then restoring your backup config file. Refer to TP-Link's documentation for how these features work.
+
+The upgrade container  will upgrade MongoDB 3.6 to 8.0. MongoDB must do step upgrades as there is no process that allows you to jump significant versions so it must be done in steps. To make this easier, I have created a special container image which contains all of the MongoDB versions required for the upgrade. The upgrade images can be found in two varieties - multi-arch and specific architectures. Almost everyone should be able to run the multi-arch image and Docker will automatically pull the correct version but just in case, I've tagged images for each architecture. Simply replace the image tag as desired. The images are:
 
 * **multi-arch** - `mbentley/omada-controller:mongodb-upgrade-3.6-to-8`
 * **amd64** - `mbentley/omada-controller:mongodb-upgrade-3.6-to-8-amd64`
@@ -16,7 +18,6 @@ Now for some details about the upgrade script you should know about:
 * In any case of an error during the upgrade, the upgrade process will automatically roll back the upgrade.
   * If the upgrade does fail, you will be able to start your original container again with the previous version and it will continue to run just as it did before for the time being.
   * If you need help, open a [Discussion in the Help category](https://github.com/mbentley/docker-omada-controller/discussions/categories/help) and the community will give you a hand, when they are able.
-* If the upgrade processes concerns you, you may want to consider doing the upgrade by taking a controller native backup, setting up a brand new controller, and restoring your backup config file.
 
 ### Upgrade Steps
 
