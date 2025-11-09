@@ -355,6 +355,48 @@ then
   fi
 fi
 
+# check to make sure we have the supported cpu features for MongoDB included with 6.x when not using an external MongoDB
+if [ "${IMAGE_MAJOR_VER}" = "6" ] && [ "${MONGO_EXTERNAL}" != "true" ]
+then
+  # running 6.x and not using external mongodb; get cpu architecture
+  ARCH="$(uname -m)"
+
+  case "${ARCH}" in
+    x86_64)
+      # amd64 checks
+      echo -n "INFO: running hardware prerequisite check for AVX support on ${ARCH} to ensure your system can run MongoDB 8..."
+
+      # check for AVX support
+      if ! grep -qE '^flags.* avx( .*|$)' /proc/cpuinfo
+      then
+        echo -e "\nERROR: your system does not support AVX which is a requirement for the v6 and above container image as it only ships with MongoDB 8"
+        echo "  See https://github.com/mbentley/docker-omada-controller/blob/master/KNOWN_ISSUES.md#your-system-does-not-support-avx-or-armv82-a for details on what exactly this means and how you can address this"
+        exit 1
+      fi
+      ;;
+    aarch64|aarch64_be|armv8b|armv8l)
+      # arm64 checks (list of 64 bit arm compatible names from `uname -m`: https://stackoverflow.com/a/45125525)
+      echo -n "INFO: running hardware prerequisite check for armv8.2-a support on ${ARCH} to ensure your system can run MongoDB 8..."
+
+      # check for armv8.2-a support
+      if ! grep -qE '^Features.* (fphp|dcpop|sha3|sm3|sm4|asimddp|sha512|sve)( .*|$)' /proc/cpuinfo
+      then
+        # failed armv8.2-a test
+        echo -e "\nERROR: your system does not support the armv8.2-a or later microarchitecture which is a requirement for the v6 and above container image as it only ships with MongoDB 8"
+        echo "  See https://github.com/mbentley/docker-omada-controller/blob/master/KNOWN_ISSUES.md#your-system-does-not-support-avx-or-armv82-a for details on what exactly this means and how you can address this"
+        exit 1
+      fi
+      ;;
+    *)
+      echo -e "\nERROR: unknown architecture (${ARCH})"
+      exit 1
+      ;;
+  esac
+
+  # prerequisite checks successful
+  echo "done"
+fi
+
 # see if this is our first run or if we are using an external MongoDB
 if [ "${LAST_RAN_OMADA_VER}" = "0.0.0" ]
 then

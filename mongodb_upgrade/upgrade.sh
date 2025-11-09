@@ -253,7 +253,7 @@ case "${ARCH}" in
     # amd64 checks
     echo -n "INFO: running hardware prerequisite check for AVX support on ${ARCH} to ensure your system can run MongoDB 8..."
 
-    # check for AXV support
+    # check for AVX support
     if ! grep -qE '^flags.* avx( .*|$)' /proc/cpuinfo
     then
       echo -e "\nERROR: your system does not support AVX which is a requirement for MongoDB starting with 5.x; you will not be able to upgrade MongoDB"
@@ -269,13 +269,13 @@ case "${ARCH}" in
     if ! grep -qE '^Features.* (fphp|dcpop|sha3|sm3|sm4|asimddp|sha512|sve)( .*|$)' /proc/cpuinfo
     then
       # failed armv8.2-a test
-      echo "ERROR: your system does not support the armv8.2-a or later microarchitecture which is a requirement for MongoDB starting with 5.x; you will not be able to upgrade MongoDB"
+      echo -e "\nERROR: your system does not support the armv8.2-a or later microarchitecture which is a requirement for MongoDB starting with 5.x; you will not be able to upgrade MongoDB"
       echo "  See https://github.com/mbentley/docker-omada-controller/blob/master/KNOWN_ISSUES.md#your-system-does-not-support-avx-or-armv82-a for details on what exactly this means and your upgrade options"
       exit 1
     fi
     ;;
   *)
-    echo "ERROR: unknown architecture (${ARCH})"
+    echo -e "\nERROR: unknown architecture (${ARCH})"
     exit 1
     ;;
 esac
