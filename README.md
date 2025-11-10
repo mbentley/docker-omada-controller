@@ -102,7 +102,7 @@ If you don't know much about Docker or want to just get started as easily as pos
 There are three main options for upgrading from v5 to v6:
 
 1. **MongoDB Upgrade Container** - run the MongoDB upgrade container (process described below)
-1. **Controller Site Migration** - stand up a new v6 controller along side your v5 controller and use the built in migration tool within the Omada Controller
+1. **Controller Migration** - stand up a new v6 controller along side your v5 controller and use the built in migration tool within the Omada Controller
 1. **Controller Backup & Restore** - take a backup through the Omada Controller application from your v5 controller, start up a brand new v6 controller with all new persistent data directories and restore your v5 configuration file
 
 This upgrade guide will focus on using the MongoDB upgrade container. The native controller migration and backup & restore procedures are using built in controller capabilities so you should follow TP-Link documentation but those details are out of scope of this guide.

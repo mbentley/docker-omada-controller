@@ -4,7 +4,7 @@
 
 ## About the Upgrade Process
 
-**Note**: if you're not comfortable running the upgrade, you may want to consider doing a site migration through the controller or by taking a backup through your v5 controller and setting up a brand new controller then restoring your backup config file. Refer to TP-Link's documentation for how these features work.
+**Note**: if you're not comfortable running the upgrade, you may want to consider doing a controller migration through the controller or by taking a backup through your v5 controller and setting up a brand new controller then restoring your backup config file. Refer to TP-Link's documentation for how these features work.
 
 The upgrade container  will upgrade MongoDB 3.6 to 8.0. MongoDB must do step upgrades as there is no process that allows you to jump significant versions so it must be done in steps. To make this easier, I have created a special container image which contains all of the MongoDB versions required for the upgrade. The upgrade images can be found in two varieties - multi-arch and specific architectures. Almost everyone should be able to run the multi-arch image and Docker will automatically pull the correct version but just in case, I've tagged images for each architecture. Simply replace the image tag as desired. The images are:
 
