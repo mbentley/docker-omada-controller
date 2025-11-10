@@ -13,12 +13,6 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
-# The number of replicas to run. Each replica is a separate Omada Controller instance, with its own
-# storage and database. Omada Controllers do not cluster, so multiple replicas will not share state.
-# In general, it is preferred to deploy this helm chart once per Omada Controller instance, rather than
-# using multiple replicas.
-replicaCount: 1
-
 # Whether to use the default ServiceAccount or create a new one
 serviceAccount:
   # Specifies whether a service account should be created
@@ -112,6 +106,7 @@ service:
   labels: {}
   # Extra annotations to add to the Service
   annotations: {}
+    # metallb.io/loadBalancerIPs: 192.168.1.20
 
 # Configure Ingress for the Omada Controller service. Requires an Ingress controller within the cluster.
 # By default, this ingress controller will terminate TLS and forward traffic to the Omada Controller,

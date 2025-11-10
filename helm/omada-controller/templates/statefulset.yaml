@@ -195,7 +195,7 @@ spec:
       spec:
         accessModes: 
           {{- toYaml .Values.persistence.data.accessModes | nindent 10 }}
-        storageClassName: {{ .Values.persistence.data.storageClass }}
+        storageClassName: {{ .Values.persistence.data.storageClassName }}
         resources:
           requests:
             storage: {{ .Values.persistence.data.size }}

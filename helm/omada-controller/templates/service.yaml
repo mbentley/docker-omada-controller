@@ -23,9 +23,11 @@ spec:
   - name: portal-https
     port: {{ .Values.config.ports.portalHttps }}
     targetPort: portal-https
+  {{- if ne .Values.config.ports.portalHttp .Values.config.ports.manageHttp }}
   - name: portal-http
     port: {{ .Values.config.ports.portalHttp }}
     targetPort: portal-http
+  {{- end }}
   - name: app-discovery
     port: {{ .Values.config.ports.appDiscovery }}
     targetPort: app-discovery
