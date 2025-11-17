@@ -423,7 +423,7 @@ else
     then
       echo "ERROR: Your persistent data for MongoDB is using WiredTiger ${WT_VERSION} (an older MongoDB) but this version of the image has MongoDB $(mongod --version | grep "db version" | awk -F 'n v' '{print $2}')!"
       echo "  You either need to revert back to a previous v5 tag or manually execute the MongoDB database upgrade."
-      echo "  See https://github.com/mbentley/docker-omada-controller/tree/update-base-and-mongo/mongodb_upgrade#help-my-controller-stopped-working for instructions on what to do"
+      echo "  See https://github.com/mbentley/docker-omada-controller/tree/master/mongodb_upgrade#help-my-controller-stopped-working for instructions on what to do"
       exit 1
     else
       echo "INFO: Success! Your MongoDB version matches your persistent data; continuing with entrypoint startup..."
