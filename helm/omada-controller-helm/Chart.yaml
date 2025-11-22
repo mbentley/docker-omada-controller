@@ -1,0 +1,7 @@
+apiVersion: v2
+name: omada-controller-helm
+description: Helm chart for deploying the TP-Link Omada SDN Controller
+icon: https://static.tp-link.com/assets/images/icon/favicon-omada.ico
+type: application
+version: 1.0.0
+appVersion: "6.0.0.24"
