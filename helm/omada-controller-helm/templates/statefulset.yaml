@@ -108,9 +108,11 @@ spec:
             - name: portal-https
               containerPort: {{ .Values.config.ports.portalHttps }}
               protocol: TCP
+            {{- if ne .Values.config.ports.portalHttp .Values.config.ports.manageHttp }}
             - name: portal-http
               containerPort: {{ .Values.config.ports.portalHttp }}
               protocol: TCP
+            {{- end }}
             - name: app-discovery
               containerPort: {{ .Values.config.ports.appDiscovery }}
               protocol: UDP
