@@ -37,7 +37,7 @@ spec:
           type: RuntimeDefault
       {{- end }}
       containers:
-        - name: {{ .Chart.Name }}
+        - name: {{ .Chart.Name | trimSuffix "-helm" }}
           {{- if .Values.config.rootless }}
           securityContext:
             allowPrivilegeEscalation: false

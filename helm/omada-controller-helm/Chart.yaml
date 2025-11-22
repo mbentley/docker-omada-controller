@@ -1,5 +1,5 @@
 apiVersion: v2
-name: omada-controller
+name: omada-controller-helm
 description: Helm chart for deploying the TP-Link Omada SDN Controller
 type: application
 version: 1.0.0
