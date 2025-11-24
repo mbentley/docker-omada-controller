@@ -1,0 +1,216 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "omada-controller.fullname" . }}
+  labels:
+    {{- include "omada-controller.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "omada-controller.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "omada-controller.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "omada-controller.serviceAccountName" . }}
+      {{- if .Values.config.rootless }}
+      securityContext:
+        runAsUser: 508
+        runAsGroup: 508
+        runAsNonRoot: true
+        fsGroup: 508
+        fsGroupChangePolicy: "OnRootMismatch"
+        seccompProfile:
+          type: RuntimeDefault
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name | trimSuffix "-helm" }}
+          {{- if .Values.config.rootless }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+          {{- end }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: MANAGE_HTTPS_PORT
+              value: {{ .Values.config.ports.manageHttps | quote }}
+            - name: MANAGE_HTTP_PORT
+              value: {{ .Values.config.ports.manageHttp | quote }}
+            - name: PORTAL_HTTPS_PORT
+              value: {{ .Values.config.ports.portalHttps | quote }}
+            - name: PORTAL_HTTP_PORT
+              value: {{ .Values.config.ports.portalHttp | quote }}
+            - name: PORT_APP_DISCOVERY
+              value: {{ .Values.config.ports.appDiscovery | quote }}
+            - name: PORT_ADOPT_V1
+              value: {{ .Values.config.ports.adoptV1 | quote }}
+            - name: PORT_UPGRADE_V1
+              value: {{ .Values.config.ports.upgradeV1 | quote }}
+            - name: PORT_MANAGER_V1
+              value: {{ .Values.config.ports.managerV1 | quote }}
+            - name: PORT_MANAGER_V2
+              value: {{ .Values.config.ports.managerV2 | quote }}
+            - name: PORT_DISCOVERY
+              value: {{ .Values.config.ports.discovery | quote }}
+            - name: PORT_TRANSFER_V2
+              value: {{ .Values.config.ports.transferV2 | quote }}
+            - name: PORT_RTTY
+              value: {{ .Values.config.ports.rtty | quote }}
+            - name: PORT_DEVICE_MONITOR
+              value: {{ .Values.config.ports.deviceMonitor | quote }}
+            - name: ROOTLESS
+              value: {{ .Values.config.rootless | quote }}
+            - name: SHOW_SERVER_LOGS
+              value: {{ .Values.config.showServerLogs | quote }}
+            - name: SHOW_MONGODB_LOGS
+              value: {{ .Values.config.showMongoDBLogs | quote }}
+            - name: SSL_CERT_NAME
+              value: {{ .Values.config.sslCertName | quote }}
+            - name: SSL_KEY_NAME
+              value: {{ .Values.config.sslKeyName | quote }}            
+            - name: TZ
+              value: {{ .Values.config.timezone | quote }}
+            {{- if .Values.config.tls1Enabled }}
+            - name: TLS_1_11_ENABLED
+              value: "true"
+            {{- end }}
+            {{- if .Values.config.externalMongoDBUrl }}
+            - name: EAP_MONGOD_URI
+              value: {{ .Values.config.externalMongoDBUrl | quote }}
+            {{- end }}
+            {{- range $key, $value := .Values.extraEnvVars }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+          ports:
+            - name: manage-https
+              containerPort: {{ .Values.config.ports.manageHttps }}
+              protocol: TCP
+            - name: manage-http
+              containerPort: {{ .Values.config.ports.manageHttp }}
+              protocol: TCP
+            - name: portal-https
+              containerPort: {{ .Values.config.ports.portalHttps }}
+              protocol: TCP
+            {{- if ne .Values.config.ports.portalHttp .Values.config.ports.manageHttp }}
+            - name: portal-http
+              containerPort: {{ .Values.config.ports.portalHttp }}
+              protocol: TCP
+            {{- end }}
+            - name: app-discovery
+              containerPort: {{ .Values.config.ports.appDiscovery }}
+              protocol: UDP
+            - name: adopt-v1
+              containerPort: {{ .Values.config.ports.adoptV1 }}
+              protocol: TCP
+            - name: upgrade-v1
+              containerPort: {{ .Values.config.ports.upgradeV1 }}
+              protocol: TCP
+            - name: manager-v1
+              containerPort: {{ .Values.config.ports.managerV1 }}
+              protocol: TCP
+            - name: manager-v2
+              containerPort: {{ .Values.config.ports.managerV2 }}
+              protocol: TCP
+            - name: udp-discovery
+              containerPort: {{ .Values.config.ports.discovery }}
+              protocol: UDP
+            - name: udp-management
+              containerPort: {{ .Values.config.ports.udpManagement }}
+              protocol: UDP
+            - name: transfer-v2
+              containerPort: {{ .Values.config.ports.transferV2 }}
+              protocol: TCP
+            - name: rtty
+              containerPort: {{ .Values.config.ports.rtty }}
+              protocol: TCP
+            - name: device-monitor
+              containerPort: {{ .Values.config.ports.deviceMonitor}}
+              protocol: TCP
+          {{- with .Values.livenessProbe }}
+          livenessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.readinessProbe }}
+          readinessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.startupProbe }}
+          startupProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- if or .Values.persistence.extraVolumeMounts ( or .Values.persistence.data.enabled .Values.persistence.logs.enabled ) }}
+          volumeMounts:
+            {{- with .Values.persistence.extraVolumeMounts }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+            {{- if .Values.persistence.data.enabled }}
+            - name: data
+              mountPath: /opt/tplink/EAPController/data
+            {{- end }}
+            {{- if .Values.persistence.logs.enabled }}
+            - name: logs
+              mountPath: /opt/tplink/EAPController/logs
+            {{- end }}
+          {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.persistence.extraVolumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+  {{- if or .Values.persistence.data.enabled .Values.persistence.logs.enabled }}
+  volumeClaimTemplates:
+    {{- if .Values.persistence.data.enabled }}
+    - metadata:
+        name: data
+      spec:
+        accessModes: 
+          {{- toYaml .Values.persistence.data.accessModes | nindent 10 }}
+        storageClassName: {{ .Values.persistence.data.storageClassName }}
+        resources:
+          requests:
+            storage: {{ .Values.persistence.data.size }}
+    {{- end }}
+    {{- if .Values.persistence.logs.enabled }}
+    - metadata:
+        name: logs
+      spec:
+        accessModes: 
+          {{- toYaml .Values.persistence.logs.accessModes | nindent 10 }}
+        storageClassName: {{ .Values.persistence.logs.storageClass }}
+        resources:
+          requests:
+            storage: {{ .Values.persistence.logs.size }}
+    {{- end }}
+  {{- end }}
