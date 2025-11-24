@@ -337,18 +337,16 @@ docker compose up -d
 
 There are two available options for deployment to Kubernetes:
 
-* Kubernetes manifests (in the [k8s](./k8s) directory)
+* Kubernetes manifests
 * Kubernetes Helm chart
 
 #### Kubernetes Manifests
 
-It's assumed that you will know how to modify and use these manifests on k8s if you choose that as your deployment option.
+The example manifests are in the [k8s](./k8s) directory. It's assumed that you will know how to modify and use these manifests on k8s if you choose that as your deployment option.
 
 #### Kubernetes Helm Chart
 
-The Helm charts are published to [mbentley/omada-controller-helm](https://hub.docker.com/r/mbentley/omada-controller-helm) on Docker Hub. See the [tag list](https://hub.docker.com/r/mbentley/omada-controller-helm/tags) for the Helm chart versions.
-
-Detailed usage instructions are available in the [Helm chart's README](https://github.com/mbentley/docker-omada-controller/blob/master/helm/omada-controller-helm/README.md).
+The Helm charts are published to [mbentley/omada-controller-helm](https://hub.docker.com/r/mbentley/omada-controller-helm) on Docker Hub but it is also available directly [from this repo](./helm/omada-controller-helm). For a Helm release list and detailed usage instructions, check out the [Helm chart's README](https://github.com/mbentley/docker-omada-controller/blob/master/helm/omada-controller-helm/README.md).
 
 ## Optional Environment Variables
 
