@@ -8,6 +8,14 @@ Helm chart for deploying the TP-Link Omada SDN Controller on Kubernetes.
 - Helm 3.0+
 - PV provisioner support in the underlying infrastructure (for persistent storage)
 
+## Chart Versions
+
+The Helm chart releases do not correspond to the controller version so below is a guide to help you find the appropriate Chart version for the version of the controller you wish to run:
+
+| Controller Version | Chart Version |
+|--------------------|---------------|
+| `6.0.0.24`         | `1.0.0`       |
+
 ## Installation
 
 ### Install the chart from OCI registry
