@@ -303,6 +303,22 @@ then
   exit 1
 fi
 
+# validate WiredTiger version to attempt to match the persistent data to MongoDB 3.6
+WT_VERSION="$(grep -o 'WiredTiger [0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*' /opt/tplink/EAPController/data/db/WiredTiger.turtle | cut -d' ' -f2)"
+
+# validat that we received a value
+if [ -z "${WT_VERSION}" ]
+then
+  echo -e "\nERROR: unable to determine WiredTiger version from /opt/tplink/EAPController/data/db/WiredTiger.turtle; aborting upgrade!"
+  echo "  If you require assistance, create a Help discussion (https://github.com/mbentley/docker-omada-controller/discussions/new?category=help) with as much information as possible"
+  exit 1
+elif [ "${WT_VERSION}" != "3.1.0" ]
+then
+  echo -e "\nERROR: unexpected WiredTiger version (${WT_VERSION}) found in persistent data; expecting 3.1.0 for MongoDB 3.6 - aborting upgrade!"
+  echo "  If you require assistance, create a Help discussion (https://github.com/mbentley/docker-omada-controller/discussions/new?category=help) with as much information as possible"
+  exit 1
+fi
+
 # pre-flight checks successful
 echo "done"
 
