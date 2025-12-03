@@ -14,6 +14,7 @@ The Helm chart releases do not correspond to the controller version so below is 
 
 | Controller Version | Chart Version |
 |--------------------|---------------|
+| `6.0.0.25`         | `1.0.1`       |
 | `6.0.0.24`         | `1.0.0`       |
 
 ## Installation
