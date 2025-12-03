@@ -129,7 +129,7 @@ For a full tag list, search the [Docker Hub tags list](https://hub.docker.com/r/
 
 | Tag(s) | Major.Minor Release | Current Version |
 | :----- | ------------------- | --------------- |
-| `6`, `6.0` | `6.0.x` | `6.0.0.24` |
+| `6`, `6.0` | `6.0.x` | `6.0.0.25` |
 | `latest`, `5`, `5.15` | `5.15.x` | `5.15.24.19` |
 
 ### Tags with Chromium
@@ -145,7 +145,7 @@ These are multi-arch tags. For the full tag listings, see the Docker Hub tags ab
 | `beta`, `beta-6.0`, `beta-6.0.0.24` | `6.0.x` Beta | `6.0.0.24` |
 | `beta-openj9`, `beta-6.0-openj9`, `beta-6.0.0.24-openj9` | `6.0.x` Beta w/OpenJ9 | `6.0.0.24` |
 | --- | --- | --- |
-| `6.0-openj9`, `6.0.0.24-openj9` | `6.0.x` w/OpenJ9 | `6.0.0.24` |
+| `6.0-openj9`, `6.0.0.25-openj9` | `6.0.x` w/OpenJ9 | `6.0.0.25` |
 | `5.15-openj9`, `5.15.24.19-openj9` | `5.15.x` w/OpenJ9 | `5.15.24.19` |
 
 ### Explicit Architecture Tags
@@ -154,7 +154,7 @@ If for some reason you can't use the multi-arch tags, there are explicitly tagge
 
 ### Explicit Version Tags
 
-If you need a specific version of the controller, starting with 5.13 and 5.14, there are explicitly tagged images with the exact version (i.e. - `6.0.0.24`) in the tag name. Check [Docker Hub](https://hub.docker.com/r/mbentley/omada-controller/tags) for the full list of tags.
+If you need a specific version of the controller, starting with 5.13 and 5.14, there are explicitly tagged images with the exact version (i.e. - `6.0.0.25`) in the tag name. Check [Docker Hub](https://hub.docker.com/r/mbentley/omada-controller/tags) for the full list of tags.
 
 ## Archived Tags
 
@@ -225,7 +225,7 @@ There are some differences between the build steps for `amd64`, `arm64`, and `ar
   ```
   docker build \
     --build-arg BASE=mbentley/ubuntu:24.04 \
-    --build-arg INSTALL_VER="6.0.0.24" \
+    --build-arg INSTALL_VER="6.0.0.25" \
     --build-arg ARCH="amd64" \
     -f Dockerfile \
     -t mbentley/omada-controller:6.0-amd64 .
@@ -238,7 +238,7 @@ There are some differences between the build steps for `amd64`, `arm64`, and `ar
   ```
   docker build \
     --build-arg BASE=mbentley/ubuntu:24.04 \
-    --build-arg INSTALL_VER="6.0.0.24" \
+    --build-arg INSTALL_VER="6.0.0.25" \
     --build-arg ARCH="arm64" \
     -f Dockerfile \
     -t mbentley/omada-controller:6.0-arm64 .

@@ -10,7 +10,7 @@ COPY healthcheck.sh install.sh /
 ARG ARCH=amd64
 
 # install version (major.minor or full version); OMADA_URL set in install.sh
-ARG INSTALL_VER="6.0.0.24"
+ARG INSTALL_VER="6.0.0.25"
 ARG NO_MONGODB=false
 
 # install omada controller (instructions taken from install.sh)
