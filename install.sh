@@ -270,7 +270,19 @@ echo "${OMADA_TAR}"
 ls -l "${OMADA_TAR}"
 tar xvf "${OMADA_TAR}"
 rm -f "${OMADA_TAR}"
-cd Omada_SDN_Controller_*
+
+# check to see which directory name is used in this version; try newer directory first, then fall back to older one
+if ls -d Omada_Network_Application_* >/dev/null 2>&1
+then
+  cd Omada_Network_Application_*
+elif ls -d Omada_SDN_Controller_* >/dev/null 2>&1
+then
+  cd Omada_SDN_Controller_*
+else
+  echo "ERROR: Omada directory NOT found! Here are the contents of the current directory for debugging purposes:"
+  ls -l
+  exit 1
+fi
 
 # make sure tha the install directory exists
 mkdir "${OMADA_DIR}" -vp
