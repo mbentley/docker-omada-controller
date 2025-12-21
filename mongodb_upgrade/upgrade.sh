@@ -312,9 +312,9 @@ then
   echo -e "\nERROR: unable to determine WiredTiger version from /opt/tplink/EAPController/data/db/WiredTiger.turtle; aborting upgrade!"
   echo "  If you require assistance, create a Help discussion (https://github.com/mbentley/docker-omada-controller/discussions/new?category=help) with as much information as possible"
   exit 1
-elif [ "${WT_VERSION}" != "3.1.0" ]
+elif [ "${WT_VERSION}" != "3.1.0" ] && [ "${WT_VERSION}" != "3.1.1" ]
 then
-  echo -e "\nERROR: unexpected WiredTiger version (${WT_VERSION}) found in persistent data; expecting 3.1.0 for MongoDB 3.6 - aborting upgrade!"
+  echo -e "\nERROR: unexpected WiredTiger version (${WT_VERSION}) found in persistent data; expecting 3.1.0 or 3.1.1 for MongoDB 3.6 - aborting upgrade!"
   echo "  If you require assistance, create a Help discussion (https://github.com/mbentley/docker-omada-controller/discussions/new?category=help) with as much information as possible"
   exit 1
 fi
