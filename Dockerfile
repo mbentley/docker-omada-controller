@@ -13,6 +13,9 @@ ARG ARCH=amd64
 ARG INSTALL_VER="6.0.0.25"
 ARG NO_MONGODB=false
 
+# optional cache busting build arg (value is not actually used anywhere)
+ARG MONGODB_VER
+
 # install omada controller (instructions taken from install.sh)
 RUN /install.sh &&\
   rm /install.sh
