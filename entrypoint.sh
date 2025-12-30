@@ -429,7 +429,7 @@ else
       echo "INFO: Success! Your MongoDB version matches your persistent data; continuing with entrypoint startup..."
     fi
   else
-    echo "INFO: Skipping MongoDB version check; image version != 6 and the last ran version != 6 (this is normal)"
+    echo "INFO: Not updating to v6; skipping MongoDB version check (this is normal)"
   fi
 fi
 
