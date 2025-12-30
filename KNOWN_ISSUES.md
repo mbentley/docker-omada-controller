@@ -48,7 +48,12 @@ The `armv7l` architecture is 32 bit and MongoDB is no longer available as a pre-
 
 ### Low Resource Systems
 
-Systems such as Raspberry Pis may not have sufficient memory to run with the default memory settings of this image. If you system only has 1 GB of RAM, I would highly recommend adjusting the Xmx arguments by overriding the `CMD` [as seen in this issue here](https://github.com/mbentley/docker-omada-controller/issues/198#issuecomment-1100485810) to prevent the container from being OOM killed by the OS.
+Systems such as Raspberry Pis may not have sufficient memory to run with the default memory settings of this image. If you system only has 1 GB of RAM, I would highly recommend adjusting the Xmx arguments. This can be done by one of two ways:
+
+1. Setting the `_JAVA_OPTIONS` environment variable; for example, `_JAVA_OPTIONS="-Xms512m -Xmx2048m"`.  This will not modify the parameter so tools like `ps` will still show the original value but this variable takes priority over the CLI args.
+1. Overriding the `CMD` [as seen in this issue here](https://github.com/mbentley/docker-omada-controller/issues/198#issuecomment-1100485810).
+
+Changing these values would be necessary on these low resource systems to prevent the operating system from killing the container due to it thinking it can allocate more memory than it should. The controller process may still actually functionally require more memory so your mileage may vary in terms of the impact of running on such a low resource system.
 
 ### Mismatched Userland and Kernel
 
