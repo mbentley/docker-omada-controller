@@ -21,6 +21,7 @@ PORT_MANAGER_V2="${PORT_MANAGER_V2:-29814}"
 PORT_DISCOVERY="${PORT_DISCOVERY:-29810}"
 PORT_TRANSFER_V2="${PORT_TRANSFER_V2:-29815}"
 PORT_RTTY="${PORT_RTTY:-29816}"
+PORT_DEVICE_MONITOR="${PORT_DEVICE_MONITOR:-29817}"
 # END PORTS CONFIGURATION
 
 # EXTERNAL MONGODB
@@ -107,7 +108,7 @@ echo "INFO: Time zone set to '${TZ}'"
 
 # set values in omada.properties
 # update stored ports when different of enviroment defined ports (works for numbers only)
-for ELEM in MANAGE_HTTP_PORT MANAGE_HTTPS_PORT PORTAL_HTTP_PORT PORTAL_HTTPS_PORT PORT_ADOPT_V1 PORT_APP_DISCOVERY PORT_UPGRADE_V1 PORT_MANAGER_V1 PORT_MANAGER_V2 PORT_DISCOVERY PORT_TRANSFER_V2 PORT_RTTY
+for ELEM in MANAGE_HTTP_PORT MANAGE_HTTPS_PORT PORTAL_HTTP_PORT PORTAL_HTTPS_PORT PORT_ADOPT_V1 PORT_APP_DISCOVERY PORT_UPGRADE_V1 PORT_MANAGER_V1 PORT_MANAGER_V2 PORT_DISCOVERY PORT_TRANSFER_V2 PORT_RTTY PORT_DEVICE_MONITOR
 do
   # convert element to key name
   KEY="$(echo "${ELEM}" | tr '[:upper:]' '[:lower:]' | tr '_' '.')"
@@ -338,7 +339,7 @@ else
       echo "INFO: Success! Your MongoDB version matches your persistent data; continuing with entrypoint startup..."
     fi
   else
-    echo "INFO: Skipping MongoDB version check; image version != 6 and the last ran version != 6 (this is normal)"
+    echo "INFO: Not updating to v6; skipping MongoDB version check (this is normal)"
   fi
 fi
 

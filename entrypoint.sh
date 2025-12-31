@@ -14,7 +14,6 @@ fi
 # set environment variables
 export TZ
 TZ="${TZ:-Etc/UTC}"
-SMALL_FILES="${SMALL_FILES:-false}"
 
 # PORTS CONFIGURATION
 MANAGE_HTTP_PORT="${MANAGE_HTTP_PORT:-8088}"
@@ -149,13 +148,6 @@ fi
 
 # set default time zone and notify user of time zone
 echo "INFO: Time zone set to '${TZ}'"
-
-# append smallfiles if set to true
-if [ "${SMALL_FILES}" = "true" ]
-then
-  echo "WARN: smallfiles was passed but is not supported in >= 4.1 with the WiredTiger engine in use by MongoDB"
-  echo "INFO: Skipping setting smallfiles option"
-fi
 
 # update stored ports when different of enviroment defined ports (works for numbers only)
 for ELEM in MANAGE_HTTP_PORT MANAGE_HTTPS_PORT PORTAL_HTTP_PORT PORTAL_HTTPS_PORT PORT_ADOPT_V1 PORT_APP_DISCOVERY PORT_UPGRADE_V1 PORT_MANAGER_V1 PORT_MANAGER_V2 PORT_DISCOVERY PORT_TRANSFER_V2 PORT_RTTY PORT_DEVICE_MONITOR
@@ -429,7 +421,7 @@ else
       echo "INFO: Success! Your MongoDB version matches your persistent data; continuing with entrypoint startup..."
     fi
   else
-    echo "INFO: Skipping MongoDB version check; image version != 6 and the last ran version != 6 (this is normal)"
+    echo "INFO: Not updating to v6; skipping MongoDB version check (this is normal)"
   fi
 fi
 
@@ -458,32 +450,6 @@ then
   exit 1
 else
   echo "INFO: userland/kernel check passed"
-fi
-
-# see if we should try to delete bcpkix-jdk15on-1.70.jar and bcprov-jdk15on-1.70.jar to workaround https://github.com/mbentley/docker-omada-controller/issues/509
-if [ "${WORKAROUND_509}" = "true" ] && [ "${IMAGE_OMADA_VER}" = "5.15.6.7" ]
-then
-  echo "INFO: WORKAROUND_509=true; deleting files that block controller startup, if present"
-
-  # delete files, if present
-  for FILE in bcpkix-jdk15on-1.70.jar bcprov-jdk15on-1.70.jar
-  do
-    # see if the file is there
-    if [ -f "${FILE}" ]
-    then
-      # found; delete it
-      echo -ne "INFO: deleting '/opt/tplink/EAPController/lib/${FILE}'\nINFO: "
-      rm -v "/opt/tplink/EAPController/lib/${FILE}"
-    else
-      # not found
-      echo "INFO: '/opt/tplink/EAPController/lib/${FILE}' isn't present, skipping"
-    fi
-  done
-
-  echo "INFO: WORKAROUND_509 complete!"
-elif [ "${WORKAROUND_509}" = "true" ] && [ "${IMAGE_OMADA_VER}" != "5.15.6.7" ]
-then
-  echo "WARN: WORKAROUND_509=true; but you're not running an impacted version; skipping workaround. (You should remove this env var as it does nothing!)"
 fi
 
 # show java version
