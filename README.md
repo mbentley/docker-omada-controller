@@ -2,7 +2,7 @@
 
 Docker image for [TP-Link Omada Software Controller](https://support.omadanetworks.com/us/product/omada-software-controller/) (also known as TP-Link Omada Network Application) to centrally manage [TP-Link Omada Hardware](https://www.omadanetworks.com/en/business-networking/all-omada/).
 
-**Disclaimer**: I am not, in any way, affiliated with TP-Link. I am just a community member who has packaged their free software as a Docker image for easier management and consumption.
+**Disclaimer**: I am not, in any way, affiliated with TP-Link. I am just a community member who has packaged TP-Link's free software as a Docker image for easier management and consumption.
 
 For instructions on running a legacy v3 or v4 controller, see the [README for v3 and v4](README_v3_and_v4.md). See the tag [archive_v3_v4](https://github.com/mbentley/docker-omada-controller/releases/tag/archive_v3_v4) for a snapshot of the code that includes the v3 and v4 artifacts as they have been removed as of July 2, 2024.
 
