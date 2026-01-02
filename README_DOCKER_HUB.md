@@ -1,6 +1,8 @@
 # mbentley/omada-controller
 
-Docker image for [TP-Link Omada Controller](https://www.tp-link.com/us/support/download/omada-software-controller/) to control [TP-Link Omada Hardware](https://www.tp-link.com/en/business-networking/all-omada/)
+Docker image for [TP-Link Omada Software Controller](https://support.omadanetworks.com/us/product/omada-software-controller/) (also known as TP-Link Omada Network Application) to centrally manage [TP-Link Omada Hardware](https://www.omadanetworks.com/en/business-networking/all-omada/).
+
+**Disclaimer**: I am not, in any way, affiliated with TP-Link. I am just a community member who has packaged their free software as a Docker image for easier management and consumption.
 
 ## Just Getting Started?
 

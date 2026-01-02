@@ -53,7 +53,7 @@ As always, take backups and read the documentation but the quick explanation of 
 
 ## Upgrading to 5.0.x from 4.1.x or above
 
-There are no manual upgrade steps directly related to the software itself required when upgrading to 5.0.x if you are already running at least 4.1.x. For full details, please refer to the [TP-Link upgrade documentation](https://www.tp-link.com/en/omada-sdn/controller-upgrade/).
+There are no manual upgrade steps directly related to the software itself required when upgrading to 5.0.x if you are already running at least 4.1.x. For full details, please refer to the [TP-Link upgrade documentation](https://www.omadanetworks.com/en/omada-sdn/controller-upgrade/).
 
 As always, I would recommend taking a backup through the controller software as well as save a copy of the persistent data while the controller is not running when you do upgrade to simplify the rollback process, if required.
 
@@ -65,10 +65,10 @@ As always, I would recommend taking a backup through the controller software as 
 
 ## Upgrading to 4.1 from 3.2.10 or below
 
-The upgrade to the 4.1.x version is not a seamless upgrade and can't be done in place. You must be running at least 3.1.4 or greater before you can proceed. Instructions are available from [TP-Link](https://www.tp-link.com/en/omada-sdn/controller-upgrade/) but many of the steps will be different due to running in a docker container. Here are the high level steps:
+The upgrade to the 4.1.x version is not a seamless upgrade and can't be done in place. You must be running at least 3.1.4 or greater before you can proceed. Instructions are available from [TP-Link](https://www.omadanetworks.com/en/omada-sdn/controller-upgrade/) but many of the steps will be different due to running in a docker container. Here are the high level steps:
 
 1. Review the steps in the TP-Link instructions as some settings will not transfer to the new version.
-1. Take a backup of your controller as described in the [upgrade procedure](https://www.tp-link.com/en/omada-sdn/controller-upgrade/#content-5_1_1)
+1. Take a backup of your controller as described in the upgrade procedure
 1. Stop your controller
 1. Clear your existing persistent data directories for data, work, and logs. I would recommend backing up the files so you can revert to the previous version in case of issues.
 1. Start your controller with the new Docker image and proceed with at least the basic setup options

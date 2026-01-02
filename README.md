@@ -1,8 +1,10 @@
 # mbentley/omada-controller
 
-Docker image for [TP-Link Omada Controller](https://www.tp-link.com/us/support/download/omada-software-controller/) to control [TP-Link Omada Hardware](https://www.tp-link.com/en/business-networking/all-omada/)
+Docker image for [TP-Link Omada Software Controller](https://support.omadanetworks.com/us/product/omada-software-controller/) (also known as TP-Link Omada Network Application) to centrally manage [TP-Link Omada Hardware](https://www.omadanetworks.com/en/business-networking/all-omada/).
 
-For references on running a legacy v3 or v4 controller, see the [README for v3 and v4](README_v3_and_v4.md). See the tag [archive_v3_v4](https://github.com/mbentley/docker-omada-controller/releases/tag/archive_v3_v4) for a snapshot of the code that includes the v3 and v4 artifacts as they have been removed as of July 2, 2024.
+**Disclaimer**: I am not, in any way, affiliated with TP-Link. I am just a community member who has packaged their free software as a Docker image for easier management and consumption.
+
+For instructions on running a legacy v3 or v4 controller, see the [README for v3 and v4](README_v3_and_v4.md). See the tag [archive_v3_v4](https://github.com/mbentley/docker-omada-controller/releases/tag/archive_v3_v4) for a snapshot of the code that includes the v3 and v4 artifacts as they have been removed as of July 2, 2024.
 
 ## Table of Contents
 
@@ -284,7 +286,7 @@ docker run -d \
 
 ### Using port mapping
 
-Using port mapping is more complex than using host networking as your devices need to be informed of the controller's IP or hostname. See [this TP-Link FAQ](https://www.tp-link.com/us/support/faq/3087/) for details on how to configure this on your device(s) prior to attempting to adopt them.
+Using port mapping is more complex than using host networking as your devices need to be informed of the controller's IP or hostname. See [this TP-Link FAQ](https://support.omadanetworks.com/us/document/13060/) for details on how to configure this on your device(s) prior to attempting to adopt them.
 
 __Warning__: If you want to change the controller ports from the default mappings, you *absolutely must* update the port binding inside the container via the environment variables. The ports exposed must match what is inside the container. The Omada Controller software expects that the ports are the same inside the container and outside and will load a blank page if that is not done. See [#99](https://github.com/mbentley/docker-omada-controller/issues/99#issuecomment-821243857) for details and and example of the behavior.
 
@@ -381,7 +383,7 @@ The Helm charts are published to [mbentley/omada-controller-helm](https://hub.do
 | `TLS_1_11_ENABLED` | `false` | `true`, `false` | Re-enables TLS 1.0 & 1.1 if set to `true` | >= `4.1` |
 | `TZ` | `Etc/UTC` | _\<many\>_ | See [Time Zones](#time-zones) for more detail | >= `3.2` |
 
-Documentation on the ports used by the controller can be found in the [TP-Link FAQ](https://www.tp-link.com/us/support/faq/3281/).
+Documentation on the ports used by the controller can be found in the [TP-Link FAQ](https://support.omadanetworks.com/us/document/13090/).
 
 ## Persistent Data
 
