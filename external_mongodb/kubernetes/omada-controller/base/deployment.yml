@@ -26,7 +26,7 @@ spec:
         image: "mbentley/omada-controller:latest-amd64"
         imagePullPolicy: IfNotPresent
         ports:
-          # Ref: https://www.tp-link.com/us/support/faq/3281/
+          # Ref: https://support.omadanetworks.com/us/document/13090/
 
           # 1. When you visit the management page of Omada Software Controller via an HTTP connection.
           # 2. When the clients visit the Portal page via an HTTP connection.
