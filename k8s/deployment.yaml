@@ -44,6 +44,8 @@ spec:
           value: "8088"
         - name: PORTAL_HTTPS_PORT
           value: "8843"
+        - name: UPGRADE_HTTPS_PORT
+          value: "8043"
         - name: PORT_APP_DISCOVERY
           value: "27001"
         - name: PORT_ADOPT_V1

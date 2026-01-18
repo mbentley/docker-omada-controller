@@ -54,6 +54,8 @@ spec:
               value: {{ .Values.config.ports.manageHttp | quote }}
             - name: PORTAL_HTTPS_PORT
               value: {{ .Values.config.ports.portalHttps | quote }}
+            - name: UPGRADE_HTTPS_PORT
+              value: {{ .Values.config.ports.upgradeHttps | quote }}
             - name: PORTAL_HTTP_PORT
               value: {{ .Values.config.ports.portalHttp | quote }}
             - name: PORT_APP_DISCOVERY
