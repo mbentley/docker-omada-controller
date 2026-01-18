@@ -286,7 +286,7 @@ docker run -d \
 
 ### Using port mapping
 
-Using port mapping is more complex than using host networking as your devices need to be informed of the controller's IP or hostname. See [this TP-Link FAQ](https://support.omadanetworks.com/us/document/13060/) for details on how to configure this on your device(s) prior to attempting to adopt them.
+When is comes to device management, using port mapping is more complex than using host networking as your devices need to be informed of the controller's IP or hostname. For instructions on how to configure your device for adoption, see [the device adoption readme](./DEVICE_ADOPTION.md). If you do not follow these instructions, it is highly likely that new devices will fail to adopt!
 
 __Warning__: If you want to change the controller ports from the default mappings, you *absolutely must* update the port binding inside the container via the environment variables. The ports exposed must match what is inside the container. The Omada Controller software expects that the ports are the same inside the container and outside and will load a blank page if that is not done. See [#99](https://github.com/mbentley/docker-omada-controller/issues/99#issuecomment-821243857) for details and and example of the behavior.
 

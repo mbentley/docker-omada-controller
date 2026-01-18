@@ -24,7 +24,7 @@
 
 ### Devices Fail to Adopt
 
-Users who are using `bridge` mode often report that switches and EAPs fail to adopt. This is due to the controller being technically being on a different network inside the container's bridge network, exporting the ports via NAT. Using port mapping is more complex than using host networking as your devices need to be informed of the controller's IP or hostname. See [this TP-Link FAQ](https://support.omadanetworks.com/us/document/13060/) for details on how to configure this on your device(s) prior to attempting to adopt them.
+Users who are using `bridge` mode often report that routers, switches, and EAPs fail to adopt. This is due to the controller being technically being on a different network inside the container's bridge network, exporting the ports via NAT. Using port mapping is more complex than using host networking as your devices need to be informed of the controller's IP or hostname. See [the device adoption docs](./DEVICE_ADOPTION.md) for instructions on how to configure this on your device(s) prior to attempting to adopt them.
 
 ## Containerization Issues
 
