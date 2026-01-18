@@ -4,6 +4,8 @@
 
 Most of what is found in this document can be found in this [TP-Link FAQ](https://www.tp-link.com/us/support/faq/4100/) on adopting devices across layer 3 networks. When you're running a controller in a container using bridged network mode, the controller has a private IP address that is not going to be accessible from your actual network. So if you do not configure your device being adopted to inform it of the controller's IP address or hostname, the controller will tell the device being adopted that it is available on an IP address on the internal Docker bridge network which isn't accessible from the device being adopted.
 
+The steps below follow the layer 3 Inform URL instructions in their FAQ but with specific details related to how the controller runs inside a container. While the instructions don't really differ significantly, I do find the process to be slightly different than what is shown in the FAQ. For the other two methods, see the [Alternate Configuration Options](#alternate-configuration-options) section at the end of this readme.
+
 ## Configuring your device for adoption
 
 1. Make sure you are running the latest firmware supported by your controller version before proceeding! Check the TP-Link support site for your device for compatability information.
@@ -26,3 +28,10 @@ Once you save this setting on your device, it should now be ready for adoption f
 1. Once adoption has failed, repeat the adoption process but this time, you should be prompted for the username and password of the device.
 
 After a minute or so, the adoption process should now be complete.
+
+## Alternate Configuration Options
+
+These two alternate configuration options are documented in the TP-Link FAQ linked above. Depending on your situation, they may work better for you. I have not tested these scenarios but I am assuming that the TP-Link documentation is fairly accurate.
+
+* **DHCP Option 138** - if your DHCP server allows DHCP Option configuration, you can set `Option 138` to specify the IP address of the controller container's host instead of manually specifying the Inform URL on your device to be adopted. Adoption should then function as expected as when your device gets an IP address via DHCP, it will automatically configure the Inform URL to the value specified.
+* **Discovery Utility** - you can use TP-Link's discovery utility to configure the Inform URL for you which removes some of the manual steps above. The general workflow should remain the same with adoption though.
