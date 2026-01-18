@@ -44,6 +44,8 @@ config:
     portalHttp: 8088
     # User captive portal for HTTPS
     portalHttps: 8843
+    # Port for HTTPS device upgrade downloads
+    upgradeHttps: 8043
     # UDP Port allowing the Omada App to discover the Controller while on the same network
     appDiscovery: 27001
     # Port used for device adoption (v1)
