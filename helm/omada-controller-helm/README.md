@@ -12,10 +12,11 @@ Helm chart for deploying the TP-Link Omada SDN Controller on Kubernetes.
 
 The Helm chart releases do not correspond to the controller version so below is a guide to help you find the appropriate Chart version for the version of the controller you wish to run:
 
-| Controller Version | Chart Version |
-|--------------------|---------------|
-| `6.0.0.25`         | `1.0.1`       |
-| `6.0.0.24`         | `1.0.0`       |
+| Controller Version | Chart Version | Change Notes |
+| ------------------ | ------------- | :------------ |
+| `6.0.0.25`         | `1.0.2`       | Added env var for UPGRADE_HTTPS_PORT |
+| `6.0.0.25`         | `1.0.1`       | Updated to version 6.0.0.25 |
+| `6.0.0.24`         | `1.0.0`       | Initial version |
 
 ## Installation
 
