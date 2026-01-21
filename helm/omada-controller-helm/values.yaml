@@ -32,7 +32,7 @@ podAnnotations: {}
 # For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
 podLabels: {}
 
-# Configuration options for the Omada Controller application. See the omada-controller documentation 
+# Configuration options for the Omada Controller application. See the omada-controller documentation
 # for details on these options.
 config:
   ports:
@@ -44,6 +44,8 @@ config:
     portalHttp: 8088
     # User captive portal for HTTPS
     portalHttps: 8843
+    # Dedicated HTTPS port for upgrades
+    portalHttps: 8043
     # Port for HTTPS device upgrade downloads
     upgradeHttps: 8043
     # UDP Port allowing the Omada App to discover the Controller while on the same network
@@ -66,7 +68,7 @@ config:
     rtty: 29816
     # Port used for device monitoring (New in Omada 6)
     deviceMonitor: 29817
-  
+
   # Configures the Omada Controller to run in rootless mode. When this is enabled, the pod
   # and container security contexts are set to non-root user IDs.
   rootless: true
@@ -82,7 +84,7 @@ config:
   # It is generally simpler to use a Kubernetes Ingress resource to handle TLS termination.
   sslCertName: tls.crt
   sslKeyName: tls.key
-  
+
   # Re-enables TLS 1.0 & 1.1 if set to `true`
   tls1Enabled: false
 
@@ -127,7 +129,7 @@ ingress:
     #   paths:
     #     - path: /
     #       pathType: Prefix
-  
+
   # Hosts which will redirect to the captive portal port
   portalHosts: []
     # - host: omada-portal.example.com
@@ -166,7 +168,7 @@ readinessProbe:
     scheme: HTTPS
 
 # Configure a startup probe to check when the Omada Controller is ready to serve requests.
-# Omada Controller can take a while to start up, especially on first run when it is 
+# Omada Controller can take a while to start up, especially on first run when it is
 # initializing its database. The startup probe helps Kubernetes avoid killing the pod
 # before it is ready. Once the startup probe succeeds, the liveness and readiness probes take over.
 startupProbe:
@@ -177,7 +179,7 @@ startupProbe:
   failureThreshold: 30
   periodSeconds: 10
 
-# Configure persistence settings for Omada Controller data and logs. 
+# Configure persistence settings for Omada Controller data and logs.
 # Separate volume claims are created for data and logs to allow for different
 # storage class or size settings.
 persistence:
@@ -196,7 +198,7 @@ persistence:
     accessModes:
       - ReadWriteOnce
     size: 1Gi
-  
+
   # Allows mounting additional volumes into the Omada Controller. Can be used
   # to mount TLS secrets, configmaps, or for additional customization of storage
   # instead of using the persistence.data and persistence.logs options. If running
