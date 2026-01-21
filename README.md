@@ -64,9 +64,9 @@ If you don't know much about Docker or want to just get started as easily as pos
     * Included in this repo is a shell script ([mongodb8_cpu_support_check.sh](./mongodb8_cpu_support_check.sh)) which can be executed to test for the required CPU features
     * If this script indicates that your CPU is not supported, check out the [KNOWN ISSUES section on this for clean installs](./KNOWN_ISSUES.md#clean-install) for how you can proceed with the v6 controller image.
 1. **Picking an image tag**
-    * Most people will want to use a major.minor tag version (i.e. - `6.0`) as this is the safest option and can almost certainly be considered to be non-breaking when a new version of the image is available.
+    * Most people will want to use a major.minor tag version (i.e. - `6.1`) as this is the safest option and can almost certainly be considered to be non-breaking when a new version of the image is available.
     * If updating the tag between minor versions is not ideal for you, there is also the major tag version (i.e. - `5`) which should be safe from most non-breaking changes.
-    * **USING THE `latest` TAG IS A BAD IDEA - DO NOT DO IT!** Using `latest` may upgrade you to a newer version (i.e. - `5.15` to `6.0`) when it comes out and there is no guarantee that there will not be potentially breaking changes between those versions! Instead, use one of the two tag types above.
+    * **USING THE `latest` TAG IS A BAD IDEA - DO NOT DO IT!** Using `latest` may upgrade you to a newer version (i.e. - `5.15` to `6.1`) when it comes out and there is no guarantee that there will not be potentially breaking changes between those versions! Instead, use one of the two tag types above.
     * ~~If you need to create PDF reports from the controller, there are [tags with Chromium](#tags-with-chromium) as that is required to generate them. Those images are much larger and only available for `amd64` so only use them if you really need that functionality.~~ Reports are now CSV and XLSX so they do not require Chromium.
 1. **Picking your networking mode**
     * There are three main options regarding how your container is exposed to your network, which is required to manage your TP-Link Omada enabled devices:
@@ -80,11 +80,11 @@ If you don't know much about Docker or want to just get started as easily as pos
     * There are several ways to run your controller container:
         * [docker run...](#example-usage)
             * Examples for both host (_preferred_) and bridge network modes
-            * Uses the latest major.minor (i.e. - `6.0`) tag
+            * Uses the latest major.minor (i.e. - `6.1`) tag
             * Only requires Docker to be set up
         * [docker compose](#using-docker-compose)
             * Examples for both host (_preferred_) and bridge network modes
-            * Uses the latest major.minor (i.e. - `6.0`) tag
+            * Uses the latest major.minor (i.e. - `6.1`) tag
             * Requires Docker and [Docker Compose](https://docs.docker.com/compose/) to be set up
         * [k8s](#using-k8s)
             * Deployment is k8s is an advanced topic; only use this if you know what you are doing and can support yourself.
@@ -131,7 +131,8 @@ For a full tag list, search the [Docker Hub tags list](https://hub.docker.com/r/
 
 | Tag(s) | Major.Minor Release | Current Version |
 | :----- | ------------------- | --------------- |
-| `6`, `6.0` | `6.0.x` | `6.0.0.25` |
+| `6`, `6.1` | `6.1.x` | `6.1.0.19` |
+| `6.0` | `6.0.x` | `6.0.0.25` |
 | `latest`, `5`, `5.15` | `5.15.x` | `5.15.24.19` |
 
 ### Tags with Chromium
@@ -147,6 +148,7 @@ These are multi-arch tags. For the full tag listings, see the Docker Hub tags ab
 | `beta`, `beta-6.1`, `beta-6.1.0.19` | `6.1.x` Beta | `6.1.0.19` |
 | `beta-openj9`, `beta-6.1-openj9`, `beta-6.1.0.19-openj9` | `6.1.x` Beta w/OpenJ9 | `6.1.0.19` |
 | --- | --- | --- |
+| `6-openj9`, `6.1-openj9`, `6.1.0.19-openj9` | `6.1.x` w/OpenJ9 | `6.1.0.19` |
 | `6.0-openj9`, `6.0.0.25-openj9` | `6.0.x` w/OpenJ9 | `6.0.0.25` |
 | `5.15-openj9`, `5.15.24.19-openj9` | `5.15.x` w/OpenJ9 | `5.15.24.19` |
 
@@ -156,7 +158,7 @@ If for some reason you can't use the multi-arch tags, there are explicitly tagge
 
 ### Explicit Version Tags
 
-If you need a specific version of the controller, starting with 5.13 and 5.14, there are explicitly tagged images with the exact version (i.e. - `6.0.0.25`) in the tag name. Check [Docker Hub](https://hub.docker.com/r/mbentley/omada-controller/tags) for the full list of tags.
+If you need a specific version of the controller, starting with 5.13 and 5.14, there are explicitly tagged images with the exact version (i.e. - `6.1.0.19`) in the tag name. Check [Docker Hub](https://hub.docker.com/r/mbentley/omada-controller/tags) for the full list of tags.
 
 ## Archived Tags
 
@@ -227,10 +229,10 @@ There are some differences between the build steps for `amd64`, `arm64`, and `ar
   ```
   docker build \
     --build-arg BASE=mbentley/ubuntu:24.04 \
-    --build-arg INSTALL_VER="6.0.0.25" \
+    --build-arg INSTALL_VER="6.1.0.19" \
     --build-arg ARCH="amd64" \
     -f Dockerfile \
-    -t mbentley/omada-controller:6.0-amd64 .
+    -t mbentley/omada-controller:6.1-amd64 .
   ```
 
 ### `arm64`
@@ -240,10 +242,10 @@ There are some differences between the build steps for `amd64`, `arm64`, and `ar
   ```
   docker build \
     --build-arg BASE=mbentley/ubuntu:24.04 \
-    --build-arg INSTALL_VER="6.0.0.25" \
+    --build-arg INSTALL_VER="6.1.0.19" \
     --build-arg ARCH="arm64" \
     -f Dockerfile \
-    -t mbentley/omada-controller:6.0-arm64 .
+    -t mbentley/omada-controller:6.1-arm64 .
   ```
 
 ### `armv7l`
@@ -281,7 +283,7 @@ docker run -d \
   -e TZ=Etc/UTC \
   -v omada-data:/opt/tplink/EAPController/data \
   -v omada-logs:/opt/tplink/EAPController/logs \
-  mbentley/omada-controller:6.0
+  mbentley/omada-controller:6.1
 ```
 
 ### Using port mapping
@@ -306,7 +308,7 @@ docker run -d \
   -e TZ=Etc/UTC \
   -v omada-data:/opt/tplink/EAPController/data \
   -v omada-logs:/opt/tplink/EAPController/logs \
-  mbentley/omada-controller:6.0
+  mbentley/omada-controller:6.1
 ```
 
 ### Using non-default ports
@@ -370,7 +372,7 @@ The Helm charts are published to [mbentley/omada-controller-helm](https://hub.do
 | `PORT_MANAGER_V2` | `29814` | `1024`-`65535` | Omada Controller and Omada Discovery Utility manage the Omada devices running firmware fully adapted to Omada Controller v5* | >= `5.x` |
 | `PORT_TRANSFER_V2` | `29815` | `1024`-`65535` | Omada Controller receives Device Info and Packet Capture files from the Omada devices | >= `5.9` |
 | `PORT_RTTY` | `29816` | `1024`-`65535` | Omada Controller establishes the remote control terminal session with the Omada devices | >= `5.9` |
-| `PORT_DEVICE_MONITOR` | `29817` | `1024`-`65535` | Omada Controller ??? (currently unknown the full purpose) | >= `6.0` |
+| `PORT_DEVICE_MONITOR` | `29817` | `1024`-`65535` | Omada Controller ??? (currently unknown the full purpose) | >= `06.0` |
 | `PUID` | `508` | _any_ | Set the `omada` process user ID ` | >= `3.2` |
 | `PUSERNAME` | `omada` | _any_ | Set the username for the process user ID to run as | >= `5.0` |
 | `ROOTLESS` | `false` | `true`, `false` | Sets the entrypoint for [rootless mode](#running-rootless) | >= `5.14` |

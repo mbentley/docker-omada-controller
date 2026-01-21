@@ -14,6 +14,7 @@ The Helm chart releases do not correspond to the controller version so below is 
 
 | Controller Version | Chart Version | Change Notes |
 | ------------------ | ------------- | :------------ |
+| `6.1.0.19`         | `1.1.0`       | Updated to version 6.1.0.19 |
 | `6.0.0.25`         | `1.0.2`       | Added env var for UPGRADE_HTTPS_PORT |
 | `6.0.0.25`         | `1.0.1`       | Updated to version 6.0.0.25 |
 | `6.0.0.24`         | `1.0.0`       | Initial version |
@@ -74,6 +75,7 @@ The following table lists the configurable parameters of the Omada Controller ch
 | `config.ports.manageHttps` | Management portal HTTPS port | `8043` |
 | `config.ports.portalHttp` | Captive portal HTTP port | `8088` |
 | `config.ports.portalHttps` | Captive portal HTTPS port | `8843` |
+| `config.ports.upgradeHttps` | Dedicated HTTPS port for upgrades | `8043` |
 | `config.ports.appDiscovery` | UDP port for Omada App discovery | `27001` |
 | `config.ports.adoptV1` | Device adoption port (v1) | `29812` |
 | `config.ports.upgradeV1` | Device upgrade port (v1) | `29813` |
