@@ -12,9 +12,9 @@ For instructions on running a legacy v3 or v4 controller, see the [README for v3
 * [v5 to v6 Upgrade Guide](#v5-to-v6-upgrade-guide)
 * [Image Tags](#image-tags)
     * [Multi-arch Tags](#multi-arch-tags)
-    * [Tags for Beta/Testing](#tags-for-betatesting)
     * [Explicit Architecture Tags](#explicit-architecture-tags)
     * [Explicit Version Tags](#explicit-version-tags)
+    * [Tags for Beta/Testing](#tags-for-betatesting)
     * [Archived Tags](#archived-tags)
 * [Getting Help & Reporting Issues](#getting-help--reporting-issues)
 * [Best Practices for Operation](#best-practices-for-operation)
@@ -64,9 +64,9 @@ If you don't know much about Docker or want to just get started as easily as pos
     * Included in this repo is a shell script ([mongodb8_cpu_support_check.sh](./mongodb8_cpu_support_check.sh)) which can be executed to test for the required CPU features
     * If this script indicates that your CPU is not supported, check out the [KNOWN ISSUES section on this for clean installs](./KNOWN_ISSUES.md#clean-install) for how you can proceed with the v6 controller image.
 1. **Picking an image tag**
-    * Most people will want to use a major.minor tag version (i.e. - `6.1`) as this is the safest option and can almost certainly be considered to be non-breaking when a new version of the image is available.
-    * If updating the tag between minor versions is not ideal for you, there is also the major tag version (i.e. - `5`) which should be safe from most non-breaking changes.
-    * **USING THE `latest` TAG IS A BAD IDEA - DO NOT DO IT!** Using `latest` may upgrade you to a newer version (i.e. - `5.15` to `6.1`) when it comes out and there is no guarantee that there will not be potentially breaking changes between those versions! Instead, use one of the two tag types above.
+    * `major` version tagged - For people who want to set it and forget it (i.e. - if you are used to just using `latest`), there is also the major tag version (i.e. - `5`, `6`, etc) which should be mostly safe from non-breaking changes.
+    * `major.minor` version tagged - Most people will want to use a major.minor tag version (i.e. - `6.1`) as this is the safest option and can almost certainly be considered to be non-breaking when a new version of the image is available.
+    * **USING THE `latest` TAG IS A BAD IDEA - DO NOT DO IT!** Using `latest` with software like this is not a good idea because you may upgrade to a version that your devices do not support and TP-Link can put in breaking changes at any time! Instead, use one of the two tag types above.
     * ~~If you need to create PDF reports from the controller, there are [tags with Chromium](#tags-with-chromium) as that is required to generate them. Those images are much larger and only available for `amd64` so only use them if you really need that functionality.~~ Reports are now CSV and XLSX so they do not require Chromium.
 1. **Picking your networking mode**
     * There are three main options regarding how your container is exposed to your network, which is required to manage your TP-Link Omada enabled devices:
@@ -123,7 +123,7 @@ If you tried to run the v6 controller without doing the upgrade, see [HELP! My C
 
 ## Image Tags
 
-:warning: **Warning** :warning: Do **NOT** run the `armv7l` (32 bit) images. Upgrade your operating system to `arm64` (64 bit) unless you accept that you're running an outdated MongoDB, a base operating system with unpatched vulnerabilities, an old version of Java, and a controller that will never be upgraded beyond `5.15.8.2`! See the [Known Issues readme](KNOWN_ISSUES.md#notes-for-armv7l) for more information.
+For every version at any given point in time, there are many different tags: `major`, `major.minor`, and a full `major.minor.patch.build` tag. For guidance on what image tag you should use, check out the _Picking an image tag_ section of the [quickstart guide](#quickstart-guide) above but the gist of it is that most people will want to use either a `major` or `major.minor` version tag.
 
 ### Multi-arch Tags
 
@@ -135,9 +135,13 @@ For a full tag list, search the [Docker Hub tags list](https://hub.docker.com/r/
 | `6.0` | `6.0.x` | `6.0.0.25` |
 | `latest`, `5`, `5.15` | `5.15.x` | `5.15.24.19` |
 
-### Tags with Chromium
+### Explicit Architecture Tags
 
-Going forward, Chromium is no longer required as of 5.14. If you were using a Chromium tag, go back to a normal tag. All reports should now either by CSV or XLSX format.
+If for some reason you can't use the multi-arch tags, there are explicitly tagged images with the architecture (`-amd64` and `-arm64`) appended to them. Check [Docker Hub](https://hub.docker.com/r/mbentley/omada-controller/tags) for the full list of tags.
+
+### Explicit Version Tags
+
+If you need a specific version of the controller, starting with 5.13 and 5.14, there are explicitly tagged images with the exact version (i.e. - `6.1.0.19`) in the tag name. Check [Docker Hub](https://hub.docker.com/r/mbentley/omada-controller/tags) for the full list of tags.
 
 ### Tags for Beta/Testing
 
@@ -152,15 +156,9 @@ These are multi-arch tags. For the full tag listings, see the Docker Hub tags ab
 | `6.0-openj9`, `6.0.0.25-openj9` | `6.0.x` w/OpenJ9 | `6.0.0.25` |
 | `5.15-openj9`, `5.15.24.19-openj9` | `5.15.x` w/OpenJ9 | `5.15.24.19` |
 
-### Explicit Architecture Tags
-
-If for some reason you can't use the multi-arch tags, there are explicitly tagged images with the architecture (`-amd64` and `-arm64`) appended to them. Check [Docker Hub](https://hub.docker.com/r/mbentley/omada-controller/tags) for the full list of tags.
-
-### Explicit Version Tags
-
-If you need a specific version of the controller, starting with 5.13 and 5.14, there are explicitly tagged images with the exact version (i.e. - `6.1.0.19`) in the tag name. Check [Docker Hub](https://hub.docker.com/r/mbentley/omada-controller/tags) for the full list of tags.
-
 ## Archived Tags
+
+:warning: **Warning** :warning: Do **NOT** run the `armv7l` (32 bit) images. Upgrade your operating system to `arm64` (64 bit) unless you accept that you're running an outdated MongoDB, a base operating system with unpatched vulnerabilities, an old version of Java, and a controller that will never be upgraded beyond `5.15.8.2`! See the [Known Issues readme](KNOWN_ISSUES.md#notes-for-armv7l) for more information.
 
 These images are still published on Docker Hub but are no longer regularly updated due to the controller software no longer being updated. **Use with extreme caution as these images are likely to contain unpatched security vulnerabilities!**. See [Archived Tags for v3 and v4](README_v3_and_v4.md#archived-tags) for details on the old, unmaintained image tags.
 
@@ -190,6 +188,10 @@ These images are still published on Docker Hub but are no longer regularly updat
 | `5.1` | `5.1.x` | `5.1.7` |
 | `5.1-chromium` | `5.1.x` | `5.1.7` |
 | `5.0` | `5.0.x` | `5.0.30` |
+
+### Tags with Chromium
+
+Going forward, Chromium is no longer required as of 5.14. If you were using a Chromium tag, go back to a normal tag. All reports should now either by CSV or XLSX format.
 
 ## Getting Help & Reporting Issues
 
