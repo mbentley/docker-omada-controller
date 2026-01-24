@@ -11,5 +11,9 @@ When filing either an issue or discussion for help, it is always helpful to prov
     * `docker inspect omada-controller --format '{{json .Image}}'`
     * `docker images --filter=reference='mbentley/omada-controller' --digests --format '{{.Repository}}:{{.Tag}}@{{.Digest}}'`
 1. Container & App Logs
-    * Container logs can be collected using `docker logs omada-controller >& output.log` to put them in a file called `output.log`.
-    * MongoDB logs do not log to the console by default as they can be very verbose but they can be collected using `docker cp omada-controller:/opt/tplink/EAPController/logs/mongod.log .` to copy out the `mongod.log` to the current directory.  The `mongod.log` file may also be in a volume if you have specified a volume path for the container's `/opt/tplink/EAPController/logs` directory.  These logs are especially helpful when the container is not starting as expected.
+    * Container logs can be collected using:
+        * `docker logs omada-controller >& output.log`
+        * This will save the logs to a file named `output.log`.
+    * MongoDB logs do not log to the console by default as they can be very verbose but they can be collected using:
+        * `docker cp omada-controller:/opt/tplink/EAPController/logs/mongod.log .`
+        * This will copy out the `mongod.log` to the current directory.  The `mongod.log` file may also be in a volume if you have specified a volume path for the container's `/opt/tplink/EAPController/logs` directory.  These logs are especially helpful when the container is not starting as expected.
