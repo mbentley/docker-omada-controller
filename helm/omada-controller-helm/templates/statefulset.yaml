@@ -95,6 +95,8 @@ spec:
             {{- if .Values.config.externalMongoDBUrl }}
             - name: EAP_MONGOD_URI
               value: {{ .Values.config.externalMongoDBUrl | quote }}
+            - name: MONGO_EXTERNAL
+              value: "true"
             {{- end }}
             {{- range $key, $value := .Values.extraEnvVars }}
             - name: {{ $key }}
