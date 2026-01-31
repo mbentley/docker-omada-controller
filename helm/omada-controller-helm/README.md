@@ -14,6 +14,7 @@ The Helm chart releases do not correspond to the controller version so below is 
 
 | Controller Version | Chart Version | Change Notes |
 | ------------------ | ------------- | :------------ |
+| `6.1.0.19`         | `1.1.1`       | Auto set `MONGO_EXTERNAL=true` when MongoDBUrl is set |
 | `6.1.0.19`         | `1.1.0`       | Updated to version 6.1.0.19 |
 | `6.0.0.25`         | `1.0.2`       | Added env var for UPGRADE_HTTPS_PORT |
 | `6.0.0.25`         | `1.0.1`       | Updated to version 6.0.0.25 |
