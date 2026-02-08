@@ -94,6 +94,13 @@ config:
   #  mongodb://user:pass@host:port/database
   externalMongoDBUrl: ""
 
+# Init containers to add to the pod. Follows the standard Kubernetes spec
+# https://kubernetes.io/docs/concepts/workloads/pods/init-containers/
+initContainers: []
+  # - name: ferretdb
+  #   image: ghcr.io/ferretdb/ferretdb:latest
+  #   restartPolicy: Always
+
 # Additional environment variables to set in the Omada Controller container
 extraEnvVars: {}
   # CUSTOM_ENV_VAR: "custom_value"

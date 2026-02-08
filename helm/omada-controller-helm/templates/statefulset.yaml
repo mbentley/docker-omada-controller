@@ -36,6 +36,10 @@ spec:
         seccompProfile:
           type: RuntimeDefault
       {{- end }}
+      {{- with .Values.initContainers }}
+      initContainers:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
         - name: {{ .Chart.Name | trimSuffix "-helm" }}
           {{- if .Values.config.rootless }}
@@ -85,7 +89,7 @@ spec:
             - name: SSL_CERT_NAME
               value: {{ .Values.config.sslCertName | quote }}
             - name: SSL_KEY_NAME
-              value: {{ .Values.config.sslKeyName | quote }}            
+              value: {{ .Values.config.sslKeyName | quote }}
             - name: TZ
               value: {{ .Values.config.timezone | quote }}
             {{- if .Values.config.tls1Enabled }}
@@ -199,7 +203,7 @@ spec:
     - metadata:
         name: data
       spec:
-        accessModes: 
+        accessModes:
           {{- toYaml .Values.persistence.data.accessModes | nindent 10 }}
         storageClassName: {{ .Values.persistence.data.storageClassName }}
         resources:
@@ -210,7 +214,7 @@ spec:
     - metadata:
         name: logs
       spec:
-        accessModes: 
+        accessModes:
           {{- toYaml .Values.persistence.logs.accessModes | nindent 10 }}
         storageClassName: {{ .Values.persistence.logs.storageClass }}
         resources:

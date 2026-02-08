@@ -154,6 +154,7 @@ The following table lists the configurable parameters of the Omada Controller ch
 |-----------|-------------|---------|
 | `podAnnotations` | Pod annotations | `{}` |
 | `podLabels` | Pod labels | `{}` |
+| `initContainers` | Init containers to add to the pod | `[]` |
 | `extraEnvVars` | Additional environment variables | `{}` |
 | `extraManifests` | Additional Kubernetes manifests | `[]` |
 
