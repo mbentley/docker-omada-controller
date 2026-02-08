@@ -1,5 +1,12 @@
-*.swp
-.git
 .DS_Store
+.git/
+.github/
 *.md
+*.swp
+*.yml
+*.yaml
+external_mongodb/
+helm/
 k8s/
+mongodb_upgrade/
+util/
