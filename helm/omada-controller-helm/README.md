@@ -14,6 +14,7 @@ The Helm chart releases do not correspond to the controller version so below is 
 
 | Controller Version | Chart Version | Change Notes |
 | ------------------ | ------------- | :------------ |
+| `6.1.0.19`         | `1.1.3`       | Adds the ability to configure an initcontainer |
 | `6.1.0.19`         | `1.1.2`       | Fix #721; duplicate port in values.yaml |
 | `6.1.0.19`         | `1.1.1`       | Auto set `MONGO_EXTERNAL=true` when MongoDBUrl is set |
 | `6.1.0.19`         | `1.1.0`       | Updated to version 6.1.0.19 |
@@ -154,6 +155,7 @@ The following table lists the configurable parameters of the Omada Controller ch
 |-----------|-------------|---------|
 | `podAnnotations` | Pod annotations | `{}` |
 | `podLabels` | Pod labels | `{}` |
+| `initContainers` | Init containers to add to the pod | `[]` |
 | `extraEnvVars` | Additional environment variables | `{}` |
 | `extraManifests` | Additional Kubernetes manifests | `[]` |
 
