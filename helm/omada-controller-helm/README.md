@@ -14,6 +14,7 @@ The Helm chart releases do not correspond to the controller version so below is 
 
 | Controller Version | Chart Version | Change Notes |
 | ------------------ | ------------- | :------------ |
+| `6.1.0.19`         | `1.1.4`       | Improve secret handling and external MongoDB support |
 | `6.1.0.19`         | `1.1.3`       | Adds the ability to configure an initcontainer |
 | `6.1.0.19`         | `1.1.2`       | Fix #721; duplicate port in values.yaml |
 | `6.1.0.19`         | `1.1.1`       | Auto set `MONGO_EXTERNAL=true` when MongoDBUrl is set |
@@ -90,13 +91,16 @@ The following table lists the configurable parameters of the Omada Controller ch
 | `config.ports.rtty` | RTTY connection port | `29816` |
 | `config.ports.deviceMonitor` | Device monitoring port (Omada 6+) | `29817` |
 | `config.rootless` | Run controller in rootless mode | `true` |
-| `config.showMongoDBLogs` | Display MongoDB logs in container output | `false` |
+| `config.showMongoDBLogs` | Display MongoDB logs (auto-disabled with external MongoDB) | `false` |
 | `config.showServerLogs` | Display server logs in container output | `true` |
 | `config.sslCertName` | SSL certificate filename | `tls.crt` |
 | `config.sslKeyName` | SSL key filename | `tls.key` |
+| `config.tlsSecretName` | Kubernetes TLS secret name to auto-mount | `""` |
 | `config.tls1Enabled` | Re-enable TLS 1.0 & 1.1 | `false` |
 | `config.timezone` | Controller timezone | `Etc/UTC` |
-| `config.externalMongoDBUrl` | External MongoDB URL (optional) | `""` |
+| `config.externalMongoDBUrl` | External MongoDB URL (mutually exclusive with secret) | `""` |
+| `config.externalMongoDBUrlSecret.name` | Secret name containing MongoDB URI (mutually exclusive with URL) | `""` |
+| `config.externalMongoDBUrlSecret.key` | Secret key containing MongoDB URI | `""` |
 
 ### Service Configuration
 
@@ -207,28 +211,58 @@ config:
 
 persistence:
   data:
+    enabled: true # Data storage still required for backups and firmware with external MongoDB
+    size: 2Gi
+  logs:
+    enabled: true
+    size: 2Gi
+```
+
+### Installation with External MongoDB Using Secret
+
+For better security, store the MongoDB URI in a Kubernetes secret:
+
+```bash
+# Create a secret with the MongoDB URI
+kubectl create secret generic mongodb-uri \
+  --from-literal=uri='mongodb://user:password@mongodb.example.com:27017/omada'
+```
+
+```yaml
+config:
+  externalMongoDBUrlSecret:
+    name: mongodb-uri
+    key: uri
+
+persistence:
+  data:
     enabled: false  # Data stored in external MongoDB
   logs:
     enabled: true
     size: 2Gi
 ```
 
+**Note:** `externalMongoDBUrlSecret` and `externalMongoDBUrl` are mutually exclusive. Setting both will result in a validation error during deployment.
+
 ### Installation with Custom TLS Certificates
+
+Using a Kubernetes TLS secret (e.g., from cert-manager):
 
 ```yaml
 config:
-  sslCertName: custom-tls.crt
-  sslKeyName: custom-tls.key
-
-persistence:
-  extraVolumes:
-    - name: custom-cert
-      secret:
-        secretName: omada-custom-tls
-  extraVolumeMounts:
-    - name: custom-cert
-      mountPath: /opt/tplink/EAPController/cert
+  tlsSecretName: omada-tls-secret
 ```
+
+Or with custom certificate/key filenames:
+
+```yaml
+config:
+  tlsSecretName: omada-custom-tls
+  sslCertName: custom.crt
+  sslKeyName: custom.key
+```
+
+**Note:** The secret must be of type `kubernetes.io/tls` or contain keys matching `sslCertName` and `sslKeyName`.
 
 ### Resource-Constrained Installation
 
@@ -266,7 +300,7 @@ When using a LoadBalancer service, ensure your load balancer supports both TCP a
 ### To a newer chart version
 
 ```bash
-helm upgrade omada-controller oci://registry-1.docker.io/mbentley/omada-controller-helm --version 1.1.0
+helm upgrade omada-controller oci://registry-1.docker.io/mbentley/omada-controller-helm --version 1.1.3
 ```
 
 ### Upgrading the Application Version

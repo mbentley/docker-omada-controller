@@ -85,7 +85,11 @@ spec:
             - name: SHOW_SERVER_LOGS
               value: {{ .Values.config.showServerLogs | quote }}
             - name: SHOW_MONGODB_LOGS
+              {{- if or .Values.config.externalMongoDBUrl .Values.config.externalMongoDBUrlSecret.name }}
+              value: "false"
+              {{- else }}
               value: {{ .Values.config.showMongoDBLogs | quote }}
+              {{- end }}
             - name: SSL_CERT_NAME
               value: {{ .Values.config.sslCertName | quote }}
             - name: SSL_KEY_NAME
@@ -96,7 +100,18 @@ spec:
             - name: TLS_1_11_ENABLED
               value: "true"
             {{- end }}
-            {{- if .Values.config.externalMongoDBUrl }}
+            {{- if and .Values.config.externalMongoDBUrl .Values.config.externalMongoDBUrlSecret.name }}
+            {{- fail "config.externalMongoDBUrl and config.externalMongoDBUrlSecret are mutually exclusive. Please set only one." }}
+            {{- end }}
+            {{- if .Values.config.externalMongoDBUrlSecret.name }}
+            - name: EAP_MONGOD_URI
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.externalMongoDBUrlSecret.name }}
+                  key: {{ .Values.config.externalMongoDBUrlSecret.key }}
+            - name: MONGO_EXTERNAL
+              value: "true"
+            {{- else if .Values.config.externalMongoDBUrl }}
             - name: EAP_MONGOD_URI
               value: {{ .Values.config.externalMongoDBUrl | quote }}
             - name: MONGO_EXTERNAL
@@ -167,8 +182,13 @@ spec:
           resources:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- if or .Values.persistence.extraVolumeMounts ( or .Values.persistence.data.enabled .Values.persistence.logs.enabled ) }}
+          {{- if or .Values.config.tlsSecretName .Values.persistence.extraVolumeMounts ( or .Values.persistence.data.enabled .Values.persistence.logs.enabled ) }}
           volumeMounts:
+            {{- if .Values.config.tlsSecretName }}
+            - name: tls-cert
+              mountPath: /cert
+              readOnly: true
+            {{- end }}
             {{- with .Values.persistence.extraVolumeMounts }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
@@ -193,9 +213,17 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.persistence.extraVolumes }}
+      {{- if or .Values.config.tlsSecretName .Values.persistence.extraVolumes }}
       volumes:
+        {{- if .Values.config.tlsSecretName }}
+        - name: tls-cert
+          secret:
+            secretName: {{ .Values.config.tlsSecretName }}
+            defaultMode: 0440
+        {{- end }}
+        {{- with .Values.persistence.extraVolumes }}
         {{- toYaml . | nindent 8 }}
+        {{- end }}
       {{- end }}
   {{- if or .Values.persistence.data.enabled .Values.persistence.logs.enabled }}
   volumeClaimTemplates:
