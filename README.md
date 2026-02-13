@@ -319,6 +319,8 @@ __tl;dr__: Always make sure the environment variables for the ports match any ch
 
 If you want to change the ports of your Omada Controller to something besides the defaults, there is some unexpected behavior that the controller exhibits. There are two sets of ports: one for HTTP/HTTPS for the controller itself and another for HTTP/HTTPS for the captive portal, typically used for authentication to a guest network. The controller's set of ports, which are set by the `MANAGE_*_PORT` environment variables, can only be modified using the environment variables on the first time the controller is started. If persistent data exists, changing the controller's ports via environment variables will have no effect on the controller itself and can only be modified through the web UI. On the other hand, the portal ports will always be set to whatever has been set in the environment variables, which are set by the `PORTAL_*_PORT` environment variables.
 
+If you absolutely need to have the ports re-read from the environment variables, you can add `web.config.override=true` to the `omada.properties` file inside the container and they'll be read on next startup.
+
 ### Running Rootless
 
 There is an optional ability to run the container in a rootless mode. This version has fewer pre-flight capabilities to do tasks like set permissions for you but works in environments where running containers as root is blocked (i.e. - many Kubernetes environments). To activate the [rootless entrypoint](entrypoint-rootless.sh) the following conditions must be met:
