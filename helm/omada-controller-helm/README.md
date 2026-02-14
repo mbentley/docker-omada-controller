@@ -236,7 +236,8 @@ config:
 
 persistence:
   data:
-    enabled: false  # Data stored in external MongoDB
+    enabled: true # Data storage still required for backups and firmware with external MongoDB
+    size: 2Gi    
   logs:
     enabled: true
     size: 2Gi
@@ -300,7 +301,7 @@ When using a LoadBalancer service, ensure your load balancer supports both TCP a
 ### To a newer chart version
 
 ```bash
-helm upgrade omada-controller oci://registry-1.docker.io/mbentley/omada-controller-helm --version 1.1.3
+helm upgrade omada-controller oci://registry-1.docker.io/mbentley/omada-controller-helm --version 1.1.4
 ```
 
 ### Upgrading the Application Version

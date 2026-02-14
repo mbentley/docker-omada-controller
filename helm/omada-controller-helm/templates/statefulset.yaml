@@ -85,7 +85,7 @@ spec:
             - name: SHOW_SERVER_LOGS
               value: {{ .Values.config.showServerLogs | quote }}
             - name: SHOW_MONGODB_LOGS
-              {{- if or .Values.config.externalMongoDBUrl .Values.config.externalMongoDBUrlSecret.name }}
+              {{- if or .Values.config.externalMongoDBUrl (and .Values.config.externalMongoDBUrlSecret.name .Values.config.externalMongoDBUrlSecret.key) }}
               value: "false"
               {{- else }}
               value: {{ .Values.config.showMongoDBLogs | quote }}
@@ -100,10 +100,16 @@ spec:
             - name: TLS_1_11_ENABLED
               value: "true"
             {{- end }}
-            {{- if and .Values.config.externalMongoDBUrl .Values.config.externalMongoDBUrlSecret.name }}
+            {{- if and .Values.config.externalMongoDBUrlSecret.name (not .Values.config.externalMongoDBUrlSecret.key) }}
+            {{- fail "config.externalMongoDBUrlSecret.key is required when config.externalMongoDBUrlSecret.name is set." }}
+            {{- end }}
+            {{- if and .Values.config.externalMongoDBUrlSecret.key (not .Values.config.externalMongoDBUrlSecret.name) }}
+            {{- fail "config.externalMongoDBUrlSecret.name is required when config.externalMongoDBUrlSecret.key is set." }}
+            {{- end }}
+            {{- if and .Values.config.externalMongoDBUrl (and .Values.config.externalMongoDBUrlSecret.name .Values.config.externalMongoDBUrlSecret.key) }}
             {{- fail "config.externalMongoDBUrl and config.externalMongoDBUrlSecret are mutually exclusive. Please set only one." }}
             {{- end }}
-            {{- if .Values.config.externalMongoDBUrlSecret.name }}
+            {{- if and .Values.config.externalMongoDBUrlSecret.name .Values.config.externalMongoDBUrlSecret.key }}
             - name: EAP_MONGOD_URI
               valueFrom:
                 secretKeyRef:
