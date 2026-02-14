@@ -71,17 +71,25 @@ config:
   # and container security contexts are set to non-root user IDs.
   rootless: true
 
-  # Show MongoDB logs in the container logs
+  # Show MongoDB logs in the container logs.
+  # Note: Automatically set to false when using external MongoDB.
   showMongoDBLogs: false
 
   # Show Omada Controller server logs in the container logs
   showServerLogs: true
 
-  # SSL certificate and key file names located in the /opt/tplink/EAPController/cert folder.
-  # You can mount your own TLS secret to this folder via extraVolumes and extraVolumeMounts.
+  # SSL certificate and key file names located in the /cert folder which are used to build the keystore.
+  # You can mount your own TLS secret to this folder via extraVolumes and extraVolumeMounts,
+  # or use the tlsSecretName option below for automatic mounting.
   # It is generally simpler to use a Kubernetes Ingress resource to handle TLS termination.
   sslCertName: tls.crt
   sslKeyName: tls.key
+
+  # Name of a kubernetes.io/tls secret to automatically mount as the controller's TLS certificate.
+  # When set, the secret will be mounted to /cert in the container and the controller will use 
+  # the certificate files specified by sslCertName and sslKeyName (defaults: tls.crt/tls.key).
+  # This is compatible with cert-manager generated secrets.
+  tlsSecretName: ""
 
   # Re-enables TLS 1.0 & 1.1 if set to `true`
   tls1Enabled: false
@@ -92,7 +100,17 @@ config:
   # External MongoDB connection URL. If set, the Omada Controller will use an external
   # MongoDB instance instead of the bundled MongoDB. The URL should be in the format:
   #  mongodb://user:pass@host:port/database
+  # NOTE: This is mutually exclusive with externalMongoDBUrlSecret.
   externalMongoDBUrl: ""
+
+  # External MongoDB connection URL from a Kubernetes secret. Use this for better security
+  # practices to avoid storing credentials in values files.
+  # NOTE: This is mutually exclusive with externalMongoDBUrl.
+  externalMongoDBUrlSecret:
+    # Name of the secret containing the MongoDB URI
+    name: ""
+    # Key within the secret that contains the MongoDB URI
+    key: ""
 
 # Init containers to add to the pod. Follows the standard Kubernetes spec
 # https://kubernetes.io/docs/concepts/workloads/pods/init-containers/
