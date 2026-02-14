@@ -139,6 +139,9 @@ update_mongodb_properties() {
     # get value we want to set from the element
     END_VAL=${!ELEM}
 
+    #value with redacted password for EAP_MONGOD_URI for logs
+    END_VAL_REDACTED="$(echo "${!ELEM}" | sed -r 's/(^mongodb:\/\/[^:]*:)([^@]*)(@.*$)/\1*****\3/')"
+
     # get the current value from the omada.properties file
     STORED_PROP_VAL=$(grep -Po "(?<=${KEY}=)(.*)+" /opt/tplink/EAPController/properties/omada.properties || true)
 
@@ -149,11 +152,11 @@ update_mongodb_properties() {
     elif [ "${STORED_PROP_VAL}" != "${END_VAL}" ]
     then
       # update the key-value pair
-      echo "INFO: Setting '${KEY}' to ${END_VAL} in omada.properties"
+      echo "INFO: Setting '${KEY}' to ${END_VAL_REDACTED} in omada.properties"
       sed -i "s~^${KEY}=${STORED_PROP_VAL}$~${KEY}=${END_VAL}~g" /opt/tplink/EAPController/properties/omada.properties
     else
       # values already match; nothing to change
-      echo "INFO: Value of '${KEY}' already set to ${END_VAL} in omada.properties"
+      echo "INFO: Value of '${KEY}' already set to ${END_VAL_REDACTED} in omada.properties"
     fi
   done
 }
