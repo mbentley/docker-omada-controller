@@ -34,6 +34,7 @@ services:
       - PORT_TRANSFER_V2=29815
       - PORT_RTTY=29816
       - PORT_DEVICE_MONITOR=29817
+      - WEB_CONFIG_OVERRIDE=false
       - SHOW_SERVER_LOGS=true
       - SHOW_MONGODB_LOGS=false
       - SSL_CERT_NAME=tls.crt

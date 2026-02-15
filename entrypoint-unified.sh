@@ -34,6 +34,9 @@ setup_environment() {
   PORT_DEVICE_MONITOR="${PORT_DEVICE_MONITOR:-29817}"
   UPGRADE_HTTPS_PORT="${UPGRADE_HTTPS_PORT:-8043}"
 
+  # WEB CONFIG OVERRIDE
+  WEB_CONFIG_OVERRIDE="${WEB_CONFIG_OVERRIDE:-false}"
+
   # EXTERNAL MONGODB
   MONGO_EXTERNAL="${MONGO_EXTERNAL:-false}"
   EAP_MONGOD_URI="${EAP_MONGOD_URI:-mongodb://127.0.0.1:27217/omada}"
@@ -126,9 +129,9 @@ update_port_configuration() {
   done
 }
 
-update_mongodb_properties() {
+update_general_properties() {
   # update stored property values when different of environment defined values (works for any value)
-  for ELEM in MONGO_EXTERNAL EAP_MONGOD_URI
+  for ELEM in WEB_CONFIG_OVERRIDE MONGO_EXTERNAL EAP_MONGOD_URI
   do
     # convert element to key name
     KEY="$(echo "${ELEM}" | tr '[:upper:]' '[:lower:]' | tr '_' '.')"
@@ -660,7 +663,7 @@ common_setup_and_validation() {
   setup_directories
   print_timezone_info
   update_port_configuration
-  update_mongodb_properties
+  update_general_properties
   fix_permissions
   import_ssl_certificate
   enable_tls_1_11

@@ -14,6 +14,7 @@ The Helm chart releases do not correspond to the controller version so below is 
 
 | Controller Version | Chart Version | Change Notes |
 | ------------------ | ------------- | :------------ |
+| `6.1.0.19`         | `1.1.5`       | Add `webConfigOverride` option to force re-read of port configuration |
 | `6.1.0.19`         | `1.1.4`       | Improve secret handling and external MongoDB support |
 | `6.1.0.19`         | `1.1.3`       | Adds the ability to configure an initcontainer |
 | `6.1.0.19`         | `1.1.2`       | Fix #721; duplicate port in values.yaml |
@@ -90,6 +91,7 @@ The following table lists the configurable parameters of the Omada Controller ch
 | `config.ports.transferV2` | Device transfer port (v2) | `29815` |
 | `config.ports.rtty` | RTTY connection port | `29816` |
 | `config.ports.deviceMonitor` | Device monitoring port (Omada 6+) | `29817` |
+| `config.webConfigOverride` | Force re-read of port configuration from properties on startup | `false` |
 | `config.rootless` | Run controller in rootless mode | `true` |
 | `config.showMongoDBLogs` | Display MongoDB logs (auto-disabled with external MongoDB) | `false` |
 | `config.showServerLogs` | Display server logs in container output | `true` |
@@ -301,7 +303,7 @@ When using a LoadBalancer service, ensure your load balancer supports both TCP a
 ### To a newer chart version
 
 ```bash
-helm upgrade omada-controller oci://registry-1.docker.io/mbentley/omada-controller-helm --version 1.1.4
+helm upgrade omada-controller oci://registry-1.docker.io/mbentley/omada-controller-helm --version 1.1.5
 ```
 
 ### Upgrading the Application Version
