@@ -64,6 +64,8 @@ spec:
           value: "29816"
         - name: PORT_DEVICE_MONITOR
           value: "29817"
+        - name: WEB_CONFIG_OVERRIDE
+          value: "false"
         - name: SHOW_SERVER_LOGS
           value: "true"
         - name: SHOW_MONGODB_LOGS

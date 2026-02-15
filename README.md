@@ -319,7 +319,7 @@ __tl;dr__: Always make sure the environment variables for the ports match any ch
 
 If you want to change the ports of your Omada Controller to something besides the defaults, there is some unexpected behavior that the controller exhibits. There are two sets of ports: one for HTTP/HTTPS for the controller itself and another for HTTP/HTTPS for the captive portal, typically used for authentication to a guest network. The controller's set of ports, which are set by the `MANAGE_*_PORT` environment variables, can only be modified using the environment variables on the first time the controller is started. If persistent data exists, changing the controller's ports via environment variables will have no effect on the controller itself and can only be modified through the web UI. On the other hand, the portal ports will always be set to whatever has been set in the environment variables, which are set by the `PORTAL_*_PORT` environment variables.
 
-If you absolutely need to have the ports re-read from the environment variables, you can add `web.config.override=true` to the `omada.properties` file inside the container and they'll be read on next startup.
+If you absolutely need to have the ports re-read from the environment variables, you can set the `WEB_CONFIG_OVERRIDE` environment variable to `true` and they'll be re-read on next startup.
 
 ### Running Rootless
 
@@ -389,6 +389,7 @@ The Helm charts are published to [mbentley/omada-controller-helm](https://hub.do
 | `TLS_1_11_ENABLED` | `false` | `true`, `false` | Re-enables TLS 1.0 & 1.1 if set to `true` | >= `4.1` |
 | `TZ` | `Etc/UTC` | _\<many\>_ | See [Time Zones](#time-zones) for more detail | >= `3.2` |
 | `UPGRADE_HTTPS_PORT` | `8043` | `1024`-`65535` | Dedicated HTTPS port for upgrades, separate from the main Controller port | >= `6.1` |
+| `WEB_CONFIG_OVERRIDE` | `false` | `true`, `false` | Forces the controller to re-read port configuration from `omada.properties` on startup; see [Using non-default ports](#using-non-default-ports) | >= `5.x` |
 
 Documentation on the ports used by the controller can be found in the [TP-Link FAQ](https://support.omadanetworks.com/us/document/13090/).
 

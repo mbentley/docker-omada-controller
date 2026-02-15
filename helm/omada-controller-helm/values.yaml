@@ -67,6 +67,10 @@ config:
     # Port used for device monitoring (New in Omada 6)
     deviceMonitor: 29817
 
+  # Forces the controller to re-read port configuration from omada.properties on startup.
+  # Useful when management ports have been changed via the web UI and need to be overridden.
+  webConfigOverride: false
+
   # Configures the Omada Controller to run in rootless mode. When this is enabled, the pod
   # and container security contexts are set to non-root user IDs.
   rootless: true

@@ -80,6 +80,8 @@ spec:
               value: {{ .Values.config.ports.rtty | quote }}
             - name: PORT_DEVICE_MONITOR
               value: {{ .Values.config.ports.deviceMonitor | quote }}
+            - name: WEB_CONFIG_OVERRIDE
+              value: {{ .Values.config.webConfigOverride | quote }}
             - name: ROOTLESS
               value: {{ .Values.config.rootless | quote }}
             - name: SHOW_SERVER_LOGS
