@@ -7,6 +7,7 @@
     * [Fresh Install Example using Compose](#fresh-install-example-using-compose)
   * [Example using `--network host`](#example-using---network-host)
     * [Migration Examples using Compose](#migration-examples-using-compose)
+* [Kubernetes Deployment Guide](#kubernetes-deployment-guide)
 
 ## Common Steps
 
@@ -263,3 +264,7 @@ You should now have a working controller - check the logs and watch for proper s
 ### Migration Examples using Compose
 
 There are example compose files for migrations to an external MongoDB at [docker-compose_migration-host.yml](./docker-compose_migration-host.yml) and [docker-compose_migration-bridge.yml](./docker-compose_migration-bridge.yml) for host and bridge networking, respectively.
+
+## Kubernetes Deployment Guide
+
+For mores details on how to deploy Omada Controller with an external MongoDB database see [Kubernetes Deployment Guide](../k8s/helm/README.md).

@@ -30,6 +30,8 @@ Below, we’ll use Helm to deploy both **MongoDB** and **Omada Controller**. It 
 
 We use the Bitnami's MongoDB chart. Specific values are required in order for Omada to be able to use the database. This includes specific values for the `auth` and `initdbScripts` sections. Other recommended updates include explicitly setting persistence and resource limits configurations.
 
+Currently the Omada Controller supports MongoDB versions 3.0 through 8.0. It is recommended to use the latest MongoDB version supported by Omada or at least a version that is still maintained by [MongoDB](https://www.mongodb.com/legal/support-policy/lifecycles). The latest version of MongoDB is 8.0 and is supported till October 31, 2029. This chart defaults to the latest version of MongoDB. In the future if a newer MongoDB version is released that is not supported by Omada you maybe required to update the image tag for the MongoDB chart in order to use a version that is supported.
+
 > [!IMPORTANT]
 > Before proceeding customize the [values file](../helm/mongodb/values.yaml) with the parameters to meet your needs. No deployment will be exactly the same. Review the [official chart documentation](https://github.com/bitnami/charts/blob/main/bitnami/mongodb/README.md) for all possible values and configurations you may require.
 
@@ -53,7 +55,7 @@ Let's deploy the chart:
     kubectl create secret generic omada-db-secret \
       --from-literal=mongodb-root-password=$ROOT_PASS \
       --from-literal=mongodb-passwords=$OMADA_DB_PASS \
-      --from-literal=replica-set-key=$RS_KEY \
+      --from-literal=mongodb-replica-set-key=$RS_KEY \
       -n $NAMESPACE --dry-run=client -o yaml | kubectl apply -f -
     ```
 
@@ -76,7 +78,7 @@ Further enhancements to accessing the Omada Controller can be made by using [cer
 In this example we will use a LoadBalancer service type with no extra configurations.
 
 > [!IMPORTANT]
-> Before proceeding customize the [values file](../helm/omada-controller/values.yaml) with the parameters to meet your needs. Additional values files have been provided to demonstrate using the [Ingress](../helm/omada-controller/values-ingress.yaml) and [LoadBalancer](../helm/omada-controller/values-loadbalancer.yaml) with ExternalDNS and cert-manager configured. No deployment will be exactly the same.
+> Before proceeding customize the [values file](../helm/omada-controller/values.yaml) with the parameters to meet your needs. Additional values files have been provided to demonstrate using the [Ingress](../helm/omada-controller/values-ingress.yaml) and [LoadBalancer](../helm/omada-controller/values-loadbalancer-ssl.yaml) with ExternalDNS and cert-manager configured. No deployment will be exactly the same.
 
 Let's deploy the chart:
 
@@ -114,5 +116,5 @@ Let's deploy the chart:
     https://<LoadBalancer IP>:8043
     ```
 
-    > [!NOTE]
-    > The first time you access the Omada Controller web interface, you will need to accept the self-signed certificate.
+> [!NOTE]
+> The first time you access the Omada Controller web interface, you will need to accept the self-signed certificate.

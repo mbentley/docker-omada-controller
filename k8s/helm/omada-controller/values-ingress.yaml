@@ -1,4 +1,4 @@
-## Sample Values File Omada Controller with Ingress
+## Sample Values File Omada Controller with Nginx Ingress (or Compatible)
 #
 # Prerequisites:
 # - Namespace created for Omada Controller
@@ -7,7 +7,7 @@
 #
 
 config:
-  timezone: america/toronto
+  timezone: America/Toronto
   externalMongoDBUrlSecret:
     name: omada-db-uri-secret
     key: mongodb-uri

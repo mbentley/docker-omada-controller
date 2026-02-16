@@ -7,7 +7,7 @@
 #
 
 config:
-  timezone: america/toronto
+  timezone: America/Toronto
   tlsSecretName: omada-tls-secret
   externalMongoDBUrlSecret:
     name: omada-db-uri-secret
