@@ -1,0 +1,52 @@
+## Sample Values File Omada Controller with Ingress
+#
+# Prerequisites:
+# - Namespace created for Omada Controller
+# - Secret created named omada-db-uri-secret with the following keys:
+#   - mongodb-uri (MongoDB database connection string)
+#
+
+config:
+  timezone: america/toronto
+  externalMongoDBUrlSecret:
+    name: omada-db-uri-secret
+    key: mongodb-uri
+
+service:
+  type: ClusterIP
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    # nginx annotations for HTTPS backend communication to Omada Controller
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    # nginx annotations for HTTPS backend self signed certificate of Omada Controller
+    nginx.ingress.kubernetes.io/ssl-verify: "false"
+    # cert-manager cluster issuer
+    cert-manager.io/cluster-issuer: cloudflare-issuer
+  managementHosts:
+    - host: omada.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: omada-tls-secret
+      hosts:
+        - omada.example.com
+
+resources:
+  limits:
+    cpu: 1500m
+    memory: 2Gi
+  requests:
+    cpu: 500m
+    memory: 500Mi
+
+persistence:
+  data:
+    enabled: true
+    size: 5Gi
+  logs:
+    enabled: true
+    size: 2Gi

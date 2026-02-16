@@ -1,0 +1,53 @@
+## Sample Values File Omada Controller with LoadBalancer, SSL and ExternalDNS
+#
+# Prerequisites:
+# - Namespace created for Omada Controller
+# - Secret created named omada-db-uri-secret with the following keys:
+#   - mongodb-uri (MongoDB database connection string)
+#
+
+config:
+  timezone: america/toronto
+  tlsSecretName: omada-tls-secret
+  externalMongoDBUrlSecret:
+    name: omada-db-uri-secret
+    key: mongodb-uri
+
+service:
+  type: LoadBalancer
+  annotations:
+    # Uncomment if you want to statically assign load balancer IP
+    # metallb.universe.tf/loadBalancerIPs: 192.168.1.100
+    # Adjust to match your domain name
+    external-dns.alpha.kubernetes.io/hostname: omada.example.com
+
+resources:
+  limits:
+    cpu: 1500m
+    memory: 2Gi
+  requests:
+    cpu: 500m
+    memory: 500Mi
+
+persistence:
+  data:
+    enabled: true
+    size: 5Gi
+  logs:
+    enabled: true
+    size: 2Gi
+
+# Adjust to match your domain name and issuer name
+extraManifests:
+- |
+  apiVersion: cert-manager.io/v1
+  kind: Certificate
+  metadata:
+    name: omada-tls-cert
+  spec:
+    secretName: omada-tls-secret
+    issuerRef:
+      name: cloudflare-issuer
+      kind: ClusterIssuer
+    dnsNames:
+    - omada.example.com

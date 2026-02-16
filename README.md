@@ -16,12 +16,16 @@ For instructions on running a legacy v3 or v4 controller, see the [README for v3
     * [Explicit Version Tags](#explicit-version-tags)
     * [Tags for Beta/Testing](#tags-for-betatesting)
     * [Archived Tags](#archived-tags)
-* [Getting Help & Reporting Issues](#getting-help--reporting-issues)
+    * [Tags with Chromium](#tags-with-chromium)
+* [Getting Help \& Reporting Issues](#getting-help--reporting-issues)
 * [Best Practices for Operation](#best-practices-for-operation)
     * [Controller Backups](#controller-backups)
     * [Controller Upgrades](#controller-upgrades)
     * [Preventing Database Corruption](#preventing-database-corruption)
 * [Building Images](#building-images)
+    * [`amd64`](#amd64)
+    * [`arm64`](#arm64)
+    * [`armv7l`](#armv7l)
 * [Example Usage](#example-usage)
     * [Using `net=host`](#using-nethost)
     * [Using port mapping](#using-port-mapping)
@@ -29,6 +33,8 @@ For instructions on running a legacy v3 or v4 controller, see the [README for v3
     * [Running Rootless](#running-rootless)
     * [Using Docker Compose](#using-docker-compose)
     * [Using k8s](#using-k8s)
+      * [Kubernetes Manifests](#kubernetes-manifests)
+      * [Kubernetes Helm Chart](#kubernetes-helm-chart)
 * [Optional Environment Variables](#optional-environment-variables)
 * [Persistent Data](#persistent-data)
 * [Custom SSL Certificates](#custom-ssl-certificates)
@@ -346,15 +352,17 @@ docker compose up -d
 There are two available options for deployment to Kubernetes:
 
 * Kubernetes manifests
-* Kubernetes Helm chart
+* Kubernetes Helm chart (recommended)
 
 #### Kubernetes Manifests
 
-The example manifests are in the [k8s](./k8s) directory. It's assumed that you will know how to modify and use these manifests on k8s if you choose that as your deployment option.
+The example manifests are in the [k8s/manifests](./k8s/manifests/) directory. It's assumed that you will know how to modify and use these manifests on k8s if you choose that as your deployment option.
 
 #### Kubernetes Helm Chart
 
-The Helm charts are published to [mbentley/omada-controller-helm](https://hub.docker.com/r/mbentley/omada-controller-helm) on Docker Hub but it is also available directly [from this repo](./helm/omada-controller-helm). For a Helm release list and detailed usage instructions, check out the [Helm chart's README](https://github.com/mbentley/docker-omada-controller/blob/master/helm/omada-controller-helm/README.md).
+The Helm charts are published to [mbentley/omada-controller-helm](https://hub.docker.com/r/mbentley/omada-controller-helm) on Docker Hub but are also available directly [from this repo](./helm/omada-controller-helm). For a Helm release list and detailed usage instructions, check out the [Helm chart's README](https://github.com/mbentley/docker-omada-controller/blob/master/helm/omada-controller-helm/README.md).
+
+Examples of how to deploy a complete stack of MongoDB and Omada Controller using Helm can be found in the [k8s/helm](./k8s/helm/) directory.  Follow the [README](./k8s/helm/README.md) to get started. Review the values files to see how to configure the chart for your environment.
 
 ## Optional Environment Variables
 
