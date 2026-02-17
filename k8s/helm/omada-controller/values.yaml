@@ -1,0 +1,35 @@
+## Sample Values File for Omada Controller
+#
+# This sample will include the minimum required properties to deploy an Omada Controller with external MongoDB
+#
+# Prerequisites:
+# - Namespace created for Omada Controller
+# - Secret created named omada-db-uri-secret with the following keys:
+#   - mongodb-uri (MongoDB database connection string)
+#
+
+config:
+  externalMongoDBUrlSecret:
+    # Name of the secret containing the MongoDB URI
+    name: omada-db-uri-secret
+    # Key within the secret that contains the MongoDB URI
+    key: mongodb-uri
+
+service:
+  type: LoadBalancer
+
+resources:
+  limits:
+    cpu: 1500m
+    memory: 2Gi
+  requests:
+    cpu: 500m
+    memory: 500Mi
+
+persistence:
+  data:
+    enabled: true
+    size: 5Gi
+  logs:
+    enabled: true
+    size: 2Gi

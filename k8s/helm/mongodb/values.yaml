@@ -1,0 +1,97 @@
+## Sample Values File MongoDB External Database for Omada Controller
+#
+# This sample will include the minimum required properties to deploy a MongoDB external database for Omada Controller
+# For full details on all possible values, refer to the official chart documentation:
+# Ref: https://github.com/bitnami/charts/blob/main/bitnami/mongodb/values.yaml
+#
+# Prerequisites:
+# - Namespace created for MongoDB
+# - Secret created named omada-db-secret with the following keys:
+#   - mongodb-root-password (MongoDB root password)
+#   - mongodb-passwords (Omada Controller database user password)
+#   - mongodb-replica-set-key (MongoDB replica set key)
+#
+
+# For simplicities sake only a standalone MongoDB instance is shown
+architecture: standalone
+usePasswordFiles: true
+auth:
+  existingSecret: omada-db-secret
+  databases: ["omada"]
+  usernames: ["omada"]
+
+persistence:
+  enabled: true
+
+  # Name of the PVC and mounted volume only provide if you want to use a specific PVC name
+  # name: "omada-db-mongodb"
+
+  # Provide an existing `PersistentVolumeClaim` (only when `architecture=standalone`)
+  # If defined, PVC must be created manually before volume will be bound
+  # existingClaim: ""
+
+  # Setting it to "keep" to avoid removing PVCs during a helm delete operation.
+  # Leaving it empty will delete PVCs after the chart is deleted
+  resourcePolicy: "keep"
+
+  # PVC Storage Class for MongoDB data volume
+  # If undefined (the default) or set to null, no storageClassName spec is
+  # set, choosing the default provisioner.
+  # storageClass: "standard-nfs"
+
+  # PV Access Mode
+  accessModes:
+    - ReadWriteOnce
+
+  # PVC Storage Request for MongoDB volume
+  size: 8Gi
+
+# Note: Following parameters are only needed when deployed as StatefulSet.
+# Persistent Volume Claim Retention Policy
+# Ref: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#persistentvolumeclaim-retention
+# persistentVolumeClaimRetentionPolicy:
+#   # Enable Persistent volume retention policy for MongoDB Statefulset
+#   enabled: false
+
+#   # Volume retention behavior when the replica count of the StatefulSet is reduced
+#   whenScaled: Retain
+
+#   # Volume retention behavior that applies when the StatefulSet is deleted
+#   whenDeleted: Retain
+
+# Init script is required to enable Omada Controller to work correctly with MongoDB
+initdbScripts:
+  omada-init.js: |+
+    // Wait for MongoDB to be ready
+    while (true) {
+      try {
+        db.adminCommand({ ping: 1 });
+        break;
+      } catch (e) {
+        print("Waiting for MongoDB to be ready...");
+        sleep(1000);
+      }
+    }
+
+    // Read root credentials from environment / file
+    const rootUser = process.env.MONGODB_ROOT_USER || "root";
+    const rootPassPath = process.env.MONGODB_ROOT_PASSWORD_FILE;
+    let rootPass = process.env.MONGODB_ROOT_PASSWORD;
+
+    if (rootPassPath && typeof cat === 'function') {
+      rootPass = cat(rootPassPath).trim();
+    }
+
+    // Switch to admin and authenticate as root
+    db = db.getSiblingDB("admin");
+    db.auth(rootUser, rootPass);
+
+    // Create omada_data database and grant permissions to all omada databases
+    db.getSiblingDB('omada').grantRolesToUser("omada", [
+      { role: "readWrite", db: "omada" },
+      { role: "dbOwner", db: "omada" },
+      { role: "readWrite", db: "omada_data" },
+      { role: "dbOwner", db: "omada_data" }
+    ]);
+
+    print("Init script finished. Databases 'omada' and 'omada_data' exist and permissions are granted.");
