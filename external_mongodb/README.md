@@ -269,4 +269,4 @@ There are example compose files for migrations to an external MongoDB at [docker
 
 ## Kubernetes Deployment Guide
 
-For mores details on how to deploy Omada Controller with an external MongoDB database see [Kubernetes Deployment Guide](../k8s/helm/README.md).
+For more details on how to deploy Omada Controller with an external MongoDB database see [Kubernetes Deployment Guide](../k8s/helm/README.md).
