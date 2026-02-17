@@ -34,9 +34,11 @@ While MongoDB is fairly robust, the persistent data can become corrupt if a clea
 
 ### Notes for `armv7l`
 
-** ⚠ Deprecation and Removal Notice ⚠** - armv7l images will no longer be available starting with the v5.15.20 and later versions. See [this issue](https://github.com/mbentley/docker-omada-controller/issues/542) describing the change. The last version that will be available for `armv7l` is `5.15.8.2`.
+> [!WARNING]
+> **Deprecation and Removal Notice** - armv7l images will no longer be available starting with the v5.15.20 and later versions. See [this issue](https://github.com/mbentley/docker-omada-controller/issues/542) describing the change. The last version that will be available for `armv7l` is `5.15.8.2`.
 
-**tl;dr** - Do not run the Omada Controller on your `armv7l`/`armhf` (32 bit arm) based operating system! If you're running as Raspberry Pi 3, 4, Pi Zero 2W, you should [run a 64 bit operating system](https://www.raspberrypi.com/news/raspberry-pi-os-64-bit/) so you can use the `arm64` image which is supported. At any time, TP-Link can break compatibility with 32 bit arm and there will be no upgrade path forward! You have been warned!
+> [!WARNING]
+> Do not run the Omada Controller on your `armv7l`/`armhf` (32 bit arm) based operating system! If you're running as Raspberry Pi 3, 4, Pi Zero 2W, you should [run a 64 bit operating system](https://www.raspberrypi.com/news/raspberry-pi-os-64-bit/) so you can use the `arm64` image which is supported. At any time, TP-Link can break compatibility with 32 bit arm and there will be no upgrade path forward! You have been warned!
 
 #### Unsupported Base Image for `armv7l`
 
@@ -98,13 +100,17 @@ Upon upgrade to 5.14, the controller may not start. You may see error messages t
 
 ### 5.15.6.x - Controller Unable to Start
 
-**Warning**: do **NOT** use this override environment variable unless you need it. It may cause unexpected issues in the future. Remove the environment variable if you're no longer running on 5.15.6.x. Upon upgrade to 5.15.6.x, the controller may not start. You may see error messages right around the `Valid radius server keystore is missing. Generating one ...` message that include phrases like: `Exception in thread "main" java.lang.NoSuchFieldError: id_alg_zlibCompress` among others. This is a problem with the controller software itself that TP-Link is aware of. If you're impacted, see the first post in [this issue](https://github.com/mbentley/docker-omada-controller/issues/509) for more information. An environment variable can be set as `WORKAROUND_509=true` on the container definition and it will delete two library files that are causing the issue.
+> [!CAUTION]
+> Do **NOT** use this override environment variable unless you need it. It may cause unexpected issues in the future. Remove the environment variable if you're no longer running on 5.15.6.x.
+
+Upon upgrade to 5.15.6.x, the controller may not start. You may see error messages right around the `Valid radius server keystore is missing. Generating one ...` message that include phrases like: `Exception in thread "main" java.lang.NoSuchFieldError: id_alg_zlibCompress` among others. This is a problem with the controller software itself that TP-Link is aware of. If you're impacted, see the first post in [this issue](https://github.com/mbentley/docker-omada-controller/issues/509) for more information. An environment variable can be set as `WORKAROUND_509=true` on the container definition and it will delete two library files that are causing the issue.
 
 ## Your system does not support AVX or armv8.2-a
 
 In order to run v6 Omada Controller using the images I publish, you will need to be able to run MongoDB 8 but unfortunately MongoDB does not run on older CPUs if they lack specific instructions or features. There are options which will allow you to run v6 of the controller but longer term, I would suggest upgrading your system to support these instruction sets or features required but I understand that means financial investment.
 
-**Proxmox users**: if your host's CPU supports AVX, you may need to select a new virtual CPU model that exposes the instruction set to the underlying VM. Please see [this post](https://forum.proxmox.com/threads/cpu-with-avx-support.146138/post-716615) on the Proxmox forum.
+> [!TIP]
+> **Proxmox users**: if your host's CPU supports AVX, you may need to select a new virtual CPU model that exposes the instruction set to the underlying VM. Please see [this post](https://forum.proxmox.com/threads/cpu-with-avx-support.146138/post-716615) on the Proxmox forum.
 
 ### Clean Installs
 

@@ -1,10 +1,12 @@
 # MongoDB Upgrade from 3.6 to 8.0
 
-**Warning**: MongoDB versions 5 and above require specific CPU features/capabilities: AVX for amd64 CPUs and armv8.2-a for arm64 CPUs. The upgrade script will check for compatibility. For more information about your options to still be able to upgrade to v6, see the [known issues](../KNOWN_ISSUES.md#your-system-does-not-support-avx-or-armv82-a). Also for Proxmox users, you may need to explicitly expose the AVX instruction set. Check out the [known issues](../KNOWN_ISSUES.md#your-system-does-not-support-avx-or-armv82-a) for instructions.
+> [!WARNING]
+> MongoDB versions 5 and above require specific CPU features/capabilities: AVX for amd64 CPUs and armv8.2-a for arm64 CPUs. The upgrade script will check for compatibility. For more information about your options to still be able to upgrade to v6, see the [known issues](../KNOWN_ISSUES.md#your-system-does-not-support-avx-or-armv82-a). Also for Proxmox users, you may need to explicitly expose the AVX instruction set. Check out the [known issues](../KNOWN_ISSUES.md#your-system-does-not-support-avx-or-armv82-a) for instructions.
 
 ## About the Upgrade Process
 
-**Note**: if you're not comfortable running the upgrade, you may want to consider doing a controller migration through the controller or by taking a backup through your v5 controller and setting up a brand new controller then restoring your backup config file. Refer to TP-Link's documentation for how these features work.
+> [!TIP]
+> If you're not comfortable running the upgrade, you may want to consider doing a controller migration through the controller or by taking a backup through your v5 controller and setting up a brand new controller then restoring your backup config file. Refer to TP-Link's documentation for how these features work.
 
 The upgrade container  will upgrade MongoDB 3.6 to 8.0. MongoDB must do step upgrades as there is no process that allows you to jump significant versions so it must be done in steps. To make this easier, I have created a special container image which contains all of the MongoDB versions required for the upgrade. The upgrade images can be found in two varieties - multi-arch and specific architectures. Almost everyone should be able to run the multi-arch image and Docker will automatically pull the correct version but just in case, I've tagged images for each architecture. Simply replace the image tag as desired. The images are:
 
@@ -28,7 +30,8 @@ Now for some details about the upgrade script you should know about:
 
 ## Execute the Upgrade
 
-**Note**: Most people should just use the images from Docker Hub and use the multi-arch tag which will automatically use the correct image for your architecture. If you build the images on your own, update the tag accordingly.
+> [!NOTE]
+> Most people should just use the images from Docker Hub and use the multi-arch tag which will automatically use the correct image for your architecture. If you build the images on your own, update the tag accordingly.
 
 If the upgrade fails, you can re-run the upgrade, adding the environment variable `DEBUG=true` so that you get additional information from the upgrade script to provide in a help discussion.
 
