@@ -245,7 +245,8 @@ persistence:
     size: 2Gi
 ```
 
-**Note:** `externalMongoDBUrlSecret` and `externalMongoDBUrl` are mutually exclusive. Setting both will result in a validation error during deployment.
+> [!IMPORTANT]
+> `externalMongoDBUrlSecret` and `externalMongoDBUrl` are mutually exclusive. Setting both will result in a validation error during deployment.
 
 ### Installation with Custom TLS Certificates
 
@@ -265,7 +266,8 @@ config:
   sslKeyName: custom.key
 ```
 
-**Note:** The secret must be of type `kubernetes.io/tls` or contain keys matching `sslCertName` and `sslKeyName`.
+> [!NOTE]
+> The secret must be of type `kubernetes.io/tls` or contain keys matching `sslCertName` and `sslKeyName`.
 
 ### Resource-Constrained Installation
 

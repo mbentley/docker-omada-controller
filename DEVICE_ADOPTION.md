@@ -1,6 +1,7 @@
 # Device Adoption with Bridge Network Mode
 
-**Intended Audience**: These instructions are targeted at users who are running the controller using "bridged" networking (with ports exposed) as the controller and devices being adopted need special configuration or you will end up with devices adoption failures. If you're running in host mode or using advanced networking capabilities like using a macvlan network, you should not need to follow these instructions.
+> [!NOTE]
+> **Intended Audience**: These instructions are targeted at users who are running the controller using "bridged" networking (with ports exposed) as the controller and devices being adopted need special configuration or you will end up with devices adoption failures. If you're running in host mode or using advanced networking capabilities like using a macvlan network, you should not need to follow these instructions.
 
 Most of what is found in this document can be found in this [TP-Link FAQ](https://www.tp-link.com/us/support/faq/4100/) on adopting devices across layer 3 networks. When you're running a controller in a container using bridged network mode, the controller has a private IP address that is not going to be accessible from your actual network. So if you do not configure your device being adopted to inform it of the controller's IP address or hostname, the controller will tell the device being adopted that it is available on an IP address on the internal Docker bridge network which isn't accessible from the device being adopted.
 

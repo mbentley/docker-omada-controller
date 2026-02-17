@@ -2,7 +2,8 @@
 
 Docker image for [TP-Link Omada Software Controller](https://support.omadanetworks.com/us/product/omada-software-controller/) (also known as TP-Link Omada Network Application) to centrally manage [TP-Link Omada Hardware](https://www.omadanetworks.com/en/business-networking/all-omada/).
 
-**Disclaimer**: I am not, in any way, affiliated with TP-Link. I am just a community member who has packaged TP-Link's free software as a Docker image for easier management and consumption.
+> [!NOTE]
+> **Disclaimer**: I am not, in any way, affiliated with TP-Link. I am just a community member who has packaged TP-Link's free software as a Docker image for easier management and consumption.
 
 For instructions on running a legacy v3 or v4 controller, see the [README for v3 and v4](README_v3_and_v4.md). See the tag [archive_v3_v4](https://github.com/mbentley/docker-omada-controller/releases/tag/archive_v3_v4) for a snapshot of the code that includes the v3 and v4 artifacts as they have been removed as of July 2, 2024.
 
@@ -115,7 +116,8 @@ There are three main options for upgrading from v5 to v6:
 
 This upgrade guide will focus on using the MongoDB upgrade container. The native controller migration and backup & restore procedures are using built in controller capabilities so you should follow TP-Link documentation but those details are out of scope of this guide.
 
-**Note**: The upgrade requires a manual step of a MongoDB upgrade which is automated but it has to be run as a separate container while the controller is **stopped**.
+> [!IMPORTANT]
+> The upgrade requires a manual step of a MongoDB upgrade which is automated but it has to be run as a separate container while the controller is **stopped**.
 
 There are a few reasons for the manual upgrade:
 
@@ -164,7 +166,8 @@ These are multi-arch tags. For the full tag listings, see the Docker Hub tags ab
 
 ## Archived Tags
 
-:warning: **Warning** :warning: Do **NOT** run the `armv7l` (32 bit) images. Upgrade your operating system to `arm64` (64 bit) unless you accept that you're running an outdated MongoDB, a base operating system with unpatched vulnerabilities, an old version of Java, and a controller that will never be upgraded beyond `5.15.8.2`! See the [Known Issues readme](KNOWN_ISSUES.md#notes-for-armv7l) for more information.
+> [!WARNING]
+> Do **NOT** run the `armv7l` (32 bit) images. Upgrade your operating system to `arm64` (64 bit) unless you accept that you're running an outdated MongoDB, a base operating system with unpatched vulnerabilities, an old version of Java, and a controller that will never be upgraded beyond `5.15.8.2`! See the [Known Issues readme](KNOWN_ISSUES.md#notes-for-armv7l) for more information.
 
 These images are still published on Docker Hub but are no longer regularly updated due to the controller software no longer being updated. **Use with extreme caution as these images are likely to contain unpatched security vulnerabilities!**. See [Archived Tags for v3 and v4](README_v3_and_v4.md#archived-tags) for details on the old, unmaintained image tags.
 
@@ -258,7 +261,8 @@ There are some differences between the build steps for `amd64`, `arm64`, and `ar
 
 ### `armv7l`
 
-  **Warning**: the `armv7l` version was deprecated and support has been removed for versions beyond `5.15.8.2`.
+  > [!WARNING]
+  > The `armv7l` version was deprecated and support has been removed for versions beyond `5.15.8.2`.
 
   Both the `ARCH` and `BASE` build-args are required
 
@@ -298,7 +302,8 @@ docker run -d \
 
 When is comes to device management, using port mapping is more complex than using host networking as your devices need to be informed of the controller's IP or hostname. For instructions on how to configure your device for adoption, see [the device adoption readme](./DEVICE_ADOPTION.md). If you do not follow these instructions, it is highly likely that new devices will fail to adopt!
 
-__Warning__: If you want to change the controller ports from the default mappings, you *absolutely must* update the port binding inside the container via the environment variables. The ports exposed must match what is inside the container. The Omada Controller software expects that the ports are the same inside the container and outside and will load a blank page if that is not done. See [#99](https://github.com/mbentley/docker-omada-controller/issues/99#issuecomment-821243857) for details and and example of the behavior.
+> [!WARNING]
+> If you want to change the controller ports from the default mappings, you *absolutely must* update the port binding inside the container via the environment variables. The ports exposed must match what is inside the container. The Omada Controller software expects that the ports are the same inside the container and outside and will load a blank page if that is not done. See [#99](https://github.com/mbentley/docker-omada-controller/issues/99#issuecomment-821243857) for details and and example of the behavior.
 
 ```bash
 docker run -d \
@@ -321,7 +326,8 @@ docker run -d \
 
 ### Using non-default ports
 
-__tl;dr__: Always make sure the environment variables for the ports match any changes you have made in the web UI and you'll be fine.
+> [!TIP]
+> tl;dr - Always make sure the environment variables for the ports match any changes you have made in the web UI and you'll be fine.
 
 If you want to change the ports of your Omada Controller to something besides the defaults, there is some unexpected behavior that the controller exhibits. There are two sets of ports: one for HTTP/HTTPS for the controller itself and another for HTTP/HTTPS for the captive portal, typically used for authentication to a guest network. The controller's set of ports, which are set by the `MANAGE_*_PORT` environment variables, can only be modified using the environment variables on the first time the controller is started. If persistent data exists, changing the controller's ports via environment variables will have no effect on the controller itself and can only be modified through the web UI. On the other hand, the portal ports will always be set to whatever has been set in the environment variables, which are set by the `PORTAL_*_PORT` environment variables.
 
@@ -339,7 +345,7 @@ There is an optional ability to run the container in a rootless mode. This versi
 
 ### Using Docker Compose
 
-There are a few Docker Compose files available that can serve as a guide if you want to use compose to managed the lifecycle of your container. Depending on which network mode of operation you want to use, there are example for each: [host networking](https://github.com/mbentley/docker-omada-controller/blob/master/docker-compose.yml) or [bridge/port mapping](https://github.com/mbentley/docker-omada-controller/blob/master/docker-compose_bridge.yml).
+There are a few Docker Compose files available that can serve as a guide if you want to use compose to managed the lifecycle of your container. Depending on which network mode of operation you want to use, there are example for each: [host networking](./docker-compose.yml) or [bridge/port mapping](./docker-compose_bridge.yml).
 
 ```bash
 <download the compose file you wish to use>
@@ -356,7 +362,7 @@ There are two available options for deployment to Kubernetes:
 
 #### Kubernetes Helm Chart
 
-The Helm charts are published to [mbentley/omada-controller-helm](https://hub.docker.com/r/mbentley/omada-controller-helm) on Docker Hub but are also available directly [from this repo](./helm/omada-controller-helm). For a Helm release list and detailed usage instructions, check out the [Helm chart's README](https://github.com/mbentley/docker-omada-controller/blob/master/helm/omada-controller-helm/README.md).
+The Helm charts are published to [mbentley/omada-controller-helm](https://hub.docker.com/r/mbentley/omada-controller-helm) on Docker Hub but are also available directly [from this repo](./helm/omada-controller-helm). For a Helm release list and detailed usage instructions, check out the [Helm chart's README](./helm/omada-controller-helm/README.md).
 
 Examples of how to deploy a complete stack of MongoDB and Omada Controller using Helm can be found in the [k8s/helm](./k8s/helm/) directory.  Follow the [README](./k8s/helm/README.md) to get started. Review the values files to see how to configure the chart for your environment.
 
@@ -409,7 +415,8 @@ In the examples, there are two directories where persistent data is stored: `dat
 
 By default, Omada software uses self-signed certificates. If however you want to use custom certificates you can mount them into the container as `/cert/tls.key` and `/cert/tls.crt`. The `tls.crt` file needs to include the full chain of certificates, i.e. cert, intermediate cert(s) and CA cert. This is compatible with kubernetes TLS secrets. Entrypoint script will convert them into Java Keystore used by jetty inside the Omada SW. If you need to use different file names, you can customize them by passing values for `SSL_CERT_NAME` and `SSL_KEY_NAME` as seen above in the [Optional Environment Variables](#optional-environment-variables) section.
 
-**Warning** - As of the version 4.1, certificates can also be installed through the web UI. You should not attempt to mix certificate management methods as installing certificates via the UI will store the certificates in MongoDB and then the `/cert` volume method will cease to function. If you installed certificates using the UI and want to revert this - see [this discussion](https://github.com/mbentley/docker-omada-controller/discussions/527).
+> [!WARNING]
+> As of the version 4.1, certificates can also be installed through the web UI. You should not attempt to mix certificate management methods as installing certificates via the UI will store the certificates in MongoDB and then the `/cert` volume method will cease to function. If you installed certificates using the UI and want to revert this - see [this discussion](https://github.com/mbentley/docker-omada-controller/discussions/527).
 
 ## Time Zones
 

@@ -65,7 +65,8 @@ You can optionally build a Docker image without MongoDB using the `NO_MONGODB=tr
     docker network create -d bridge omada
     ```
 
-    **Note**: If you're using host or macvlan networking, you obviously do not need to create a bridge but you should take care to make MongoDB listen on localhost so it's not wide open to your network.
+    > [!NOTE]
+    > If you're using host or macvlan networking, you obviously do not need to create a bridge but you should take care to make MongoDB listen on localhost so it's not wide open to your network.
 
 ## MongoDB + Omada Controller (fresh install)
 
@@ -170,7 +171,8 @@ docker run -d \
     * Update the UID/GID to match what you run your controller as - this example uses the defaults
     * Take note of the overridden CMD - we need to set the path to where the existing persistent data lives
 
-    **Note**: this uses `mongo:3` because you otherwise have to perform an upgrade which is currently outside of the scope of this guide.
+    > [!NOTE]
+    > This uses `mongo:3` because you otherwise have to perform an upgrade which is currently outside of the scope of this guide.
 
     ```bash
     docker run -d \
