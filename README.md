@@ -20,6 +20,7 @@ For instructions on running a legacy v3 or v4 controller, see the [README for v3
         * [Tags with Chromium](#tags-with-chromium)
 * [Getting Help \& Reporting Issues](#getting-help--reporting-issues)
 * [Best Practices for Operation](#best-practices-for-operation)
+    * [Container Resource Constraints](#container-resource-constraints)
     * [Controller Backups](#controller-backups)
     * [Controller Upgrades](#controller-upgrades)
     * [Preventing Database Corruption](#preventing-database-corruption)
@@ -208,6 +209,10 @@ If you have issues running the controller, feel free to [create a Help discussio
 
 ## Best Practices for Operation
 
+### Container Resource Constraints
+
+In order to ensure that the container does not attempt to use excessive amounts of CPU or memory, it is strongly suggested that you set resource constraints on your container. The examples do not specifically have those set as the values you set may depend on your system's available resources. A safe starting point, which I personally use, is the `docker run...` equivalent of `--cpus 2 --memory 4g --memory-swap 5g`. Adapt this for whatever method you use whether it's `docker run...`, `docker compose`, k8s manifests, or the Helm chart.
+
 ### Controller Backups
 
 While you can take backups of your controller by making a copy of the persistent data, the chance of data corruption exists if you do so while the container is running as there is a database used for persistence. The best way to take backups is to use the automatic backup capabilities within the controller itself. Go to `Settings` > `Maintenance` > `Backup` and scroll down to `Auto Backup` to enable and configure the feature. These backups can be restored as a part of the installation process on a clean controller install. If you do not see `Settings` > `Maintenance`, you may be drilled down into a sites' configuration. Make sure you're in the Global view as settings that impact the controller as a whole, like backups, are in that Global view.
@@ -278,6 +283,10 @@ There are some differences between the build steps for `amd64`, `arm64`, and `ar
 </details>
 
 ## Example Usage
+
+> [!NOTE]
+> Regardless of how you run the container, I would strongly recommend adding CPU and memory limits for the container. See the section on [Container Resource Constraints](#container-resource-constraints) in the Best Practices for Operation section of the documentation.
+
 
 These example below are based on `docker run...` commands. See [Using Docker Compose](#using-docker-compose) for compose examples or [Using k8s](#using-k8s) for example k8s manifests. See [Optional Environment Variables](#optional-environment-variables) for details on the environment variables that can modify the behavior of the controller inside the container. To run this Docker image and keep persistent data in named volumes:
 
