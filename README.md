@@ -335,12 +335,18 @@ docker run -d \
 
 ### Using non-default ports
 
+> [!WARNING]
+> In most cases, overriding the default port numbers using environment variables mostly ONLY works the first time the container is started by default. After the database is initialized, the controller app reads the port configuration from the database and any modification of the ports through the controller's web interface will also be persisted to the database as well. If you wish to modify the ports using the environment variables on subsequent container startups, you must also set the `WEB_CONFIG_OVERRIDE` environment variable to `true` and they'll be re-read on next startup.
+
 > [!TIP]
-> tl;dr - Always make sure the environment variables for the ports match any changes you have made in the web UI and you'll be fine.
+> tl;dr - If you make changes to the ports via the web UI, you should update the environment variables to match as well, just to be safe as there are some odd quirks to how the ports are read.
 
-If you want to change the ports of your Omada Controller to something besides the defaults, there is some unexpected behavior that the controller exhibits. There are two sets of ports: one for HTTP/HTTPS for the controller itself and another for HTTP/HTTPS for the captive portal, typically used for authentication to a guest network. The controller's set of ports, which are set by the `MANAGE_*_PORT` environment variables, can only be modified using the environment variables on the first time the controller is started. If persistent data exists, changing the controller's ports via environment variables will have no effect on the controller itself and can only be modified through the web UI. On the other hand, the portal ports will always be set to whatever has been set in the environment variables, which are set by the `PORTAL_*_PORT` environment variables.
+There are two sets of ports for the main controller (not including the specific ports used for a variety of management functions; see the [Optional Environment Variables](#optional-environment-variables) section for full details on those):
 
-If you absolutely need to have the ports re-read from the environment variables, you can set the `WEB_CONFIG_OVERRIDE` environment variable to `true` and they'll be re-read on next startup.
+* One set for HTTP/HTTPS for the controller itself
+    * The controller's set of ports, which are set by the `MANAGE_*_PORT` environment variables, can only be modified using the environment variables on the first time the controller is started. If persistent data exists, changing the controller's ports via environment variables will have no effect on the controller itself and can only be modified through the web UI.
+* Another set for HTTP/HTTPS for the captive portal, typically used for authentication to a guest network
+    * The portal ports will always be set to whatever has been set in the environment variables, which are set by the `PORTAL_*_PORT` environment variables.
 
 ### Running Rootless
 
