@@ -213,6 +213,8 @@ If you have issues running the controller, feel free to [create a Help discussio
 
 In order to ensure that the container does not attempt to use excessive amounts of CPU or memory, it is strongly suggested that you set resource constraints on your container. The examples do not specifically have those set as the values you set may depend on your system's available resources. A safe starting point, which I personally use, is the `docker run...` equivalent of `--cpus 2 --memory 4g --memory-swap 5g`. Adapt this for whatever method you use whether it's `docker run...`, `docker compose`, k8s manifests, or the Helm chart.
 
+If you wish to modify the default JVM arguments of `-Xms128m -Xmx1024m` to something else, you can do so by utilizing the `_JAVA_OPTIONS` environment variable. See the [Low Resource Systems](KNOWN_ISSUES.md#low-resource-systems) section of the known issues for more details.
+
 ### Controller Backups
 
 While you can take backups of your controller by making a copy of the persistent data, the chance of data corruption exists if you do so while the container is running as there is a database used for persistence. The best way to take backups is to use the automatic backup capabilities within the controller itself. Go to `Settings` > `Maintenance` > `Backup` and scroll down to `Auto Backup` to enable and configure the feature. These backups can be restored as a part of the installation process on a clean controller install. If you do not see `Settings` > `Maintenance`, you may be drilled down into a sites' configuration. Make sure you're in the Global view as settings that impact the controller as a whole, like backups, are in that Global view.
@@ -287,7 +289,6 @@ There are some differences between the build steps for `amd64`, `arm64`, and `ar
 > [!NOTE]
 > Regardless of how you run the container, I would strongly recommend adding CPU and memory limits for the container. See the section on [Container Resource Constraints](#container-resource-constraints) in the Best Practices for Operation section of the documentation.
 
-
 These example below are based on `docker run...` commands. See [Using Docker Compose](#using-docker-compose) for compose examples or [Using k8s](#using-k8s) for example k8s manifests. See [Optional Environment Variables](#optional-environment-variables) for details on the environment variables that can modify the behavior of the controller inside the container. To run this Docker image and keep persistent data in named volumes:
 
 ### Using `net=host`
@@ -338,15 +339,15 @@ docker run -d \
 > [!WARNING]
 > In most cases, overriding the default port numbers using environment variables mostly ONLY works the first time the container is started by default. After the database is initialized, the controller app reads the port configuration from the database and any modification of the ports through the controller's web interface will also be persisted to the database as well. If you wish to modify the ports using the environment variables on subsequent container startups, you must also set the `WEB_CONFIG_OVERRIDE` environment variable to `true` and they'll be re-read on next startup.
 
-> [!TIP]
-> tl;dr - If you make changes to the ports via the web UI, you should update the environment variables to match as well, just to be safe as there are some odd quirks to how the ports are read.
-
 There are two sets of ports for the main controller (not including the specific ports used for a variety of management functions; see the [Optional Environment Variables](#optional-environment-variables) section for full details on those):
 
 * One set for HTTP/HTTPS for the controller itself
     * The controller's set of ports, which are set by the `MANAGE_*_PORT` environment variables, can only be modified using the environment variables on the first time the controller is started. If persistent data exists, changing the controller's ports via environment variables will have no effect on the controller itself and can only be modified through the web UI.
 * Another set for HTTP/HTTPS for the captive portal, typically used for authentication to a guest network
     * The portal ports will always be set to whatever has been set in the environment variables, which are set by the `PORTAL_*_PORT` environment variables.
+
+> [!TIP]
+> If you make changes to the ports via the web UI, you should update the environment variables to match as well, just to be safe as there are some odd quirks to how the ports are read.
 
 ### Running Rootless
 
