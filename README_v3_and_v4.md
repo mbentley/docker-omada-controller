@@ -24,7 +24,7 @@ This README is the consolidation of information from the v3 and v4 images which 
 ## Image Tags
 
 > [!WARNING]
-> Do **NOT** run the `armv7l` (32 bit) images. Upgrade your operating system to `arm64` (64 bit) unless you accept that you're running an outdated MongoDB and a base operating system with unpatched vulnerabilities! See the [Known Issues readme](KNOWN_ISSUES.md#notes-for-armv7l) for more information.
+> Do **NOT** run the `armv7l` (32 bit) images. Upgrade your operating system to `arm64` (64 bit) unless you accept that you're running an outdated MongoDB and a base operating system with unpatched vulnerabilities! See the [Known Issues section](README.md#notes-for-armv7l) for more information.
 
 ## Archived Tags
 

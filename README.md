@@ -9,6 +9,7 @@ For instructions on running a legacy v3 or v4 controller, see the [README for v3
 
 ## Table of Contents
 
+* [Getting Help \& Reporting Issues](#getting-help--reporting-issues)
 * [Quickstart Guide](#quickstart-guide)
 * [v5 to v6 Upgrade Guide](#v5-to-v6-upgrade-guide)
 * [Image Tags](#image-tags)
@@ -18,7 +19,6 @@ For instructions on running a legacy v3 or v4 controller, see the [README for v3
     * [Tags for Beta/Testing](#tags-for-betatesting)
     * [Archived Tags](#archived-tags)
         * [Tags with Chromium](#tags-with-chromium)
-* [Getting Help \& Reporting Issues](#getting-help--reporting-issues)
 * [Best Practices for Operation](#best-practices-for-operation)
     * [Container Resource Constraints](#container-resource-constraints)
     * [Controller Backups](#controller-backups)
@@ -43,23 +43,30 @@ For instructions on running a legacy v3 or v4 controller, see the [README for v3
 * [Time Zones](#time-zones)
 * [Unprivileged Ports](#unprivileged-ports)
 * [Omada Controller API Documentation](#omada-controller-api-documentation)
-* [Known Issues](KNOWN_ISSUES.md#known-issues)
-    * [Controller Software Issues](KNOWN_ISSUES.md#controller-software-issues)
-        * [Devices Fail to Adopt](KNOWN_ISSUES.md#devices-fail-to-adopt)
-    * [Containerization Issues](KNOWN_ISSUES.md#containerization-issues)
-        * [MongoDB Corruption](KNOWN_ISSUES.md#mongodb-corruption)
-        * [Notes for `armv7l`](KNOWN_ISSUES.md#notes-for-armv7l)
-            * [:warning: Unsupported Base Image for `armv7l`](KNOWN_ISSUES.md#unsupported-base-image-for-armv7l)
-            * [:warning: Unsupported MongoDB](KNOWN_ISSUES.md#unsupported-mongodb)
-        * [Low Resource Systems](KNOWN_ISSUES.md#low-resource-systems)
-        * [Mismatched Userland and Kernel](KNOWN_ISSUES.md#mismatched-userland-and-kernel)
-    * [Upgrade Issues](KNOWN_ISSUES.md#upgrade-issues)
-        * [5.8 - 404s and Blank Pages](KNOWN_ISSUES.md#58---404s-and-blank-pages)
-        * [Incorrect CMD](KNOWN_ISSUES.md#incorrect-cmd)
-        * [5.12 - Unable to Login After Upgrade](KNOWN_ISSUES.md#512---unable-to-login-after-upgrade)
-        * [Slowness in Safari](KNOWN_ISSUES.md#slowness-in-safari)
-        * [5.14 - Controller Unable to Start](KNOWN_ISSUES.md#514---controller-unable-to-start)
-        * [5.15 - Controller Unable to Start](KNOWN_ISSUES.md#515---controller-unable-to-start)
+* [Known Issues](#known-issues)
+    * [Controller Software Issues](#controller-software-issues)
+        * [Devices Fail to Adopt](#devices-fail-to-adopt)
+    * [Containerization Issues](#containerization-issues)
+        * [MongoDB Corruption](#mongodb-corruption)
+        * [Notes for `armv7l`](#notes-for-armv7l)
+            * [:warning: Unsupported Base Image for `armv7l`](#unsupported-base-image-for-armv7l)
+            * [:warning: Unsupported MongoDB](#unsupported-mongodb)
+        * [Low Resource Systems](#low-resource-systems)
+        * [Mismatched Userland and Kernel](#mismatched-userland-and-kernel)
+    * [Upgrade Issues](#upgrade-issues)
+        * [5.8 - 404s and Blank Pages](#58---404s-and-blank-pages)
+        * [Incorrect CMD](#incorrect-cmd)
+        * [5.12 - Unable to Login After Upgrade](#512---unable-to-login-after-upgrade)
+        * [Slowness in Safari](#slowness-in-safari)
+        * [5.14 - Controller Unable to Start](#514---controller-unable-to-start)
+        * [5.15.6.x - Controller Unable to Start](#5156x---controller-unable-to-start)
+    * [Your system does not support AVX or armv8.2-a](#your-system-does-not-support-avx-or-armv82-a)
+        * [Clean Installs](#clean-installs)
+        * [Upgrades](#upgrades)
+
+## Getting Help & Reporting Issues
+
+If you have issues running the controller, feel free to [create a Help discussion](https://github.com/mbentley/docker-omada-controller/discussions/categories/help) and I will help as I can. If you are specifically having a problem that is related to the actual software, I would suggest filing an issue on the [TP-Link community forums](https://community.tp-link.com/en/business/forum/582) or [contacting TP-Link's support team](https://www.tp-link.com/en/support/) as I do not have access to source code to debug those issues. If you're not sure where the problem might be, I can help determine if it is a running in Docker issue or a software issue. If you're certain you have found a bug, create a [Bug Report Issue](https://github.com/mbentley/docker-omada-controller/issues/new/choose).
 
 ## Quickstart Guide
 
@@ -70,7 +77,7 @@ If you don't know much about Docker or want to just get started as easily as pos
 1. **Verifying your CPU supports the required features for v6 of the image and above**
     * Due to the MongoDB 8 system requirements, specific CPU features are required to run v6 of the controller image and above.
     * Included in this repo is a shell script ([mongodb8_cpu_support_check.sh](./mongodb8_cpu_support_check.sh)) which can be executed to test for the required CPU features
-    * If this script indicates that your CPU is not supported, check out the [KNOWN ISSUES section on this for clean installs](./KNOWN_ISSUES.md#clean-install) for how you can proceed with the v6 controller image.
+    * If this script indicates that your CPU is not supported, check out the [KNOWN ISSUES section on this for clean installs](#clean-installs) for how you can proceed with the v6 controller image.
 1. **Picking an image tag**
     * `major` version tagged - For people who want to set it and forget it (i.e. - if you are used to just using `latest`), there is also the major tag version (i.e. - `5`, `6`, etc) which should be mostly safe from non-breaking changes.
     * `major.minor` version tagged - Most people will want to use a major.minor tag version (i.e. - `6.1`) as this is the safest option and can almost certainly be considered to be non-breaking when a new version of the image is available.
@@ -168,7 +175,7 @@ These are multi-arch tags. For the full tag listings, see the Docker Hub tags ab
 ## Archived Tags
 
 > [!WARNING]
-> Do **NOT** run the `armv7l` (32 bit) images. Upgrade your operating system to `arm64` (64 bit) unless you accept that you're running an outdated MongoDB, a base operating system with unpatched vulnerabilities, an old version of Java, and a controller that will never be upgraded beyond `5.15.8.2`! See the [Known Issues readme](KNOWN_ISSUES.md#notes-for-armv7l) for more information.
+> Do **NOT** run the `armv7l` (32 bit) images. Upgrade your operating system to `arm64` (64 bit) unless you accept that you're running an outdated MongoDB, a base operating system with unpatched vulnerabilities, an old version of Java, and a controller that will never be upgraded beyond `5.15.8.2`! See the [Known Issues section](#notes-for-armv7l) for more information.
 
 These images are still published on Docker Hub but are no longer regularly updated due to the controller software no longer being updated. **Use with extreme caution as these images are likely to contain unpatched security vulnerabilities!**. See [Archived Tags for v3 and v4](README_v3_and_v4.md#archived-tags) for details on the old, unmaintained image tags.
 
@@ -203,17 +210,13 @@ These images are still published on Docker Hub but are no longer regularly updat
 
 Going forward, Chromium is no longer required as of 5.14. If you were using a Chromium tag, go back to a normal tag. All reports should now either by CSV or XLSX format.
 
-## Getting Help & Reporting Issues
-
-If you have issues running the controller, feel free to [create a Help discussion](https://github.com/mbentley/docker-omada-controller/discussions/categories/help) and I will help as I can. If you are specifically having a problem that is related to the actual software, I would suggest filing an issue on the [TP-Link community forums](https://community.tp-link.com/en/business/forum/582) or [contacting TP-Link's support team](https://www.tp-link.com/en/support/) as I do not have access to source code to debug those issues. If you're not sure where the problem might be, I can help determine if it is a running in Docker issue or a software issue. If you're certain you have found a bug, create a [Bug Report Issue](https://github.com/mbentley/docker-omada-controller/issues/new/choose).
-
 ## Best Practices for Operation
 
 ### Container Resource Constraints
 
 In order to ensure that the container does not attempt to use excessive amounts of CPU or memory, it is strongly suggested that you set resource constraints on your container. The examples do not specifically have those set as the values you set may depend on your system's available resources. A safe starting point, which I personally use, is the `docker run...` equivalent of `--cpus 2 --memory 4g --memory-swap 5g`. Adapt this for whatever method you use whether it's `docker run...`, `docker compose`, k8s manifests, or the Helm chart.
 
-If you wish to modify the default JVM arguments of `-Xms128m -Xmx1024m` to something else, you can do so by utilizing the `_JAVA_OPTIONS` environment variable. See the [Low Resource Systems](KNOWN_ISSUES.md#low-resource-systems) section of the known issues for more details.
+If you wish to modify the default JVM arguments of `-Xms128m -Xmx1024m` to something else, you can do so by utilizing the `_JAVA_OPTIONS` environment variable. See the [Low Resource Systems](#low-resource-systems) section of the known issues for more details.
 
 ### Controller Backups
 
@@ -448,4 +451,103 @@ If you are interested in using the Omada Controller APIs to retrieve data from t
 
 ## Known Issues
 
-See [the Known Issues](KNOWN_ISSUES.md) documentation for details.
+### Controller Software Issues
+
+#### Devices Fail to Adopt
+
+Users who are using `bridge` mode often report that routers, switches, and EAPs fail to adopt. This is due to the controller being technically being on a different network inside the container's bridge network, exporting the ports via NAT. Using port mapping is more complex than using host networking as your devices need to be informed of the controller's IP or hostname. See [the device adoption docs](./DEVICE_ADOPTION.md) for instructions on how to configure this on your device(s) prior to attempting to adopt them.
+
+### Containerization Issues
+
+#### MongoDB Corruption
+
+While MongoDB is fairly robust, the persistent data can become corrupt if a clean shutdown isn't performed. By default, Docker only waits 10 seconds before killing the container processes when using `docker stop...`. I would **highly recommend** performing a stop with a large timeout value, such as `docker stop -t 30...` to ensure that the controller is cleanly shut down. This value may need to be even larger for low powered devices, such as a Raspberry Pi.
+
+#### Notes for `armv7l`
+
+> [!WARNING]
+> **Deprecation and Removal Notice** - armv7l images will no longer be available starting with the v5.15.20 and later versions. See [this issue](https://github.com/mbentley/docker-omada-controller/issues/542) describing the change. The last version that will be available for `armv7l` is `5.15.8.2`.
+>
+> Do not run the Omada Controller on your `armv7l`/`armhf` (32 bit arm) based operating system! If you're running as Raspberry Pi 3, 4, Pi Zero 2W, you should [run a 64 bit operating system](https://www.raspberrypi.com/news/raspberry-pi-os-64-bit/) so you can use the `arm64` image which is supported. At any time, TP-Link can break compatibility with 32 bit arm and there will be no upgrade path forward! You have been warned!
+
+##### Unsupported Base Image for `armv7l`
+
+All `armv7l` images are based on Ubuntu 16.04 due to the lack of packaging for MongoDB in newer Ubuntu releases. Ubuntu 16.04 is end of general support so security patches aren't regularly being released. I would highly recommend not using the `armv7l` images unless you have no other alternative and accept the security risk. If you are running a Raspberry Pi, I might suggest looking into running an `arm64` based operating system if your system supports it (the [Raspberry Pi 3 and above do](https://www.raspberrypi.com/news/raspberry-pi-os-64-bit/))
+
+##### Unsupported MongoDB
+
+The `armv7l` architecture is 32 bit and MongoDB is no longer available as a pre-compiled binary in Ubuntu, this means that the `armv7l` images are running version `2.6.10` of MongoDB. This may lead to unexpected behavior as TP-Link states Omada Controller version 4.1.x and newer require at least MongoDB `3.0.15` or newer, depending on which version of the controller you're running. For the `armv7l` architecture, I will continue to include those in the builds until they stop working as I can't guarantee that an update will not actually require a newer MongoDB feature that isn't available.
+
+#### Low Resource Systems
+
+Systems such as Raspberry Pis may not have sufficient memory to run with the default memory settings of this image. If you system only has 1 GB of RAM, I would highly recommend adjusting the Xmx arguments. This can be done by one of two ways:
+
+1. Setting the `_JAVA_OPTIONS` environment variable; for example, `_JAVA_OPTIONS="-Xms128m -Xmx768m"`.  This will not modify the parameter so tools like `ps` will still show the original value but this variable takes priority over the CLI args.
+1. Overriding the `CMD` [as seen in this issue here](https://github.com/mbentley/docker-omada-controller/issues/198#issuecomment-1100485810).
+
+Changing these values would be necessary on these low resource systems to prevent the operating system from killing the container due to it thinking it can allocate more memory than it should. The controller process may still actually functionally require more memory so your mileage may vary in terms of the impact of running on such a low resource system.
+
+#### Mismatched Userland and Kernel
+
+If a Raspberry Pi 4 is running a 32 bit version of Raspberry Pi OS, a [recent firmware update](https://github.com/raspberrypi/firmware/issues/1795) has intentionally made it so the default kernel the Pi will boot from has been switched from 32 bit kernel to a 64 bit kernel. This is a problem for the running container because the version of MongoDB that is present in the `armv7l` image (also known as `armhf`), will fail to start on a 64 bit kernel. Most software tends to run fine when switching kernels but in this case, it will prevent the controller from running due to MongoDB failing to start. Please also review the [Notes for armv7l](#notes-for-armv7l) to also understand the risks for running the `armv7l` based controller!
+
+To fix this issue in the short term, you will want to instruct your Pi to boot from a 32 bit kernel instead of the 64 bit kernel by:
+
+1. Adding `arm_64bit=0` to the `/boot/config.txt` file
+1. Rebooting the device
+
+A proper long term solution would be to reinstall Raspberry Pi OS on your Pi 4 and use the new `arm64` based operating system which will get you a 64 bit userland and a 64 bit kernel. There are [significant known issues](#notes-for-armv7l) while running the `armv7l` image on a device so longer term, this is the best solution.
+
+### Upgrade Issues
+
+#### 5.8 - 404s and Blank Pages
+
+It has been reported that a number of users are seeing 404s or blank pages after upgrading to version 5.8. This can be resolved by either force-reloading the page or by clearing your browser's cache.
+
+#### Incorrect CMD
+
+It has been reported that users of some NAS devices such as a Synology or users of a Docker management UI like Portainer have had issues with upgrades due to the CMD being retained between versions. This normally does not happen with the Docker command line so it is a bit of an unexpected pattern but it can not be overwritten as it exists outside of the container.
+
+If updating from 3.x to 4.x or 4.x to 5.x, make sure to **completely** re-create the container (leaving your persistent data intact) otherwise the controller will not start. This is due to the CMD changing between the major releases as some web interfaces like Synology or Portainer retain the entrypoint and command explicitly instead of inheriting it from the image. To resolve the issue, do one of the following:
+
+* Re-create the container - remove the container, keeping your persistent data and create it again using whatever method you used to originally create it.
+* Update the CMD (command is all on one line):
+    * 4.x to 5.x - `/usr/bin/java -server -Xms128m -Xmx1024m -XX:MaxHeapFreeRatio=60 -XX:MinHeapFreeRatio=30 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/opt/tplink/EAPController/logs/java_heapdump.hprof -Djava.awt.headless=true -cp /opt/tplink/EAPController/lib/*::/opt/tplink/EAPController/properties: com.tplink.smb.omada.starter.OmadaLinuxMain`
+
+It should be noted that users of 3.x who wish to upgrade to 4.x must perform [specific upgrade steps](#upgrading-to-41-from-3210-or-below) to prevent data loss!
+
+#### 5.12 - Unable to Login After Upgrade
+
+There is a [known bug](https://github.com/mbentley/docker-omada-controller/discussions/344#discussioncomment-7104908) in the controller software where a user is not able to login with their local user after upgrading to 5.12.x. This has been [reported to TP-Link](https://community.tp-link.com/en/business/forum/topic/623942) but a fix has not yet been provided.
+
+#### Slowness in Safari
+
+In versions 5.8 to 5.12, it has been seen where Safari will take a significant amount of time to completely load a page in the controller web interface.  This is an [issue that has been reported upstream](https://community.tp-link.com/en/business/forum/topic/619304?replyId=1255404).
+
+#### 5.14 - Controller Unable to Start
+
+Upon upgrade to 5.14, the controller may not start. You may see error messages that include phrases like: `Cannot retry start up springboot`, `Unsatisfied dependency expressed through field...`, `org.springframework.beans.factory.UnsatisfiedDependencyException`, among others. This is a problem with the controller software itself that TP-Link is aware of. If you're impacted, see the first post in [this issue](https://github.com/mbentley/docker-omada-controller/issues/418) for possible workaround instructions and more information. This issue should no longer be present on the latest 5.14 versions.
+
+#### 5.15.6.x - Controller Unable to Start
+
+> [!CAUTION]
+> Do **NOT** use this override environment variable unless you need it. It may cause unexpected issues in the future. Remove the environment variable if you're no longer running on 5.15.6.x.
+
+Upon upgrade to 5.15.6.x, the controller may not start. You may see error messages right around the `Valid radius server keystore is missing. Generating one ...` message that include phrases like: `Exception in thread "main" java.lang.NoSuchFieldError: id_alg_zlibCompress` among others. This is a problem with the controller software itself that TP-Link is aware of. If you're impacted, see the first post in [this issue](https://github.com/mbentley/docker-omada-controller/issues/509) for more information. An environment variable can be set as `WORKAROUND_509=true` on the container definition and it will delete two library files that are causing the issue.
+
+### Your system does not support AVX or armv8.2-a
+
+In order to run v6 Omada Controller using the images I publish, you will need to be able to run MongoDB 8 but unfortunately MongoDB does not run on older CPUs if they lack specific instructions or features. There are options which will allow you to run v6 of the controller but longer term, I would suggest upgrading your system to support these instruction sets or features required but I understand that means financial investment.
+
+> [!TIP]
+> **Proxmox users**: if your host's CPU supports AVX, you may need to select a new virtual CPU model that exposes the instruction set to the underlying VM. Please see [this post](https://forum.proxmox.com/threads/cpu-with-avx-support.146138/post-716615) on the Proxmox forum.
+
+#### Clean Installs
+
+For a clean install where you do not have proper CPU support, you can run MongoDB externally. See the [external MongoDB fresh install section](./external_mongodb#mongodb--omada-controller-fresh-install) for instructions on how to do so.
+
+#### Upgrades
+
+When upgrading the controller to v6, you need to upgrade MongoDB from v3 to v8. Details about the migration process can be found in [mongodb_upgrade](./mongodb_upgrade#about-the-upgrade-process) but if you're here, it's probably because one of these two checks for AVX (amd64) or armv8.2-a (arm64) have failed when you attempted to upgrade, meaning that your CPU is not supported. The quick way to get your controller back up and running is to move back to the v5 image as a failed upgrade will not have modified any of your data and you can start your v5 controller container back up and be running just fine.
+
+Longer term, you may want to upgrade to v6 but you still can't just upgrade because you're stuck with a CPU that doesn't have the required capabilities to support a modern MongoDB. This can be achieved by running MongoDB external to the Omada Controller application. If you're ready to try to migrate from the all in one deployment to separate MongoDB and Omada Controller containers, check out the [Migration from All in One](./external_mongodb#migration-from-all-in-one) instructions. As always, make sure that you take a backup before you do anything like this as I am sure you do before all upgrades, right?

@@ -257,7 +257,7 @@ case "${ARCH}" in
     if ! grep -qE '^flags.* avx( .*|$)' /proc/cpuinfo
     then
       echo -e "\nERROR: your system does not support AVX which is a requirement for MongoDB starting with 5.x; you will not be able to upgrade MongoDB"
-      echo "  See https://github.com/mbentley/docker-omada-controller/blob/master/KNOWN_ISSUES.md#your-system-does-not-support-avx-or-armv82-a for details on what exactly this means and your upgrade options"
+      echo "  See https://github.com/mbentley/docker-omada-controller/blob/master/README.md#your-system-does-not-support-avx-or-armv82-a for details on what exactly this means and your upgrade options"
       exit 1
     fi
     ;;
@@ -270,7 +270,7 @@ case "${ARCH}" in
     then
       # failed armv8.2-a test
       echo -e "\nERROR: your system does not support the armv8.2-a or later microarchitecture which is a requirement for MongoDB starting with 5.x; you will not be able to upgrade MongoDB"
-      echo "  See https://github.com/mbentley/docker-omada-controller/blob/master/KNOWN_ISSUES.md#your-system-does-not-support-avx-or-armv82-a for details on what exactly this means and your upgrade options"
+      echo "  See https://github.com/mbentley/docker-omada-controller/blob/master/README.md#your-system-does-not-support-avx-or-armv82-a for details on what exactly this means and your upgrade options"
       exit 1
     fi
     ;;

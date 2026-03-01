@@ -229,7 +229,7 @@ check_old_cmd() {
   then
     echo -e "\n############################"
     echo "WARN: CMD from 4.x detected!  It is likely that this container will fail to start properly with a \"Could not find or load main class com.tplink.omada.start.OmadaLinuxMain\" error!"
-    echo "  See the note on old CMDs at https://github.com/mbentley/docker-omada-controller/blob/master/KNOWN_ISSUES.md#upgrade-issues for details on why and how to resolve the issue."
+    echo "  See the note on old CMDs at https://github.com/mbentley/docker-omada-controller/blob/master/README.md#upgrade-issues for details on why and how to resolve the issue."
     echo -e "############################\n"
   fi
 }
@@ -289,7 +289,7 @@ check_cpu_features() {
         if ! grep -qE '^flags.* avx( .*|$)' /proc/cpuinfo
         then
           echo -e "\nERROR: your system does not support AVX which is a requirement for the v6 and above container image as it only ships with MongoDB 8"
-          echo "  See https://github.com/mbentley/docker-omada-controller/blob/master/KNOWN_ISSUES.md#your-system-does-not-support-avx-or-armv82-a for details on what exactly this means and how you can address this"
+          echo "  See https://github.com/mbentley/docker-omada-controller/blob/master/README.md#your-system-does-not-support-avx-or-armv82-a for details on what exactly this means and how you can address this"
           exit 1
         fi
         ;;
@@ -302,7 +302,7 @@ check_cpu_features() {
         then
           # failed armv8.2-a test
           echo -e "\nERROR: your system does not support the armv8.2-a or later microarchitecture which is a requirement for the v6 and above container image as it only ships with MongoDB 8"
-          echo "  See https://github.com/mbentley/docker-omada-controller/blob/master/KNOWN_ISSUES.md#your-system-does-not-support-avx-or-armv82-a for details on what exactly this means and how you can address this"
+          echo "  See https://github.com/mbentley/docker-omada-controller/blob/master/README.md#your-system-does-not-support-avx-or-armv82-a for details on what exactly this means and how you can address this"
           exit 1
         fi
         ;;
@@ -376,7 +376,7 @@ check_userland_kernel() {
     echo "##############################################################################"
     echo "##############################################################################"
     echo "ERROR: 32 bit userspace with 64 bit kernel detected!  MongoDB will NOT start!"
-    echo "  See https://github.com/mbentley/docker-omada-controller/blob/master/KNOWN_ISSUES.md#mismatched-userland-and-kernel for how to fix the issue"
+    echo "  See https://github.com/mbentley/docker-omada-controller/blob/master/README.md#mismatched-userland-and-kernel for how to fix the issue"
     echo "##############################################################################"
     echo "##############################################################################"
 

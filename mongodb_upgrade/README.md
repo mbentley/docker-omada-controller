@@ -1,7 +1,7 @@
 # MongoDB Upgrade from 3.6 to 8.0
 
 > [!WARNING]
-> MongoDB versions 5 and above require specific CPU features/capabilities: AVX for amd64 CPUs and armv8.2-a for arm64 CPUs. The upgrade script will check for compatibility. For more information about your options to still be able to upgrade to v6, see the [known issues](../KNOWN_ISSUES.md#your-system-does-not-support-avx-or-armv82-a). Also for Proxmox users, you may need to explicitly expose the AVX instruction set. Check out the [known issues](../KNOWN_ISSUES.md#your-system-does-not-support-avx-or-armv82-a) for instructions.
+> MongoDB versions 5 and above require specific CPU features/capabilities: AVX for amd64 CPUs and armv8.2-a for arm64 CPUs. The upgrade script will check for compatibility. For more information about your options to still be able to upgrade to v6, see the [known issues](../README.md#your-system-does-not-support-avx-or-armv82-a). Also for Proxmox users, you may need to explicitly expose the AVX instruction set. Check out the [known issues](../README.md#your-system-does-not-support-avx-or-armv82-a) for instructions.
 
 ## About the Upgrade Process
 
