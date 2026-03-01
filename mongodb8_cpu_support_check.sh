@@ -12,7 +12,7 @@ case "${ARCH}" in
     if ! grep -qE '^flags.* avx( .*|$)' /proc/cpuinfo
     then
       echo "ERROR: your system does not support AVX which is a requirement for the v6 and above container image as it only ships with MongoDB 8"
-      echo "  See https://github.com/mbentley/docker-omada-controller/blob/master/KNOWN_ISSUES.md#your-system-does-not-support-avx-or-armv82-a for details on what exactly this means and how you can address this"
+      echo "  See https://github.com/mbentley/docker-omada-controller/blob/master/README.md#your-system-does-not-support-avx-or-armv82-a for details on what exactly this means and how you can address this"
       exit 1
     else
       echo "INFO: AVX support detected; v6 of the controller image (MongoDB 8) should run on your system!"
@@ -27,7 +27,7 @@ case "${ARCH}" in
     then
       # failed armv8.2-a test
       echo "ERROR: your system does not support the armv8.2-a or later microarchitecture which is a requirement for the v6 and above container image as it only ships with MongoDB 8"
-      echo "  See https://github.com/mbentley/docker-omada-controller/blob/master/KNOWN_ISSUES.md#your-system-does-not-support-avx-or-armv82-a for details on what exactly this means and how you can address this"
+      echo "  See https://github.com/mbentley/docker-omada-controller/blob/master/README.md#your-system-does-not-support-avx-or-armv82-a for details on what exactly this means and how you can address this"
       exit 1
     else
       echo "INFO: armv8.2-a and above CPU features detected; v6 of the controller image (MongoDB 8) should run on your system!"
