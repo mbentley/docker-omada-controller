@@ -393,6 +393,7 @@ The example manifests are in the [k8s/manifests](./k8s/manifests/) directory. It
 
 | Variable | Default | Values | Description | Valid For |
 | :------- | :------ | :----: | :---------- | :-------: |
+| `_JAVA_OPTIONS` | _null_ | _any valid JVM args_ | Overrides the default JVM memory arguments (e.g. `-Xms128m -Xmx1024m`); takes priority over CLI args without modifying them; see [Low Resource Systems](#low-resource-systems) for more details | >= `3.2` |
 | `EAP_MONGOD_URI` | _null_ | `mongodb://user:pass@1.2.3.4:27017/omada` | Used to specify the URI of MongoDB when running it external to the controller container | >= `5.x` |
 | `MANAGE_HTTP_PORT` | `8088` | `1024`-`65535` | Management portal HTTP port; for ports < 1024, see [Unprivileged Ports](#unprivileged-ports) | >= `3.2` |
 | `MANAGE_HTTPS_PORT` | `8043` | `1024`-`65535` | Management portal HTTPS port; for ports < 1024, see [Unprivileged Ports](#unprivileged-ports) | >= `3.2` |
