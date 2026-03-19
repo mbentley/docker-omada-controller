@@ -141,6 +141,9 @@ If you tried to run the v6 controller without doing the upgrade, see [HELP! My C
 
 For every version at any given point in time, there are many different tags: `major`, `major.minor`, and a full `major.minor.patch.build` tag. For guidance on what image tag you should use, check out the _Picking an image tag_ section of the [quickstart guide](#quickstart-guide) above but the gist of it is that most people will want to use either a `major` or `major.minor` version tag.
 
+> [!IMPORTANT]
+> The `latest` tag still points to the latest v5 version of the software even thought v6 is available. This will not change in the future as I am deprecating the use of the `latest` tag due to the inability for me to perform a migration for v5 to v6 without manual user intervention and not wanting to break anyone's controller who is using an auto-update mechanism. Review the quickstart guide on tag versions to understand the tagging methodology or review the version tables below.
+
 ### Multi-arch Tags
 
 For a full tag list, search the [Docker Hub tags list](https://hub.docker.com/r/mbentley/omada-controller/tags). The following tags have multi-arch support for `amd64` and `arm64` and will automatically pull the correct tag based on your system's architecture:
