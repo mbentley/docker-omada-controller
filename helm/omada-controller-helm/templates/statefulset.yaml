@@ -136,6 +136,11 @@ spec:
             - name: manage-http
               containerPort: {{ .Values.config.ports.manageHttp }}
               protocol: TCP
+            {{- if ne .Values.config.ports.upgradeHttps .Values.config.ports.manageHttps }}
+            - name: upgrade-https
+              containerPort: {{ .Values.config.ports.upgradeHttps }}
+              protocol: TCP
+            {{- end }}
             - name: portal-https
               containerPort: {{ .Values.config.ports.portalHttps }}
               protocol: TCP
