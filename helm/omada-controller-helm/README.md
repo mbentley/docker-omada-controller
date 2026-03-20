@@ -14,6 +14,7 @@ The Helm chart releases do not correspond to the controller version so below is 
 
 | Controller Version | Chart Version | Change Notes |
 | ------------------ | ------------- | :------------ |
+| `6.1.0.19`         | `1.1.6`       | Add `upgradeHttps` port to service if it doesn't equal the `manageHttps` port |
 | `6.1.0.19`         | `1.1.5`       | Add `webConfigOverride` option to force re-read of port configuration |
 | `6.1.0.19`         | `1.1.4`       | Improve secret handling and external MongoDB support |
 | `6.1.0.19`         | `1.1.3`       | Adds the ability to configure an initcontainer |
@@ -291,7 +292,7 @@ persistence:
 
 The Omada Controller requires several ports to be accessible for proper operation:
 
-- **8043/TCP** - HTTPS management portal (primary interface)
+- **8043/TCP** - HTTPS management portal and Device Firmware Upgrades (primary interface)
 - **8088/TCP** - HTTP management portal
 - **8843/TCP** - HTTPS captive portal
 - **27001/UDP** - Omada app discovery

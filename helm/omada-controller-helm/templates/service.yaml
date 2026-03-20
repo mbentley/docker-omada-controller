@@ -28,6 +28,11 @@ spec:
     port: {{ .Values.config.ports.portalHttp }}
     targetPort: portal-http
   {{- end }}
+  {{- if ne .Values.config.ports.upgradeHttps .Values.config.ports.manageHttps }}
+  - name: upgrade-https
+    port: {{ .Values.config.ports.upgradeHttps }}
+    targetPort: upgrade-https
+  {{- end }}
   - name: app-discovery
     port: {{ .Values.config.ports.appDiscovery }}
     targetPort: app-discovery
