@@ -168,8 +168,8 @@ These are multi-arch tags. For the full tag listings, see the Docker Hub tags ab
 
 | Tag(s) | Major.Minor Release | Current Version |
 | :----- | ------------------- | --------------- |
-| `beta`, `beta-6.2`, `beta-6.2.0.15` | `6.2.x` Beta | `6.2.0.15` |
-| `beta-openj9`, `beta-6.2-openj9`, `beta-6.2.0.15-openj9` | `6.2.x` Beta w/OpenJ9 | `6.2.0.15` |
+| `beta`, `beta-6.2`, `beta-6.2.10.9` | `6.2.x` Beta | `6.2.10.9` |
+| `beta-openj9`, `beta-6.2-openj9`, `beta-6.2.10.9-openj9` | `6.2.x` Beta w/OpenJ9 | `6.2.10.9` |
 | --- | --- | --- |
 | `6-openj9`, `6.1-openj9`, `6.1.0.19-openj9` | `6.1.x` w/OpenJ9 | `6.1.0.19` |
 | `6.0-openj9`, `6.0.0.25-openj9` | `6.0.x` w/OpenJ9 | `6.0.0.25` |
