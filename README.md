@@ -14,6 +14,8 @@ For instructions on running a legacy v3 or v4 controller, see the [README for v3
 * [v5 to v6 Upgrade Guide](#v5-to-v6-upgrade-guide)
 * [Image Tags](#image-tags)
     * [Multi-arch Tags](#multi-arch-tags)
+        * [OpenJDK](#openjdk)
+        * [OpenJ9](#openj9)
     * [Explicit Architecture Tags](#explicit-architecture-tags)
     * [Explicit Version Tags](#explicit-version-tags)
     * [Tags for Beta/Testing](#tags-for-betatesting)
@@ -80,7 +82,7 @@ If you don't know much about Docker or want to just get started as easily as pos
     * If this script indicates that your CPU is not supported, check out the [KNOWN ISSUES section on this for clean installs](#clean-installs) for how you can proceed with the v6 controller image.
 1. **Picking an image tag**
     * `major` version tagged - For people who want to set it and forget it (i.e. - if you are used to just using `latest`), there is also the major tag version (i.e. - `5`, `6`, etc) which should be mostly safe from non-breaking changes.
-    * `major.minor` version tagged - Most people will want to use a major.minor tag version (i.e. - `6.1`) as this is the safest option and can almost certainly be considered to be non-breaking when a new version of the image is available.
+    * `major.minor` version tagged - Most people will want to use a major.minor tag version (i.e. - `6.2`) as this is the safest option and can almost certainly be considered to be non-breaking when a new version of the image is available.
     * **USING THE `latest` TAG IS A BAD IDEA - DO NOT DO IT!** Using `latest` with software like this is not a good idea because you may upgrade to a version that your devices do not support and TP-Link can put in breaking changes at any time! Instead, use one of the two tag types above.
     * ~~If you need to create PDF reports from the controller, there are [tags with Chromium](#tags-with-chromium) as that is required to generate them. Those images are much larger and only available for `amd64` so only use them if you really need that functionality.~~ Reports are now CSV and XLSX so they do not require Chromium.
 1. **Picking your networking mode**
@@ -95,11 +97,11 @@ If you don't know much about Docker or want to just get started as easily as pos
     * There are several ways to run your controller container:
         * [docker run...](#example-usage)
             * Examples for both host (_preferred_) and bridge network modes
-            * Uses the latest major.minor (i.e. - `6.1`) tag
+            * Uses the latest major.minor (i.e. - `6.2`) tag
             * Only requires Docker to be set up
         * [docker compose](#using-docker-compose)
             * Examples for both host (_preferred_) and bridge network modes
-            * Uses the latest major.minor (i.e. - `6.1`) tag
+            * Uses the latest major.minor (i.e. - `6.2`) tag
             * Requires Docker and [Docker Compose](https://docs.docker.com/compose/) to be set up
         * [k8s](#using-k8s)
             * Deployment is k8s is an advanced topic; only use this if you know what you are doing and can support yourself.
@@ -146,13 +148,32 @@ For every version at any given point in time, there are many different tags: `ma
 
 ### Multi-arch Tags
 
-For a full tag list, search the [Docker Hub tags list](https://hub.docker.com/r/mbentley/omada-controller/tags). The following tags have multi-arch support for `amd64` and `arm64` and will automatically pull the correct tag based on your system's architecture:
+For a full tag list, search the [Docker Hub tags list](https://hub.docker.com/r/mbentley/omada-controller/tags). The following tags have multi-arch support for `amd64` and `arm64` and will automatically pull the correct tag based on your system's architecture.
+
+#### OpenJDK
+
+These are builds with the standard OpenJDK JVM.
 
 | Tag(s) | Major.Minor Release | Current Version |
 | :----- | ------------------- | --------------- |
-| `6`, `6.1` | `6.1.x` | `6.1.0.19` |
+| `6`, `6.2` | `6.2.x` | `6.2.0.17` |
+| `6.1` | `6.1.x` | `6.1.0.19` |
 | `6.0` | `6.0.x` | `6.0.0.25` |
 | `latest`, `5`, `5.15` | `5.15.x` | `5.15.24.19` |
+
+#### OpenJ9
+
+These are builds with [OpenJ9](https://eclipse.dev/openj9/); an alternative to the standard OpenJDK JVM implementation. OpenJ9 is optimized for low memory footprint and fast startup time.
+
+> [!NOTE]
+> Work on optimizing the OpenJ9 builds is still ongoing but you will likely see a reduced memory footprint so these builds are ideal for situations where memory usage is more of a concern.
+
+| Tag(s) | Major.Minor Release | Current Version |
+| :----- | ------------------- | --------------- |
+| `6-openj9`, `6.2-openj9`, `6.2.0.17-openj9` | `6.2.x` | `6.2.0.17` |
+| `6.1-openj9`, `6.1.0.19-openj9` | `6.1.x` | `6.1.0.19` |
+| `6.0-openj9`, `6.0.0.25-openj9` | `6.0.x` | `6.0.0.25` |
+| `5.15-openj9`, `5.15.24.19-openj9` | `5.15.x` | `5.15.24.19` |
 
 ### Explicit Architecture Tags
 
@@ -160,7 +181,7 @@ If for some reason you can't use the multi-arch tags, there are explicitly tagge
 
 ### Explicit Version Tags
 
-If you need a specific version of the controller, starting with 5.13 and 5.14, there are explicitly tagged images with the exact version (i.e. - `6.1.0.19`) in the tag name. Check [Docker Hub](https://hub.docker.com/r/mbentley/omada-controller/tags) for the full list of tags.
+If you need a specific version of the controller, starting with 5.13 and 5.14, there are explicitly tagged images with the exact version (i.e. - `6.2.0.17`) in the tag name. Check [Docker Hub](https://hub.docker.com/r/mbentley/omada-controller/tags) for the full list of tags.
 
 ### Tags for Beta/Testing
 
@@ -170,10 +191,6 @@ These are multi-arch tags. For the full tag listings, see the Docker Hub tags ab
 | :----- | ------------------- | --------------- |
 | `beta`, `beta-6.2`, `beta-6.2.10.9` | `6.2.x` Beta | `6.2.10.9` |
 | `beta-openj9`, `beta-6.2-openj9`, `beta-6.2.10.9-openj9` | `6.2.x` Beta w/OpenJ9 | `6.2.10.9` |
-| --- | --- | --- |
-| `6-openj9`, `6.1-openj9`, `6.1.0.19-openj9` | `6.1.x` w/OpenJ9 | `6.1.0.19` |
-| `6.0-openj9`, `6.0.0.25-openj9` | `6.0.x` w/OpenJ9 | `6.0.0.25` |
-| `5.15-openj9`, `5.15.24.19-openj9` | `5.15.x` w/OpenJ9 | `5.15.24.19` |
 
 ## Archived Tags
 
@@ -253,10 +270,10 @@ There are some differences between the build steps for `amd64`, `arm64`, and `ar
   ```
   docker build \
     --build-arg BASE=mbentley/ubuntu:24.04 \
-    --build-arg INSTALL_VER="6.1.0.19" \
+    --build-arg INSTALL_VER="6.2.0.17" \
     --build-arg ARCH="amd64" \
     -f Dockerfile \
-    -t mbentley/omada-controller:6.1-amd64 .
+    -t mbentley/omada-controller:6.2-amd64 .
   ```
 
 ### `arm64`
@@ -266,10 +283,10 @@ There are some differences between the build steps for `amd64`, `arm64`, and `ar
   ```
   docker build \
     --build-arg BASE=mbentley/ubuntu:24.04 \
-    --build-arg INSTALL_VER="6.1.0.19" \
+    --build-arg INSTALL_VER="6.2.0.17" \
     --build-arg ARCH="arm64" \
     -f Dockerfile \
-    -t mbentley/omada-controller:6.1-arm64 .
+    -t mbentley/omada-controller:6.2-arm64 .
   ```
 
 ### `armv7l`
@@ -311,7 +328,7 @@ docker run -d \
   -e TZ=Etc/UTC \
   -v omada-data:/opt/tplink/EAPController/data \
   -v omada-logs:/opt/tplink/EAPController/logs \
-  mbentley/omada-controller:6.1
+  mbentley/omada-controller:6.2
 ```
 
 ### Using port mapping
@@ -337,7 +354,7 @@ docker run -d \
   -e TZ=Etc/UTC \
   -v omada-data:/opt/tplink/EAPController/data \
   -v omada-logs:/opt/tplink/EAPController/logs \
-  mbentley/omada-controller:6.1
+  mbentley/omada-controller:6.2
 ```
 
 ### Using non-default ports
