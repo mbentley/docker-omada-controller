@@ -14,6 +14,7 @@ The Helm chart releases do not correspond to the controller version so below is 
 
 | Controller Version | Chart Version | Change Notes |
 | ------------------ | ------------- | :------------ |
+| `6.2.0.17`         | `1.2.0`       | Update to version 6.2.0.17 |
 | `6.1.0.19`         | `1.1.6`       | Add `upgradeHttps` port to service if it doesn't equal the `manageHttps` port |
 | `6.1.0.19`         | `1.1.5`       | Add `webConfigOverride` option to force re-read of port configuration |
 | `6.1.0.19`         | `1.1.4`       | Improve secret handling and external MongoDB support |
@@ -240,7 +241,7 @@ config:
 persistence:
   data:
     enabled: true # Data storage still required for backups and firmware with external MongoDB
-    size: 2Gi    
+    size: 2Gi
   logs:
     enabled: true
     size: 2Gi
@@ -306,7 +307,7 @@ When using a LoadBalancer service, ensure your load balancer supports both TCP a
 ### To a newer chart version
 
 ```bash
-helm upgrade omada-controller oci://registry-1.docker.io/mbentley/omada-controller-helm --version 1.1.5
+helm upgrade omada-controller oci://registry-1.docker.io/mbentley/omada-controller-helm --version 1.2.0
 ```
 
 ### Upgrading the Application Version
