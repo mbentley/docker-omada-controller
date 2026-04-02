@@ -14,6 +14,8 @@ For instructions on running a legacy v3 or v4 controller, see the [README for v3
 * [v5 to v6 Upgrade Guide](#v5-to-v6-upgrade-guide)
 * [Image Tags](#image-tags)
     * [Multi-arch Tags](#multi-arch-tags)
+        * [OpenJDK](#openjdk)
+        * [OpenJ9](#openj9)
     * [Explicit Architecture Tags](#explicit-architecture-tags)
     * [Explicit Version Tags](#explicit-version-tags)
     * [Tags for Beta/Testing](#tags-for-betatesting)
@@ -146,7 +148,11 @@ For every version at any given point in time, there are many different tags: `ma
 
 ### Multi-arch Tags
 
-For a full tag list, search the [Docker Hub tags list](https://hub.docker.com/r/mbentley/omada-controller/tags). The following tags have multi-arch support for `amd64` and `arm64` and will automatically pull the correct tag based on your system's architecture:
+For a full tag list, search the [Docker Hub tags list](https://hub.docker.com/r/mbentley/omada-controller/tags). The following tags have multi-arch support for `amd64` and `arm64` and will automatically pull the correct tag based on your system's architecture.
+
+#### OpenJDK
+
+These are builds with the standard OpenJDK JVM.
 
 | Tag(s) | Major.Minor Release | Current Version |
 | :----- | ------------------- | --------------- |
@@ -154,6 +160,20 @@ For a full tag list, search the [Docker Hub tags list](https://hub.docker.com/r/
 | `6.1` | `6.1.x` | `6.1.0.19` |
 | `6.0` | `6.0.x` | `6.0.0.25` |
 | `latest`, `5`, `5.15` | `5.15.x` | `5.15.24.19` |
+
+#### OpenJ9
+
+These are builds with [OpenJ9](https://eclipse.dev/openj9/); an alternative to the standard OpenJDK JVM implementation. OpenJ9 is optimized for low memory footprint and fast startup time.
+
+> [!NOTE]
+> Work on optimizing the OpenJ9 builds is still ongoing but you will likely see a reduced memory footprint so these builds are ideal for situations where memory usage is more of a concern.
+
+| Tag(s) | Major.Minor Release | Current Version |
+| :----- | ------------------- | --------------- |
+| `6-openj9`, `6.2-openj9`, `6.2.0.17-openj9` | `6.2.x` | `6.2.0.17` |
+| `6.1-openj9`, `6.1.0.19-openj9` | `6.1.x` | `6.1.0.19` |
+| `6.0-openj9`, `6.0.0.25-openj9` | `6.0.x` | `6.0.0.25` |
+| `5.15-openj9`, `5.15.24.19-openj9` | `5.15.x` | `5.15.24.19` |
 
 ### Explicit Architecture Tags
 
@@ -171,11 +191,6 @@ These are multi-arch tags. For the full tag listings, see the Docker Hub tags ab
 | :----- | ------------------- | --------------- |
 | `beta`, `beta-6.2`, `beta-6.2.10.9` | `6.2.x` Beta | `6.2.10.9` |
 | `beta-openj9`, `beta-6.2-openj9`, `beta-6.2.10.9-openj9` | `6.2.x` Beta w/OpenJ9 | `6.2.10.9` |
-| --- | --- | --- |
-| `6-openj9`, `6.2-openj9`, `6.2.0.17-openj9` | `6.2.x` w/OpenJ9 | `6.2.0.17` |
-| `6.1-openj9`, `6.1.0.19-openj9` | `6.1.x` w/OpenJ9 | `6.1.0.19` |
-| `6.0-openj9`, `6.0.0.25-openj9` | `6.0.x` w/OpenJ9 | `6.0.0.25` |
-| `5.15-openj9`, `5.15.24.19-openj9` | `5.15.x` w/OpenJ9 | `5.15.24.19` |
 
 ## Archived Tags
 
