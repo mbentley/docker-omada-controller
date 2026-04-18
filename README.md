@@ -418,6 +418,7 @@ The example manifests are in the [k8s/manifests](./k8s/manifests/) directory. It
 | `MANAGE_HTTP_PORT` | `8088` | `1024`-`65535` | Management portal HTTP port; for ports < 1024, see [Unprivileged Ports](#unprivileged-ports) | >= `3.2` |
 | `MANAGE_HTTPS_PORT` | `8043` | `1024`-`65535` | Management portal HTTPS port; for ports < 1024, see [Unprivileged Ports](#unprivileged-ports) | >= `3.2` |
 | `MONGO_EXTERNAL` | `false` | `true`, `false` | Disables MongoDB from starting inside the controller container; used for external MongoDB | >= 5.x |
+| `MONGOD_EXTRA_ARGS` | _null_ | _any valid mongod args_ | Appends extra arguments to every embedded mongod invocation (e.g. `--wiredTigerCacheSizeGB 0.25`); not supported in rootless mode | >= `5.x` |
 | `PGID` | `508` | _any_ | Set the `omada` process group ID ` | >= `3.2` |
 | `PGROUP` | `omada` | _any_ | Set the group name for the process group ID to run as | >= `5.0` |
 | `PORTAL_HTTP_PORT` | `8088` | `1024`-`65535` | User portal HTTP port; for ports < 1024, see [Unprivileged Ports](#unprivileged-ports) | >= `4.1` |
