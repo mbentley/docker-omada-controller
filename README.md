@@ -415,6 +415,8 @@ The example manifests are in the [k8s/manifests](./k8s/manifests/) directory. It
 | :------- | :------ | :----: | :---------- | :-------: |
 | `_JAVA_OPTIONS` | _null_ | _any valid JVM args_ | Overrides the default JVM memory arguments (e.g. `-Xms128m -Xmx1024m`); takes priority over CLI args without modifying them; see [Low Resource Systems](#low-resource-systems) for more details | >= `3.2` |
 | `EAP_MONGOD_URI` | _null_ | `mongodb://user:pass@1.2.3.4:27017/omada` | Used to specify the URI of MongoDB when running it external to the controller container | >= `5.x` |
+| `JAVA_MAX_HEAP_SIZE` | _null_ | _any valid JVM heap size_ | Replaces the hardcoded `-Xmx` value in the default CMD (e.g. `512m`, `1g`); works with any JVM including HotSpot | >= `3.2` |
+| `JAVA_MIN_HEAP_SIZE` | _null_ | _any valid JVM heap size_ | Replaces the hardcoded `-Xms` value in the default CMD (e.g. `64m`, `128m`); works with any JVM including HotSpot | >= `3.2` |
 | `MANAGE_HTTP_PORT` | `8088` | `1024`-`65535` | Management portal HTTP port; for ports < 1024, see [Unprivileged Ports](#unprivileged-ports) | >= `3.2` |
 | `MANAGE_HTTPS_PORT` | `8043` | `1024`-`65535` | Management portal HTTPS port; for ports < 1024, see [Unprivileged Ports](#unprivileged-ports) | >= `3.2` |
 | `MONGO_EXTERNAL` | `false` | `true`, `false` | Disables MongoDB from starting inside the controller container; used for external MongoDB | >= 5.x |
@@ -504,6 +506,7 @@ The `armv7l` architecture is 32 bit and MongoDB is no longer available as a pre-
 
 Systems such as Raspberry Pis may not have sufficient memory to run with the default memory settings of this image. If you system only has 1 GB of RAM, I would highly recommend adjusting the Xmx arguments. This can be done by one of two ways:
 
+1. Setting `JAVA_MAX_HEAP_SIZE` (and optionally `JAVA_MIN_HEAP_SIZE`); for example, `JAVA_MAX_HEAP_SIZE=512m`. This directly replaces the `-Xmx` (and `-Xms`) value in the startup command and is visible in `ps` output. Works with HotSpot and any other JVM.
 1. Setting the `_JAVA_OPTIONS` environment variable; for example, `_JAVA_OPTIONS="-Xms128m -Xmx768m"`.  This will not modify the parameter so tools like `ps` will still show the original value but this variable takes priority over the CLI args.
 1. Overriding the `CMD` [as seen in this issue here](https://github.com/mbentley/docker-omada-controller/issues/198#issuecomment-1100485810).
 

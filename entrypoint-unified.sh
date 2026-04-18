@@ -47,6 +47,10 @@ setup_environment() {
 
   # EXTRA ARGS for embedded MongoDB (appended to every mongod invocation)
   MONGOD_EXTRA_ARGS="${MONGOD_EXTRA_ARGS:-}"
+
+  # JAVA HEAP OVERRIDES (replace hardcoded -Xmx/-Xms in the CMD)
+  JAVA_MAX_HEAP_SIZE="${JAVA_MAX_HEAP_SIZE:-}"
+  JAVA_MIN_HEAP_SIZE="${JAVA_MIN_HEAP_SIZE:-}"
 }
 
 restore_properties_files() {
@@ -461,6 +465,43 @@ inject_cloudsdk_jar() {
   fi
 }
 
+patch_java_heap() {
+  # replace hardcoded -Xmx / -Xms in EXEC_ARGS with user-supplied values
+  if [ -z "${JAVA_MAX_HEAP_SIZE}" ] && [ -z "${JAVA_MIN_HEAP_SIZE}" ]
+  then
+    return
+  fi
+
+  NEW_ARGS=()
+  for ARG in "${EXEC_ARGS[@]}"
+  do
+    case "${ARG}" in
+      -Xmx*)
+        if [ -n "${JAVA_MAX_HEAP_SIZE}" ]
+        then
+          echo "INFO: replacing '${ARG}' with '-Xmx${JAVA_MAX_HEAP_SIZE}' (JAVA_MAX_HEAP_SIZE)"
+          NEW_ARGS+=("-Xmx${JAVA_MAX_HEAP_SIZE}")
+        else
+          NEW_ARGS+=("${ARG}")
+        fi
+        ;;
+      -Xms*)
+        if [ -n "${JAVA_MIN_HEAP_SIZE}" ]
+        then
+          echo "INFO: replacing '${ARG}' with '-Xms${JAVA_MIN_HEAP_SIZE}' (JAVA_MIN_HEAP_SIZE)"
+          NEW_ARGS+=("-Xms${JAVA_MIN_HEAP_SIZE}")
+        else
+          NEW_ARGS+=("${ARG}")
+        fi
+        ;;
+      *)
+        NEW_ARGS+=("${ARG}")
+        ;;
+    esac
+  done
+  EXEC_ARGS=("${NEW_ARGS[@]}")
+}
+
 warn_autobackup() {
   # check for autobackup
   if [ ! -d "/opt/tplink/EAPController/data/autobackup" ]
@@ -709,6 +750,7 @@ common_setup_and_validation() {
   show_java_version
   warn_autobackup
   handle_java_version
+  patch_java_heap
   inject_cloudsdk_jar
 }
 
