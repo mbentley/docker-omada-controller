@@ -504,11 +504,67 @@ The `armv7l` architecture is 32 bit and MongoDB is no longer available as a pre-
 
 #### Low Resource Systems
 
-Systems such as Raspberry Pis may not have sufficient memory to run with the default memory settings of this image. If you system only has 1 GB of RAM, I would highly recommend adjusting the Xmx arguments. This can be done by one of two ways:
+Systems such as Raspberry Pis or Kubernetes pods with tight memory limits may not have sufficient memory to run with the default memory settings of this image. The default JVM heap is `-Xmx1024m` and MongoDB's WiredTiger cache defaults to half of available RAM, which together can push memory usage well above 1.5 GB.
 
-1. Setting `JAVA_MAX_HEAP_SIZE` (and optionally `JAVA_MIN_HEAP_SIZE`); for example, `JAVA_MAX_HEAP_SIZE=512m`. This directly replaces the `-Xmx` (and `-Xms`) value in the startup command and is visible in `ps` output. Works with HotSpot and any other JVM.
+##### JVM Heap
+
+The hardcoded `-Xmx1024m -Xms128m` in the default `CMD` can be overridden in the following ways (in order of preference):
+
+1. Setting `JAVA_MAX_HEAP_SIZE` (and optionally `JAVA_MIN_HEAP_SIZE`). This directly replaces the `-Xmx` (and `-Xms`) value in the startup command and is visible in `ps` output. Works with any JVM — HotSpot, OpenJ9, or any other.
+   ```
+   JAVA_MAX_HEAP_SIZE=512m
+   JAVA_MIN_HEAP_SIZE=128m
+   ```
 1. Setting the `_JAVA_OPTIONS` environment variable; for example, `_JAVA_OPTIONS="-Xms128m -Xmx768m"`.  This will not modify the parameter so tools like `ps` will still show the original value but this variable takes priority over the CLI args.
 1. Overriding the `CMD` [as seen in this issue here](https://github.com/mbentley/docker-omada-controller/issues/198#issuecomment-1100485810).
+
+##### MongoDB WiredTiger Cache
+
+By default MongoDB will use up to half of available RAM for its WiredTiger cache. On a system with 2 GB RAM this means up to 1 GB for MongoDB alone. You can limit it with `MONGOD_EXTRA_ARGS`:
+
+```
+MONGOD_EXTRA_ARGS=--wiredTigerCacheSizeGB 0.25
+```
+
+> [!NOTE]
+> `MONGOD_EXTRA_ARGS` is not supported in rootless mode.
+
+##### OpenJ9 Image Tags
+
+If memory footprint is a priority, consider using one of the [OpenJ9 image tags](#openj9) (e.g. `6.2-openj9`). Eclipse OpenJ9 is optimized for low memory use and fast startup time. In practice it can reduce the Java process RSS by 30-50% compared to HotSpot at the same `-Xmx` setting due to more aggressive idle GC and shared class caching.
+
+When using an OpenJ9 image you can additionally tune idle behaviour:
+
+```
+OPENJ9_JAVA_OPTIONS=-XX:+IdleTuningGcOnIdle -XX:+IdleTuningCompileAtIdle
+```
+
+> [!NOTE]
+> `OPENJ9_JAVA_OPTIONS` is appended **after** the JVM command line in OpenJ9, so it takes precedence over the hardcoded `-Xmx1024m`. Use it alongside `JAVA_MAX_HEAP_SIZE` for clarity, or on its own.
+
+##### Complete Example (Kubernetes, ≤ 2 GB pod limit, OpenJ9)
+
+The following environment variables result in approximately 1–1.3 GB RSS in practice, leaving headroom in a 2 GB pod limit:
+
+```yaml
+# Image tag: mbentley/omada-controller:6.2-openj9
+# (or a pinned version such as 6.2.0.17-openj9)
+
+JAVA_MAX_HEAP_SIZE: "512m"
+JAVA_MIN_HEAP_SIZE: "128m"
+MONGOD_EXTRA_ARGS: "--wiredTigerCacheSizeGB 0.25"
+OPENJ9_JAVA_OPTIONS: "-Xmx512m -Xms128m -XX:+IdleTuningGcOnIdle -XX:+IdleTuningCompileAtIdle"
+```
+
+Approximate memory budget:
+
+| Component | Approx. |
+|---|---|
+| Java heap (`-Xmx`) | 512 MB |
+| Java metaspace + JIT code cache | ~150 MB |
+| MongoDB WiredTiger cache | 256 MB |
+| OS / JVM / MongoDB overhead | ~300 MB |
+| **Total** | **~1.2–1.4 GB** |
 
 Changing these values would be necessary on these low resource systems to prevent the operating system from killing the container due to it thinking it can allocate more memory than it should. The controller process may still actually functionally require more memory so your mileage may vary in terms of the impact of running on such a low resource system.
 
