@@ -51,6 +51,9 @@ setup_environment() {
   # JAVA HEAP OVERRIDES (replace hardcoded -Xmx/-Xms in the CMD)
   JAVA_MAX_HEAP_SIZE="${JAVA_MAX_HEAP_SIZE:-}"
   JAVA_MIN_HEAP_SIZE="${JAVA_MIN_HEAP_SIZE:-}"
+
+  # SPRING BOOT APPLICATION PROPERTIES (written to classpath as application.properties)
+  APPLICATION_PROPERTIES="${APPLICATION_PROPERTIES:-}"
 }
 
 restore_properties_files() {
@@ -677,6 +680,25 @@ EOF
   chmod +x "${MONGOD_LINK}"
 }
 
+inject_application_properties() {
+  if [ -z "${APPLICATION_PROPERTIES}" ]
+  then
+    return
+  fi
+
+  PROPS_FILE="/opt/tplink/EAPController/properties/application.properties"
+  echo "INFO: APPLICATION_PROPERTIES set; writing Spring Boot properties to ${PROPS_FILE}"
+  printf '%s\n' "${APPLICATION_PROPERTIES}" > "${PROPS_FILE}"
+  chmod 640 "${PROPS_FILE}"
+
+  # in non-rootless mode this function runs as root before gosu hands off to ${PUSERNAME};
+  # without chown the file is root:root 640 and Spring Boot silently can't read it
+  if [ "${ROOTLESS}" != "true" ]
+  then
+    chown "${PUSERNAME}:${PGROUP}" "${PROPS_FILE}"
+  fi
+}
+
 enable_tls_1_11() {
   TLS_1_11_ENABLED="${TLS_1_11_ENABLED:-false}"
 
@@ -749,6 +771,7 @@ common_setup_and_validation() {
   update_general_properties
   fix_permissions
   setup_mongodb_wrapper
+  inject_application_properties
   import_ssl_certificate
   enable_tls_1_11
   check_old_version_files

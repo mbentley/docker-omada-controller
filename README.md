@@ -419,6 +419,7 @@ The example manifests are in the [k8s/manifests](./k8s/manifests/) directory. It
 | Variable | Default | Values | Description | Valid For |
 | :------- | :------ | :----: | :---------- | :-------: |
 | `_JAVA_OPTIONS` | _null_ | _any valid JVM args_ | Overrides the default JVM memory arguments (e.g. `-Xms128m -Xmx1024m`); takes priority over CLI args without modifying them; see [Low Resource Systems](#low-resource-systems) for more details | >= `3.2` |
+| `APPLICATION_PROPERTIES` | _null_ | _any Spring Boot properties_ | Content written verbatim to `application.properties` on the classpath at startup, loaded by Spring Boot; see [Spring Boot Tuning](./spring-boot-tuning.md) for details and recommended settings | >= `5.x` |
 | `EAP_MONGOD_URI` | _null_ | `mongodb://user:pass@1.2.3.4:27017/omada` | Used to specify the URI of MongoDB when running it external to the controller container | >= `5.x` |
 | `JAVA_MAX_HEAP_SIZE` | _null_ | _any valid JVM heap size_ | Replaces the hardcoded `-Xmx` value in the default CMD (e.g. `512m`, `1g`); works with any JVM including HotSpot | >= `3.2` |
 | `JAVA_MIN_HEAP_SIZE` | _null_ | _any valid JVM heap size_ | Replaces the hardcoded `-Xms` value in the default CMD (e.g. `64m`, `128m`); works with any JVM including HotSpot | >= `3.2` |
@@ -594,6 +595,8 @@ This tuning reduced OpenJ9's non-heap overhead significantly (smaller JIT code c
 Treat this as a practical reference point rather than a universal recommendation. Larger sites, more devices, more clients, firmware upgrades, or long-running background tasks may require more headroom.
 
 Changing these values would be necessary on these low resource systems to prevent the operating system from killing the container due to it thinking it can allocate more memory than it should. The controller process may still actually functionally require more memory so your mileage may vary in terms of the impact of running on such a low resource system.
+
+For advanced tuning of Spring Boot internals (Tomcat thread pool, async executors, logging levels), see [Spring Boot Tuning](./spring-boot-tuning.md).
 
 #### Mismatched Userland and Kernel
 
