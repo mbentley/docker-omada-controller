@@ -566,6 +566,22 @@ Approximate memory budget:
 | OS / JVM / MongoDB overhead | ~300 MB |
 | **Total** | **~1.2–1.4 GB** |
 
+##### Real-World OpenJ9 Example (Small Network)
+
+In one Kubernetes deployment with the embedded MongoDB, the following settings worked reliably on a small network with 1 switch, 3 APs, and about 40 clients:
+
+```yaml
+JAVA_MAX_HEAP_SIZE: "512m"
+JAVA_MIN_HEAP_SIZE: "128m"
+MALLOC_ARENA_MAX: "2"
+MONGOD_EXTRA_ARGS: "--wiredTigerCacheSizeGB 0.25"
+OPENJ9_JAVA_OPTIONS: "-Xquickstart -Xcodecachetotal16m -XcompilationThreads1 -Xss192k -Xmso192k -XX:-TransparentHugePage -XX:+IdleTuningGcOnIdle"
+```
+
+This tuning reduced OpenJ9's non-heap overhead significantly (smaller JIT code cache, fewer JIT compiler threads, smaller thread stacks, and disabled transparent huge pages), but the total pod memory still fluctuated around roughly 0.9-1.1 GiB because the container includes both the Java controller and `mongod`.
+
+Treat this as a practical reference point rather than a universal recommendation. Larger sites, more devices, more clients, firmware upgrades, or long-running background tasks may require more headroom.
+
 Changing these values would be necessary on these low resource systems to prevent the operating system from killing the container due to it thinking it can allocate more memory than it should. The controller process may still actually functionally require more memory so your mileage may vary in terms of the impact of running on such a low resource system.
 
 #### Mismatched Userland and Kernel
