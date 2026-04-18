@@ -414,6 +414,7 @@ The example manifests are in the [k8s/manifests](./k8s/manifests/) directory. It
 | Variable | Default | Values | Description | Valid For |
 | :------- | :------ | :----: | :---------- | :-------: |
 | `_JAVA_OPTIONS` | _null_ | _any valid JVM args_ | Overrides the default JVM memory arguments (e.g. `-Xms128m -Xmx1024m`); takes priority over CLI args without modifying them; see [Low Resource Systems](#low-resource-systems) for more details | >= `3.2` |
+| `APPLICATION_PROPERTIES` | _null_ | _any Spring Boot properties_ | Content written verbatim to `application.properties` on the classpath at startup, loaded by Spring Boot; see [Spring Boot Tuning](./docs/spring-boot-tuning.md) for details and recommended settings | >= `5.x` |
 | `EAP_MONGOD_URI` | _null_ | `mongodb://user:pass@1.2.3.4:27017/omada` | Used to specify the URI of MongoDB when running it external to the controller container | >= `5.x` |
 | `MANAGE_HTTP_PORT` | `8088` | `1024`-`65535` | Management portal HTTP port; for ports < 1024, see [Unprivileged Ports](#unprivileged-ports) | >= `3.2` |
 | `MANAGE_HTTPS_PORT` | `8043` | `1024`-`65535` | Management portal HTTPS port; for ports < 1024, see [Unprivileged Ports](#unprivileged-ports) | >= `3.2` |
@@ -507,6 +508,8 @@ Systems such as Raspberry Pis may not have sufficient memory to run with the def
 1. Overriding the `CMD` [as seen in this issue here](https://github.com/mbentley/docker-omada-controller/issues/198#issuecomment-1100485810).
 
 Changing these values would be necessary on these low resource systems to prevent the operating system from killing the container due to it thinking it can allocate more memory than it should. The controller process may still actually functionally require more memory so your mileage may vary in terms of the impact of running on such a low resource system.
+
+For advanced tuning of Spring Boot internals (Tomcat thread pool, async executors, logging levels), see [Spring Boot Tuning](./docs/spring-boot-tuning.md).
 
 #### Mismatched Userland and Kernel
 

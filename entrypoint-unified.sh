@@ -44,6 +44,9 @@ setup_environment() {
   EAP_MONGOD_URI="$(eval echo "${EAP_MONGOD_URI//&/\\&}")"
   # escape after eval as well for sed
   EAP_MONGOD_URI="${EAP_MONGOD_URI//&/\\&}"
+
+  # SPRING BOOT APPLICATION PROPERTIES (written to classpath as application.properties)
+  APPLICATION_PROPERTIES="${APPLICATION_PROPERTIES:-}"
 }
 
 restore_properties_files() {
@@ -594,6 +597,18 @@ fix_permissions() {
   fi
 }
 
+inject_application_properties() {
+  if [ -z "${APPLICATION_PROPERTIES}" ]
+  then
+    return
+  fi
+
+  PROPS_FILE="/opt/tplink/EAPController/properties/application.properties"
+  echo "INFO: APPLICATION_PROPERTIES set; writing Spring Boot properties to ${PROPS_FILE}"
+  printf '%s\n' "${APPLICATION_PROPERTIES}" > "${PROPS_FILE}"
+  chmod 640 "${PROPS_FILE}"
+}
+
 enable_tls_1_11() {
   TLS_1_11_ENABLED="${TLS_1_11_ENABLED:-false}"
 
@@ -665,6 +680,7 @@ common_setup_and_validation() {
   update_port_configuration
   update_general_properties
   fix_permissions
+  inject_application_properties
   import_ssl_certificate
   enable_tls_1_11
   check_old_version_files
