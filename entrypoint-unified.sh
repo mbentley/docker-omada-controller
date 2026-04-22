@@ -472,6 +472,8 @@ patch_java_heap() {
     return
   fi
 
+  XMX_REPLACED="false"
+  XMS_REPLACED="false"
   NEW_ARGS=()
   for ARG in "${EXEC_ARGS[@]}"
   do
@@ -481,6 +483,7 @@ patch_java_heap() {
         then
           echo "INFO: replacing '${ARG}' with '-Xmx${JAVA_MAX_HEAP_SIZE}' (JAVA_MAX_HEAP_SIZE)"
           NEW_ARGS+=("-Xmx${JAVA_MAX_HEAP_SIZE}")
+          XMX_REPLACED="true"
         else
           NEW_ARGS+=("${ARG}")
         fi
@@ -490,6 +493,7 @@ patch_java_heap() {
         then
           echo "INFO: replacing '${ARG}' with '-Xms${JAVA_MIN_HEAP_SIZE}' (JAVA_MIN_HEAP_SIZE)"
           NEW_ARGS+=("-Xms${JAVA_MIN_HEAP_SIZE}")
+          XMS_REPLACED="true"
         else
           NEW_ARGS+=("${ARG}")
         fi
@@ -500,6 +504,16 @@ patch_java_heap() {
     esac
   done
   EXEC_ARGS=("${NEW_ARGS[@]}")
+
+  if [ -n "${JAVA_MAX_HEAP_SIZE}" ] && [ "${XMX_REPLACED}" != "true" ]
+  then
+    echo "WARN: JAVA_MAX_HEAP_SIZE was set but no existing -Xmx argument was found in EXEC_ARGS; no replacement was made"
+  fi
+
+  if [ -n "${JAVA_MIN_HEAP_SIZE}" ] && [ "${XMS_REPLACED}" != "true" ]
+  then
+    echo "WARN: JAVA_MIN_HEAP_SIZE was set but no existing -Xms argument was found in EXEC_ARGS; no replacement was made"
+  fi
 }
 
 warn_autobackup() {
@@ -653,7 +667,24 @@ setup_mongodb_wrapper() {
   fi
 
   MONGOD_LINK="/opt/tplink/EAPController/bin/mongod"
-  MONGOD_REAL="$(readlink -f "${MONGOD_LINK}")"
+  if [ -L "${MONGOD_LINK}" ]
+  then
+    MONGOD_REAL="$(readlink -f "${MONGOD_LINK}")"
+  else
+    MONGOD_REAL="$(command -v mongod)"
+  fi
+
+  if [ -z "${MONGOD_REAL}" ] || [ ! -x "${MONGOD_REAL}" ]
+  then
+    echo "ERROR: Unable to determine the real mongod binary for MONGOD_EXTRA_ARGS"
+    exit 1
+  fi
+
+  if [ "${MONGOD_REAL}" = "${MONGOD_LINK}" ]
+  then
+    echo "ERROR: Refusing to create mongod wrapper because the resolved binary path points to the wrapper itself"
+    exit 1
+  fi
 
   echo "INFO: MONGOD_EXTRA_ARGS='${MONGOD_EXTRA_ARGS}'; creating mongod wrapper (real binary: ${MONGOD_REAL})"
 

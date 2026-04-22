@@ -508,14 +508,16 @@ Systems such as Raspberry Pis or Kubernetes pods with tight memory limits may no
 
 ##### JVM Heap
 
-The hardcoded `-Xmx1024m -Xms128m` in the default `CMD` can be overridden in the following ways (in order of preference):
+The default `CMD` includes hardcoded `-Xmx1024m -Xms128m`. These can already be overridden by JVM-specific environment variables such as `_JAVA_OPTIONS`, but those do not change the visible command line. If you want the effective heap settings to also be reflected in `ps` output, you can use `JAVA_MAX_HEAP_SIZE` and `JAVA_MIN_HEAP_SIZE`, which replace the existing `-Xmx` and `-Xms` arguments in the startup command.
 
-1. Setting `JAVA_MAX_HEAP_SIZE` (and optionally `JAVA_MIN_HEAP_SIZE`). This directly replaces the `-Xmx` (and `-Xms`) value in the startup command and is visible in `ps` output. Works with any JVM — HotSpot, OpenJ9, or any other.
+The available approaches are:
+
+1. Setting `JAVA_MAX_HEAP_SIZE` (and optionally `JAVA_MIN_HEAP_SIZE`). This directly replaces the `-Xmx` (and `-Xms`) value in the startup command and is visible in `ps` output. Works with any JVM, including HotSpot and OpenJ9.
    ```
    JAVA_MAX_HEAP_SIZE=512m
    JAVA_MIN_HEAP_SIZE=128m
    ```
-1. Setting the `_JAVA_OPTIONS` environment variable; for example, `_JAVA_OPTIONS="-Xms128m -Xmx768m"`.  This will not modify the parameter so tools like `ps` will still show the original value but this variable takes priority over the CLI args.
+1. Setting the `_JAVA_OPTIONS` environment variable; for example, `_JAVA_OPTIONS="-Xms128m -Xmx768m"`. This already takes priority over the CLI args on HotSpot, but it does not modify the visible command line so tools like `ps` will still show the original values.
 1. Overriding the `CMD` [as seen in this issue here](https://github.com/mbentley/docker-omada-controller/issues/198#issuecomment-1100485810).
 
 ##### MongoDB WiredTiger Cache
@@ -540,7 +542,7 @@ OPENJ9_JAVA_OPTIONS=-XX:+IdleTuningGcOnIdle -XX:+IdleTuningCompileAtIdle
 ```
 
 > [!NOTE]
-> `OPENJ9_JAVA_OPTIONS` is appended **after** the JVM command line in OpenJ9, so it takes precedence over the hardcoded `-Xmx1024m`. Use it alongside `JAVA_MAX_HEAP_SIZE` for clarity, or on its own.
+> `OPENJ9_JAVA_OPTIONS` is appended **after** the JVM command line in OpenJ9, so it takes precedence over the hardcoded `-Xmx1024m`. If you also set `JAVA_MAX_HEAP_SIZE` / `JAVA_MIN_HEAP_SIZE`, the values should match so the effective heap settings and the visible command line stay consistent.
 
 ##### Complete Example (Kubernetes, ≤ 2 GB pod limit, OpenJ9)
 
@@ -555,6 +557,8 @@ JAVA_MIN_HEAP_SIZE: "128m"
 MONGOD_EXTRA_ARGS: "--wiredTigerCacheSizeGB 0.25"
 OPENJ9_JAVA_OPTIONS: "-Xmx512m -Xms128m -XX:+IdleTuningGcOnIdle -XX:+IdleTuningCompileAtIdle"
 ```
+
+In this example the heap values are intentionally duplicated. On OpenJ9, `OPENJ9_JAVA_OPTIONS` is authoritative; `JAVA_MAX_HEAP_SIZE` and `JAVA_MIN_HEAP_SIZE` are included so the startup command line shown by tools such as `ps` matches the effective settings. On HotSpot, `OPENJ9_JAVA_OPTIONS` is ignored and the `JAVA_*_HEAP_SIZE` values remain effective.
 
 Approximate memory budget:
 
