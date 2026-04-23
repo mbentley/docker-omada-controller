@@ -78,6 +78,12 @@ spec:
           value: Etc/UTC
         - name: SKIP_USERMOD
           value: "true"
+        # Uncomment to reduce the JVM heap from the image default of -Xmx1024m / -Xms128m.
+        # Useful on memory-constrained nodes. Replacement is visible in ps output.
+        # - name: JAVA_MAX_HEAP_SIZE
+        #   value: "512m"
+        # - name: JAVA_MIN_HEAP_SIZE
+        #   value: "128m"
         volumeMounts:
         - name: omada-data
           mountPath: /opt/tplink/EAPController/data

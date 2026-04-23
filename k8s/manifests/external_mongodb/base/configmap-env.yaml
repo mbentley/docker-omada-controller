@@ -46,3 +46,8 @@ data:
   PORT_DEVICE_MONITOR: "29817"
 
   WEB_CONFIG_OVERRIDE: "false"
+
+  # Uncomment to reduce the JVM heap from the image default of -Xmx1024m / -Xms128m.
+  # Useful on memory-constrained nodes. Replacement is visible in ps output.
+  # JAVA_MAX_HEAP_SIZE: "512m"
+  # JAVA_MIN_HEAP_SIZE: "128m"
