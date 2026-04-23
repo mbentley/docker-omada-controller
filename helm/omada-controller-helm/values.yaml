@@ -101,6 +101,14 @@ config:
   # The timezone for the Omada Controller application
   timezone: Etc/UTC
 
+  # Replaces the hardcoded -Xmx value in the default CMD. Useful on memory-constrained nodes.
+  # Example: "512m", "1g". Leave empty to use the image default (1024m).
+  javaMaxHeapSize: ""
+
+  # Replaces the hardcoded -Xms value in the default CMD.
+  # Example: "64m", "128m". Leave empty to use the image default (128m).
+  javaMinHeapSize: ""
+
   # External MongoDB connection URL. If set, the Omada Controller will use an external
   # MongoDB instance instead of the bundled MongoDB. The URL should be in the format:
   #  mongodb://user:pass@host:port/database

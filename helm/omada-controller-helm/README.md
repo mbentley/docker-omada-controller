@@ -14,6 +14,7 @@ The Helm chart releases do not correspond to the controller version so below is 
 
 | Controller Version | Chart Version | Change Notes |
 | ------------------ | ------------- | :------------ |
+| `6.2.0.17`         | `1.3.0`       | Add `javaMaxHeapSize` and `javaMinHeapSize` config options |
 | `6.2.0.17`         | `1.2.0`       | Update to version 6.2.0.17 |
 | `6.1.0.19`         | `1.1.6`       | Add `upgradeHttps` port to service if it doesn't equal the `manageHttps` port |
 | `6.1.0.19`         | `1.1.5`       | Add `webConfigOverride` option to force re-read of port configuration |
@@ -105,6 +106,8 @@ The following table lists the configurable parameters of the Omada Controller ch
 | `config.externalMongoDBUrl` | External MongoDB URL (mutually exclusive with secret) | `""` |
 | `config.externalMongoDBUrlSecret.name` | Secret name containing MongoDB URI (mutually exclusive with URL) | `""` |
 | `config.externalMongoDBUrlSecret.key` | Secret key containing MongoDB URI | `""` |
+| `config.javaMaxHeapSize` | Replaces the hardcoded `-Xmx` in the default CMD (e.g. `512m`, `1g`); leave empty to use image default of `1024m` | `""` |
+| `config.javaMinHeapSize` | Replaces the hardcoded `-Xms` in the default CMD (e.g. `64m`, `128m`); leave empty to use image default of `128m` | `""` |
 
 ### Service Configuration
 
@@ -274,6 +277,12 @@ config:
 ### Resource-Constrained Installation
 
 ```yaml
+config:
+  # Reduce the JVM heap from the default 1024m to fit within the pod memory limit.
+  # The replacement is visible in `ps` output alongside the Kubernetes resource limits.
+  javaMaxHeapSize: "512m"
+  javaMinHeapSize: "128m"
+
 resources:
   limits:
     cpu: 2000m
@@ -288,6 +297,9 @@ persistence:
   logs:
     size: 500Mi
 ```
+
+> [!NOTE]
+> `MONGOD_EXTRA_ARGS` (for tuning the embedded MongoDB WiredTiger cache) is not applicable for the standard Helm chart deployment, which uses external MongoDB and runs in rootless mode. If you are running a non-rootless deployment with embedded MongoDB, you can pass it via `extraEnvVars`.
 
 ## Port Requirements
 
