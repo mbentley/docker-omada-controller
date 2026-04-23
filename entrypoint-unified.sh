@@ -44,6 +44,13 @@ setup_environment() {
   EAP_MONGOD_URI="$(eval echo "${EAP_MONGOD_URI//&/\\&}")"
   # escape after eval as well for sed
   EAP_MONGOD_URI="${EAP_MONGOD_URI//&/\\&}"
+
+  # EXTRA ARGS for embedded MongoDB (appended to every mongod invocation)
+  MONGOD_EXTRA_ARGS="${MONGOD_EXTRA_ARGS:-}"
+
+  # JAVA HEAP OVERRIDES (replace hardcoded -Xmx/-Xms in the CMD)
+  JAVA_MAX_HEAP_SIZE="${JAVA_MAX_HEAP_SIZE:-}"
+  JAVA_MIN_HEAP_SIZE="${JAVA_MIN_HEAP_SIZE:-}"
 }
 
 restore_properties_files() {
@@ -458,6 +465,57 @@ inject_cloudsdk_jar() {
   fi
 }
 
+patch_java_heap() {
+  # replace hardcoded -Xmx / -Xms in EXEC_ARGS with user-supplied values
+  if [ -z "${JAVA_MAX_HEAP_SIZE}" ] && [ -z "${JAVA_MIN_HEAP_SIZE}" ]
+  then
+    return
+  fi
+
+  XMX_REPLACED="false"
+  XMS_REPLACED="false"
+  NEW_ARGS=()
+  for ARG in "${EXEC_ARGS[@]}"
+  do
+    case "${ARG}" in
+      -Xmx*)
+        if [ -n "${JAVA_MAX_HEAP_SIZE}" ]
+        then
+          echo "INFO: replacing '${ARG}' with '-Xmx${JAVA_MAX_HEAP_SIZE}' (JAVA_MAX_HEAP_SIZE)"
+          NEW_ARGS+=("-Xmx${JAVA_MAX_HEAP_SIZE}")
+          XMX_REPLACED="true"
+        else
+          NEW_ARGS+=("${ARG}")
+        fi
+        ;;
+      -Xms*)
+        if [ -n "${JAVA_MIN_HEAP_SIZE}" ]
+        then
+          echo "INFO: replacing '${ARG}' with '-Xms${JAVA_MIN_HEAP_SIZE}' (JAVA_MIN_HEAP_SIZE)"
+          NEW_ARGS+=("-Xms${JAVA_MIN_HEAP_SIZE}")
+          XMS_REPLACED="true"
+        else
+          NEW_ARGS+=("${ARG}")
+        fi
+        ;;
+      *)
+        NEW_ARGS+=("${ARG}")
+        ;;
+    esac
+  done
+  EXEC_ARGS=("${NEW_ARGS[@]}")
+
+  if [ -n "${JAVA_MAX_HEAP_SIZE}" ] && [ "${XMX_REPLACED}" != "true" ]
+  then
+    echo "WARN: JAVA_MAX_HEAP_SIZE was set but no existing -Xmx argument was found in EXEC_ARGS; no replacement was made"
+  fi
+
+  if [ -n "${JAVA_MIN_HEAP_SIZE}" ] && [ "${XMS_REPLACED}" != "true" ]
+  then
+    echo "WARN: JAVA_MIN_HEAP_SIZE was set but no existing -Xms argument was found in EXEC_ARGS; no replacement was made"
+  fi
+}
+
 warn_autobackup() {
   # check for autobackup
   if [ ! -d "/opt/tplink/EAPController/data/autobackup" ]
@@ -594,6 +652,51 @@ fix_permissions() {
   fi
 }
 
+setup_mongodb_wrapper() {
+  # only applicable when using embedded MongoDB with extra args requested
+  if [ -z "${MONGOD_EXTRA_ARGS}" ] || [ "${MONGO_EXTERNAL}" = "true" ]
+  then
+    return
+  fi
+
+  # rootless mode: bin/ is owned by root; cannot replace symlink without elevated permissions
+  if [ "${ROOTLESS}" = "true" ]
+  then
+    echo "WARN: MONGOD_EXTRA_ARGS is set but rootless mode is enabled; skipping mongod wrapper (bin/ not writable as non-root)"
+    return
+  fi
+
+  MONGOD_LINK="/opt/tplink/EAPController/bin/mongod"
+  if [ -L "${MONGOD_LINK}" ]
+  then
+    MONGOD_REAL="$(readlink -f "${MONGOD_LINK}")"
+  else
+    MONGOD_REAL="$(command -v mongod)"
+  fi
+
+  if [ -z "${MONGOD_REAL}" ] || [ ! -x "${MONGOD_REAL}" ]
+  then
+    echo "ERROR: Unable to determine the real mongod binary for MONGOD_EXTRA_ARGS"
+    exit 1
+  fi
+
+  if [ "${MONGOD_REAL}" = "${MONGOD_LINK}" ]
+  then
+    echo "ERROR: Refusing to create mongod wrapper because the resolved binary path points to the wrapper itself"
+    exit 1
+  fi
+
+  echo "INFO: MONGOD_EXTRA_ARGS='${MONGOD_EXTRA_ARGS}'; creating mongod wrapper (real binary: ${MONGOD_REAL})"
+
+  # replace symlink with a wrapper script that appends the extra args
+  rm -f "${MONGOD_LINK}"
+  cat > "${MONGOD_LINK}" << EOF
+#!/bin/sh
+exec "${MONGOD_REAL}" "\$@" ${MONGOD_EXTRA_ARGS}
+EOF
+  chmod +x "${MONGOD_LINK}"
+}
+
 enable_tls_1_11() {
   TLS_1_11_ENABLED="${TLS_1_11_ENABLED:-false}"
 
@@ -665,6 +768,7 @@ common_setup_and_validation() {
   update_port_configuration
   update_general_properties
   fix_permissions
+  setup_mongodb_wrapper
   import_ssl_certificate
   enable_tls_1_11
   check_old_version_files
@@ -677,6 +781,7 @@ common_setup_and_validation() {
   show_java_version
   warn_autobackup
   handle_java_version
+  patch_java_heap
   inject_cloudsdk_jar
 }
 
