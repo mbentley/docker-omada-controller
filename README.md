@@ -54,6 +54,11 @@ For instructions on running a legacy v3 or v4 controller, see the [README for v3
             * [:warning: Unsupported Base Image for `armv7l`](#unsupported-base-image-for-armv7l)
             * [:warning: Unsupported MongoDB](#unsupported-mongodb)
         * [Low Resource Systems](#low-resource-systems)
+            * [JVM Heap](#jvm-heap)
+            * [MongoDB WiredTiger Cache](#mongodb-wiredtiger-cache)
+            * [OpenJ9 Image Tags](#openj9-image-tags)
+            * [Complete Example (Kubernetes, ≤ 2 GB pod limit, OpenJ9)](#complete-example-kubernetes--2-gb-pod-limit-openj9)
+            * [Real-World OpenJ9 Example (Small Network)](#real-world-openj9-example-small-network)
         * [Mismatched Userland and Kernel](#mismatched-userland-and-kernel)
     * [Upgrade Issues](#upgrade-issues)
         * [5.8 - 404s and Blank Pages](#58---404s-and-blank-pages)
@@ -513,10 +518,12 @@ The default `CMD` includes hardcoded `-Xmx1024m -Xms128m`. These can already be 
 The available approaches are:
 
 1. Setting `JAVA_MAX_HEAP_SIZE` (and optionally `JAVA_MIN_HEAP_SIZE`). This directly replaces the `-Xmx` (and `-Xms`) value in the startup command and is visible in `ps` output. Works with any JVM, including HotSpot and OpenJ9.
+
    ```
    JAVA_MAX_HEAP_SIZE=512m
    JAVA_MIN_HEAP_SIZE=128m
    ```
+
 1. Setting the `_JAVA_OPTIONS` environment variable; for example, `_JAVA_OPTIONS="-Xms128m -Xmx768m"`. This already takes priority over the CLI args on HotSpot, but it does not modify the visible command line so tools like `ps` will still show the original values.
 1. Overriding the `CMD` [as seen in this issue here](https://github.com/mbentley/docker-omada-controller/issues/198#issuecomment-1100485810).
 
