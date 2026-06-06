@@ -80,7 +80,7 @@ If you have issues running the controller, feel free to [create a Help discussio
 If you don't know much about Docker or want to just get started as easily as possible, start here as this will guide you through this readme on key concepts and things you want to take into consideration.
 
 1. **Docker**
-    * This guide assumes that you have Docker installed. If you don't, I would suggest starting [here](https://www.docker.com/get-started/).
+    * This guide assumes that you have Docker installed. If you don't, I would suggest starting at the [Docker Getting Started Guide](https://www.docker.com/get-started/).
 1. **Verifying your CPU supports the required features for v6 of the image and above**
     * Due to the MongoDB 8 system requirements, specific CPU features are required to run v6 of the controller image and above.
     * Included in this repo is a shell script ([mongodb8_cpu_support_check.sh](./mongodb8_cpu_support_check.sh)) which can be executed to test for the required CPU features
@@ -205,7 +205,7 @@ These are multi-arch tags. For the full tag listings, see the Docker Hub tags ab
 These images are still published on Docker Hub but are no longer regularly updated due to the controller software no longer being updated. **Use with extreme caution as these images are likely to contain unpatched security vulnerabilities!**. See [Archived Tags for v3 and v4](README_v3_and_v4.md#archived-tags) for details on the old, unmaintained image tags.
 
 | Tag(s) | Major.Minor Release | Current Version |
-| :----- | ------------------- | ----------------|
+| :----- | ------------------- | --------------- |
 | `5.14` | `5.14.x` | `5.14.32.4` |
 | `5.14-openj9`, `5.14.32.4-openj9` | `5.14.x` w/OpenJ9 | `5.14.32.4` |
 | `5.13` | `5.13.x` | `5.13.30.8` |
@@ -272,7 +272,7 @@ There are some differences between the build steps for `amd64`, `arm64`, and `ar
 
   No build args required; set for the default build-args
 
-  ```
+  ```bash
   docker build \
     --build-arg BASE=mbentley/ubuntu:24.04 \
     --build-arg INSTALL_VER="6.2.10.17" \
@@ -285,7 +285,7 @@ There are some differences between the build steps for `amd64`, `arm64`, and `ar
 
   Only the `ARCH` build-arg is required
 
-  ```
+  ```bash
   docker build \
     --build-arg BASE=mbentley/ubuntu:24.04 \
     --build-arg INSTALL_VER="6.2.10.17" \
@@ -301,7 +301,7 @@ There are some differences between the build steps for `amd64`, `arm64`, and `ar
 
   Both the `ARCH` and `BASE` build-args are required
 
-  ```
+  ```bash
   docker build \
     --build-arg INSTALL_VER="5.15.8.2" \
     --build-arg ARCH="armv7l" \
@@ -341,7 +341,7 @@ docker run -d \
 When is comes to device management, using port mapping is more complex than using host networking as your devices need to be informed of the controller's IP or hostname. For instructions on how to configure your device for adoption, see [the device adoption readme](./DEVICE_ADOPTION.md). If you do not follow these instructions, it is highly likely that new devices will fail to adopt!
 
 > [!WARNING]
-> If you want to change the controller ports from the default mappings, you *absolutely must* update the port binding inside the container via the environment variables. The ports exposed must match what is inside the container. The Omada Controller software expects that the ports are the same inside the container and outside and will load a blank page if that is not done. See [#99](https://github.com/mbentley/docker-omada-controller/issues/99#issuecomment-821243857) for details and and example of the behavior.
+> If you want to change the controller ports from the default mappings, you _absolutely must_ update the port binding inside the container via the environment variables. The ports exposed must match what is inside the container. The Omada Controller software expects that the ports are the same inside the container and outside and will load a blank page if that is not done. See [#99](https://github.com/mbentley/docker-omada-controller/issues/99#issuecomment-821243857) for details and and example of the behavior.
 
 ```bash
 docker run -d \
@@ -445,9 +445,8 @@ The example manifests are in the [k8s/manifests](./k8s/manifests/) directory. It
 | `SHOW_SERVER_LOGS` | `true` | `true`, `false` | Outputs Omada Controller logs to STDOUT at runtime | >= `4.1` |
 | `SHOW_MONGODB_LOGS` | `false` | `true`, `false` | Outputs MongoDB logs to STDOUT at runtime | >= `4.1` |
 | `SKIP_USERLAND_KERNEL_CHECK` | `false` | `true`, `false` | When set to `true`, skips the userland/kernel match check for `armv7l` & `arm64` | >= `3.2` |
-| `SMALL_FILES` | `false` | `true`, `false` | See [Small Files](#small-files) for more detail; no effect in >= `4.1.x` | `3.2` only |
-| `SSL_CERT_NAME` | `tls.crt` | _any_ | Name of the public cert chain mounted to `/cert`; see [Custom Certificates](#custom-certificates) | >= `3.2` |
-| `SSL_KEY_NAME` | `tls.key` | _any_ | Name of the private cert mounted to `/cert`; see [Custom Certificates](#custom-certificates) | >= `3.2` |
+| `SSL_CERT_NAME` | `tls.crt` | _any_ | Name of the public cert chain mounted to `/cert`; see [Custom SSL Certificates](#custom-ssl-certificates) | >= `3.2` |
+| `SSL_KEY_NAME` | `tls.key` | _any_ | Name of the private cert mounted to `/cert`; see [Custom SSL Certificates](#custom-ssl-certificates) | >= `3.2` |
 | `TLS_1_11_ENABLED` | `false` | `true`, `false` | Re-enables TLS 1.0 & 1.1 if set to `true` | >= `4.1` |
 | `TZ` | `Etc/UTC` | _\<many\>_ | See [Time Zones](#time-zones) for more detail | >= `3.2` |
 | `UPGRADE_HTTPS_PORT` | `8043` | `1024`-`65535` | Dedicated HTTPS port for upgrades, separate from the main Controller port | >= `6.1` |
@@ -519,7 +518,7 @@ The available approaches are:
 
 1. Setting `JAVA_MAX_HEAP_SIZE` (and optionally `JAVA_MIN_HEAP_SIZE`). This directly replaces the `-Xmx` (and `-Xms`) value in the startup command and is visible in `ps` output. Works with any JVM, including HotSpot and OpenJ9.
 
-   ```
+   ```bash
    JAVA_MAX_HEAP_SIZE=512m
    JAVA_MIN_HEAP_SIZE=128m
    ```
@@ -531,7 +530,7 @@ The available approaches are:
 
 By default MongoDB will use up to half of available RAM for its WiredTiger cache. On a system with 2 GB RAM this means up to 1 GB for MongoDB alone. You can limit it with `MONGOD_EXTRA_ARGS`:
 
-```
+```bash
 MONGOD_EXTRA_ARGS=--wiredTigerCacheSizeGB 0.25
 ```
 
@@ -544,7 +543,7 @@ If memory footprint is a priority, consider using one of the [OpenJ9 image tags]
 
 When using an OpenJ9 image you can additionally tune idle behaviour:
 
-```
+```bash
 OPENJ9_JAVA_OPTIONS=-XX:+IdleTuningGcOnIdle -XX:+IdleTuningCompileAtIdle
 ```
 
@@ -570,7 +569,7 @@ In this example the heap values are intentionally duplicated. On OpenJ9, `OPENJ9
 Approximate memory budget:
 
 | Component | Approx. |
-|---|---|
+| --- | --- |
 | Java heap (`-Xmx`) | 512 MB |
 | Java metaspace + JIT code cache | ~150 MB |
 | MongoDB WiredTiger cache | 256 MB |
@@ -622,7 +621,7 @@ If updating from 3.x to 4.x or 4.x to 5.x, make sure to **completely** re-create
 * Update the CMD (command is all on one line):
     * 4.x to 5.x - `/usr/bin/java -server -Xms128m -Xmx1024m -XX:MaxHeapFreeRatio=60 -XX:MinHeapFreeRatio=30 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/opt/tplink/EAPController/logs/java_heapdump.hprof -Djava.awt.headless=true -cp /opt/tplink/EAPController/lib/*::/opt/tplink/EAPController/properties: com.tplink.smb.omada.starter.OmadaLinuxMain`
 
-It should be noted that users of 3.x who wish to upgrade to 4.x must perform [specific upgrade steps](#upgrading-to-41-from-3210-or-below) to prevent data loss!
+It should be noted that users of 3.x who wish to upgrade to 4.x must perform [specific upgrade steps](README_v3_and_v4.md#upgrading-to-41-from-3210-or-below) to prevent data loss!
 
 #### 5.12 - Unable to Login After Upgrade
 
