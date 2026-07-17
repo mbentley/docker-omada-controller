@@ -161,7 +161,7 @@ These are builds with the standard OpenJDK JVM.
 
 | Tag(s) | Major.Minor Release | Current Version |
 | :----- | ------------------- | --------------- |
-| `6`, `6.2` | `6.2.x` | `6.2.10.17` |
+| `6`, `6.2` | `6.2.x` | `6.2.14.11` |
 | `6.1` | `6.1.x` | `6.1.0.19` |
 | `6.0` | `6.0.x` | `6.0.0.25` |
 | `latest`, `5`, `5.15` | `5.15.x` | `5.15.24.19` |
@@ -175,7 +175,7 @@ These are builds with [OpenJ9](https://eclipse.dev/openj9/); an alternative to t
 
 | Tag(s) | Major.Minor Release | Current Version |
 | :----- | ------------------- | --------------- |
-| `6-openj9`, `6.2-openj9`, `6.2.10.17-openj9` | `6.2.x` | `6.2.10.17` |
+| `6-openj9`, `6.2-openj9`, `6.2.14.11-openj9` | `6.2.x` | `6.2.14.11` |
 | `6.1-openj9`, `6.1.0.19-openj9` | `6.1.x` | `6.1.0.19` |
 | `6.0-openj9`, `6.0.0.25-openj9` | `6.0.x` | `6.0.0.25` |
 | `5.15-openj9`, `5.15.24.19-openj9` | `5.15.x` | `5.15.24.19` |
@@ -186,7 +186,7 @@ If for some reason you can't use the multi-arch tags, there are explicitly tagge
 
 ### Explicit Version Tags
 
-If you need a specific version of the controller, starting with 5.13 and 5.14, there are explicitly tagged images with the exact version (i.e. - `6.2.10.17`) in the tag name. Check [Docker Hub](https://hub.docker.com/r/mbentley/omada-controller/tags) for the full list of tags.
+If you need a specific version of the controller, starting with 5.13 and 5.14, there are explicitly tagged images with the exact version (i.e. - `6.2.14.11`) in the tag name. Check [Docker Hub](https://hub.docker.com/r/mbentley/omada-controller/tags) for the full list of tags.
 
 ### Tags for Beta/Testing
 
@@ -275,7 +275,7 @@ There are some differences between the build steps for `amd64`, `arm64`, and `ar
   ```bash
   docker build \
     --build-arg BASE=mbentley/ubuntu:24.04 \
-    --build-arg INSTALL_VER="6.2.10.17" \
+    --build-arg INSTALL_VER="6.2.14.11" \
     --build-arg ARCH="amd64" \
     -f Dockerfile \
     -t mbentley/omada-controller:6.2-amd64 .
@@ -288,7 +288,7 @@ There are some differences between the build steps for `amd64`, `arm64`, and `ar
   ```bash
   docker build \
     --build-arg BASE=mbentley/ubuntu:24.04 \
-    --build-arg INSTALL_VER="6.2.10.17" \
+    --build-arg INSTALL_VER="6.2.14.11" \
     --build-arg ARCH="arm64" \
     -f Dockerfile \
     -t mbentley/omada-controller:6.2-arm64 .
@@ -556,7 +556,7 @@ The following environment variables result in approximately 1–1.3 GB RSS in pr
 
 ```yaml
 # Image tag: mbentley/omada-controller:6.2-openj9
-# (or a pinned version such as 6.2.10.17-openj9)
+# (or a pinned version such as 6.2.14.11-openj9)
 
 JAVA_MAX_HEAP_SIZE: "512m"
 JAVA_MIN_HEAP_SIZE: "128m"

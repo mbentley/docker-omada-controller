@@ -10,7 +10,7 @@ COPY healthcheck.sh install.sh /
 ARG ARCH=amd64
 
 # install version (major.minor or full version); OMADA_URL set in install.sh
-ARG INSTALL_VER="6.2.10.17"
+ARG INSTALL_VER="6.2.14.11"
 ARG NO_MONGODB=false
 
 # optional cache busting build arg (value is not actually used anywhere)
