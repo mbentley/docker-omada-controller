@@ -14,6 +14,7 @@ The Helm chart releases do not correspond to the controller version so below is 
 
 | Controller Version | Chart Version | Change Notes |
 | ------------------ | ------------- | :------------ |
+| `6.2.14.11`        | `1.4.1`       | Update to version 6.2.14.11 |
 | `6.2.10.17`        | `1.4.0`       | Update to version 6.2.10.17 |
 | `6.2.0.17`         | `1.3.0`       | Add `javaMaxHeapSize` and `javaMinHeapSize` config options |
 | `6.2.0.17`         | `1.2.0`       | Update to version 6.2.0.17 |
