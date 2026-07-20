@@ -44,12 +44,13 @@ docker run \
 
 ```yaml
 extraEnvVars:
-  APPLICATION_PROPERTIES: |
-    server.tomcat.threads.max=50
-    server.tomcat.threads.min-spare=5
-    spring.task.execution.pool.core-size=5
-    spring.task.execution.pool.max-size=10
-    spring.task.scheduling.pool.size=3
+  - name: APPLICATION_PROPERTIES
+    value: |
+      server.tomcat.threads.max=50
+      server.tomcat.threads.min-spare=5
+      spring.task.execution.pool.core-size=5
+      spring.task.execution.pool.max-size=10
+      spring.task.scheduling.pool.size=3
 ```
 
 The startup log will confirm the file was written:
@@ -158,19 +159,23 @@ the approximate memory budget is:
 
 ```yaml
 extraEnvVars:
-  JAVA_MAX_HEAP_SIZE: "512m"
-  JAVA_MIN_HEAP_SIZE: "128m"
-  MONGOD_EXTRA_ARGS: "--wiredTigerCacheSizeGB 0.25"
-  APPLICATION_PROPERTIES: |
-    server.tomcat.threads.max=50
-    server.tomcat.threads.min-spare=5
-    server.tomcat.accept-count=50
-    spring.task.execution.pool.core-size=5
-    spring.task.execution.pool.max-size=20
-    spring.task.execution.pool.queue-capacity=100
-    spring.task.scheduling.pool.size=2
-    logging.level.root=WARN
-    logging.level.com.tplink=INFO
+  - name: JAVA_MAX_HEAP_SIZE
+    value: "512m"
+  - name: JAVA_MIN_HEAP_SIZE
+    value: "128m"
+  - name: MONGOD_EXTRA_ARGS
+    value: "--wiredTigerCacheSizeGB 0.25"
+  - name: APPLICATION_PROPERTIES
+    value: |
+      server.tomcat.threads.max=50
+      server.tomcat.threads.min-spare=5
+      server.tomcat.accept-count=50
+      spring.task.execution.pool.core-size=5
+      spring.task.execution.pool.max-size=20
+      spring.task.execution.pool.queue-capacity=100
+      spring.task.scheduling.pool.size=2
+      logging.level.root=WARN
+      logging.level.com.tplink=INFO
 ```
 
 ---
@@ -179,8 +184,9 @@ extraEnvVars:
 
 - **Version requirement**: `APPLICATION_PROPERTIES` only works with v5.x and above (Spring Boot base).
   On v4.x and below, the properties directory is not on the classpath and the file will be ignored.
-- **File is regenerated on every start**: The file is written fresh from the env var each time the
-  container starts, so changes to `APPLICATION_PROPERTIES` always take effect on the next restart.
+- **File state always matches the env var**: When `APPLICATION_PROPERTIES` is set the file is written
+  fresh on every start; when the env var is unset any previously written file is removed. Changes
+  always take effect on the next restart.
 - **No conflict with `omada.properties`**: Spring Boot reads `application.properties` for its own
   framework settings; Omada's application config lives in `omada.properties` (a different file).
 - **Unknown properties are ignored**: Spring Boot will log a warning for unrecognised keys but will

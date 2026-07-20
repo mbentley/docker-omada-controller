@@ -681,12 +681,18 @@ EOF
 }
 
 inject_application_properties() {
+  PROPS_FILE="/opt/tplink/EAPController/properties/application.properties"
+
   if [ -z "${APPLICATION_PROPERTIES}" ]
   then
+    if [ -f "${PROPS_FILE}" ]
+    then
+      echo "INFO: APPLICATION_PROPERTIES unset; removing leftover ${PROPS_FILE}"
+      rm -f "${PROPS_FILE}"
+    fi
     return
   fi
 
-  PROPS_FILE="/opt/tplink/EAPController/properties/application.properties"
   echo "INFO: APPLICATION_PROPERTIES set; writing Spring Boot properties to ${PROPS_FILE}"
   printf '%s\n' "${APPLICATION_PROPERTIES}" > "${PROPS_FILE}"
   chmod 640 "${PROPS_FILE}"
