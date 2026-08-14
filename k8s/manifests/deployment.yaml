@@ -46,6 +46,8 @@ spec:
           value: "8843"
         - name: UPGRADE_HTTPS_PORT
           value: "8043"
+        - name: UPGRADE_ES_HTTPS_PORT
+          value: "8044"
         - name: PORT_APP_DISCOVERY
           value: "27001"
         - name: PORT_ADOPT_V1

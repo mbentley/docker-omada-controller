@@ -4,6 +4,36 @@ set -e
 
 GA_URL="$(wget -q -O - "https://omada-controller-url.mbentley.net/hooks/omada_ver_to_url?omada-ver=6.2")"
 BETA_URL="$(wget -q -O - "https://omada-controller-url.mbentley.net/hooks/omada_ver_to_url?omada-ver=beta")"
+#BETA_URL="$(wget -q -O - "https://omada-controller-url.mbentley.net/hooks/omada_ver_to_url?omada-ver=beta-6.3.0.36")"
+
+# CACHE=true will store downloaded files in CACHE_DIR and reuse them on subsequent runs
+CACHE="${CACHE:-true}"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CACHE_DIR="${SCRIPT_DIR}/.cache"
+
+# fetch a URL into DEST_DIR, using/populating CACHE_DIR when CACHE=true
+download_file() {
+  local URL="$1"
+  local DEST_DIR="$2"
+  local FILENAME
+  FILENAME="$(basename "${URL}")"
+
+  if [ "${CACHE}" = "true" ] && [ -f "${CACHE_DIR}/${FILENAME}" ]
+  then
+    echo "INFO: found cached file, skipping download: ${FILENAME}"
+    cp "${CACHE_DIR}/${FILENAME}" "${DEST_DIR}/${FILENAME}"
+    return
+  fi
+
+  (cd "${DEST_DIR}" && wget -q --show-progress "${URL}")
+
+  if [ "${CACHE}" = "true" ]
+  then
+    mkdir -p "${CACHE_DIR}"
+    echo "INFO: caching downloaded file: ${FILENAME}"
+    cp "${DEST_DIR}/${FILENAME}" "${CACHE_DIR}/${FILENAME}"
+  fi
+}
 
 # create temp directory
 TEMP_DIR="$(mktemp -d)"
@@ -21,15 +51,11 @@ echo "INFO: downloading the latest GA and Beta versions..."
 echo "  GA URL: ${GA_URL}"
 echo "  BETA URL: ${BETA_URL}"
 
-cd ga
-wget -q --show-progress "${GA_URL}"
-GA_TAR="$(ls)"
-cd ..
+download_file "${GA_URL}" "${TEMP_DIR}/ga"
+GA_TAR="$(ls "${TEMP_DIR}/ga")"
 
-cd beta
-wget -q --show-progress "${BETA_URL}"
-BETA_TAR="$(ls)"
-cd ..
+download_file "${BETA_URL}" "${TEMP_DIR}/beta"
+BETA_TAR="$(ls "${TEMP_DIR}/beta")"
 
 echo ""
 
@@ -38,11 +64,22 @@ echo "INFO: extracting GA version..."
 cd "${TEMP_DIR}/ga" || exit 1
 tar xzf "${GA_TAR}"
 
-# extract BETA version (.tar.gz.zip)
+# extract BETA version (may be a plain .tar.gz or a .tar.gz wrapped in a .zip)
 echo "INFO: extracting BETA version..."
 cd "${TEMP_DIR}/beta" || exit 1
-unzip -q "${BETA_TAR}"
-tar xzf *.tar.gz
+case "${BETA_TAR}" in
+  *.zip)
+    unzip -q "${BETA_TAR}"
+    tar xzf *.tar.gz
+    ;;
+  *.tar.gz)
+    tar xzf "${BETA_TAR}"
+    ;;
+  *)
+    echo "ERROR: unknown file extension for BETA_TAR (${BETA_TAR})"
+    exit 1
+    ;;
+esac
 cd "${TEMP_DIR}" || exit 1
 
 echo ""

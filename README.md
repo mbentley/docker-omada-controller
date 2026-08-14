@@ -450,6 +450,7 @@ The example manifests are in the [k8s/manifests](./k8s/manifests/) directory. It
 | `SSL_KEY_NAME` | `tls.key` | _any_ | Name of the private cert mounted to `/cert`; see [Custom SSL Certificates](#custom-ssl-certificates) | >= `3.2` |
 | `TLS_1_11_ENABLED` | `false` | `true`, `false` | Re-enables TLS 1.0 & 1.1 if set to `true` | >= `4.1` |
 | `TZ` | `Etc/UTC` | _\<many\>_ | See [Time Zones](#time-zones) for more detail | >= `3.2` |
+| `UPGRADE_ES_HTTPS_PORT` | `8044` | `1024`-`65535` | Omada Controller ??? (currently unknown the full purpose) | >= `6.3.0.36` |
 | `UPGRADE_HTTPS_PORT` | `8043` | `1024`-`65535` | Dedicated HTTPS port for upgrades, separate from the main Controller port | >= `6.1` |
 | `WEB_CONFIG_OVERRIDE` | `false` | `true`, `false` | Forces the controller to re-read port configuration from `omada.properties` on startup; see [Using non-default ports](#using-non-default-ports) | >= `5.x` |
 
