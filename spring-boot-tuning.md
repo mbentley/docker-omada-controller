@@ -24,7 +24,7 @@ them verbatim to `/opt/tplink/EAPController/properties/application.properties` b
 ```yaml
 services:
   omada-controller:
-    image: mbentley/omada-controller:6.2
+    image: mbentley/omada-controller:6.3
     environment:
       APPLICATION_PROPERTIES: |
         server.tomcat.threads.max=50
@@ -37,7 +37,7 @@ services:
 ```bash
 docker run \
   -e APPLICATION_PROPERTIES=$'server.tomcat.threads.max=50\nserver.tomcat.threads.min-spare=5' \
-  mbentley/omada-controller:6.2
+  mbentley/omada-controller:6.3
 ```
 
 ### Kubernetes / Helm (extraEnvVars)

@@ -23,7 +23,7 @@ spec:
       restartPolicy: Always
       containers:
       - name: omada-controller
-        image: "mbentley/omada-controller:latest-amd64"
+        image: "mbentley/omada-controller:6.3"
         imagePullPolicy: IfNotPresent
         ports:
           # Ref: https://support.omadanetworks.com/us/document/13090/
@@ -38,6 +38,11 @@ spec:
           # 2. When upgrading the firmware for the Omada devices with Omada Software Controller.
           - name: manage-https
             containerPort: 8043
+            protocol: TCP
+
+          # Purpose currently unknown; added in v6.3.0.36
+          - name: upgrade-es-https
+            containerPort: 8044
             protocol: TCP
 
           # When the clients visit the Portal page via an HTTPS connection.

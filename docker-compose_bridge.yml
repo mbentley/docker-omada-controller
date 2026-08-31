@@ -1,7 +1,7 @@
 services:
   omada-controller:
     container_name: omada-controller
-    image: mbentley/omada-controller:6.2
+    image: mbentley/omada-controller:6.3
     restart: unless-stopped
     ulimits:
       nofile:
