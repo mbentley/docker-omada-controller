@@ -12,6 +12,7 @@ services:
     ports:
       - 8088:8088
       - 8043:8043
+      - 8044:8044
       - 8843:8843
       - 19810:19810/udp
       - 27001:27001/udp
@@ -25,6 +26,7 @@ services:
       - PORTAL_HTTP_PORT=8088
       - PORTAL_HTTPS_PORT=8843
       - UPGRADE_HTTPS_PORT=8043
+      - UPGRADE_ES_HTTPS_PORT=8044
       - PORT_APP_DISCOVERY=27001
       - PORT_DISCOVERY=29810
       - PORT_MANAGER_V1=29811

@@ -46,6 +46,8 @@ config:
     portalHttps: 8843
     # Port for HTTPS device upgrade downloads
     upgradeHttps: 8043
+    # Additional HTTPS port used for device upgrades (currently unknown the full purpose)
+    upgradeEsHttps: 8044
     # UDP Port allowing the Omada App to discover the Controller while on the same network
     appDiscovery: 27001
     # Port used for device adoption (v1)
