@@ -87,7 +87,7 @@ If you don't know much about Docker or want to just get started as easily as pos
     * If this script indicates that your CPU is not supported, check out the [KNOWN ISSUES section on this for clean installs](#clean-installs) for how you can proceed with the v6 controller image.
 1. **Picking an image tag**
     * `major` version tagged - For people who want to set it and forget it (i.e. - if you are used to just using `latest`), there is also the major tag version (i.e. - `5`, `6`, etc) which should be mostly safe from non-breaking changes.
-    * `major.minor` version tagged - Most people will want to use a major.minor tag version (i.e. - `6.2`) as this is the safest option and can almost certainly be considered to be non-breaking when a new version of the image is available.
+    * `major.minor` version tagged - Most people will want to use a major.minor tag version (i.e. - `6.3`) as this is the safest option and can almost certainly be considered to be non-breaking when a new version of the image is available.
     * **USING THE `latest` TAG IS A BAD IDEA - DO NOT DO IT!** Using `latest` with software like this is not a good idea because you may upgrade to a version that your devices do not support and TP-Link can put in breaking changes at any time! Instead, use one of the two tag types above.
     * ~~If you need to create PDF reports from the controller, there are [tags with Chromium](#tags-with-chromium) as that is required to generate them. Those images are much larger and only available for `amd64` so only use them if you really need that functionality.~~ Reports are now CSV and XLSX so they do not require Chromium.
 1. **Picking your networking mode**
@@ -102,11 +102,11 @@ If you don't know much about Docker or want to just get started as easily as pos
     * There are several ways to run your controller container:
         * [docker run...](#example-usage)
             * Examples for both host (_preferred_) and bridge network modes
-            * Uses the latest major.minor (i.e. - `6.2`) tag
+            * Uses the latest major.minor (i.e. - `6.3`) tag
             * Only requires Docker to be set up
         * [docker compose](#using-docker-compose)
             * Examples for both host (_preferred_) and bridge network modes
-            * Uses the latest major.minor (i.e. - `6.2`) tag
+            * Uses the latest major.minor (i.e. - `6.3`) tag
             * Requires Docker and [Docker Compose](https://docs.docker.com/compose/) to be set up
         * [k8s](#using-k8s)
             * Deployment is k8s is an advanced topic; only use this if you know what you are doing and can support yourself.
@@ -161,7 +161,8 @@ These are builds with the standard OpenJDK JVM.
 
 | Tag(s) | Major.Minor Release | Current Version |
 | :----- | ------------------- | --------------- |
-| `6`, `6.2` | `6.2.x` | `6.2.14.11` |
+| `6`, `6.3` | `6.3.x` | `6.3.0.44` |
+| `6.2` | `6.2.x` | `6.2.14.11` |
 | `6.1` | `6.1.x` | `6.1.0.19` |
 | `6.0` | `6.0.x` | `6.0.0.25` |
 | `latest`, `5`, `5.15` | `5.15.x` | `5.15.24.19` |
@@ -175,7 +176,8 @@ These are builds with [OpenJ9](https://eclipse.dev/openj9/); an alternative to t
 
 | Tag(s) | Major.Minor Release | Current Version |
 | :----- | ------------------- | --------------- |
-| `6-openj9`, `6.2-openj9`, `6.2.14.11-openj9` | `6.2.x` | `6.2.14.11` |
+| `6-openj9`, `6.3-openj9`, `6.3.0.44-openj9` | `6.3.x` | `6.3.0.44` |
+| `6.2-openj9`, `6.2.14.11-openj9` | `6.2.x` | `6.2.14.11` |
 | `6.1-openj9`, `6.1.0.19-openj9` | `6.1.x` | `6.1.0.19` |
 | `6.0-openj9`, `6.0.0.25-openj9` | `6.0.x` | `6.0.0.25` |
 | `5.15-openj9`, `5.15.24.19-openj9` | `5.15.x` | `5.15.24.19` |
@@ -186,7 +188,7 @@ If for some reason you can't use the multi-arch tags, there are explicitly tagge
 
 ### Explicit Version Tags
 
-If you need a specific version of the controller, starting with 5.13 and 5.14, there are explicitly tagged images with the exact version (i.e. - `6.2.14.11`) in the tag name. Check [Docker Hub](https://hub.docker.com/r/mbentley/omada-controller/tags) for the full list of tags.
+If you need a specific version of the controller, starting with 5.13 and 5.14, there are explicitly tagged images with the exact version (i.e. - `6.3.0.44`) in the tag name. Check [Docker Hub](https://hub.docker.com/r/mbentley/omada-controller/tags) for the full list of tags.
 
 ### Tags for Beta/Testing
 
@@ -275,10 +277,10 @@ There are some differences between the build steps for `amd64`, `arm64`, and `ar
   ```bash
   docker build \
     --build-arg BASE=mbentley/ubuntu:24.04 \
-    --build-arg INSTALL_VER="6.2.14.11" \
+    --build-arg INSTALL_VER="6.3.0.44" \
     --build-arg ARCH="amd64" \
     -f Dockerfile \
-    -t mbentley/omada-controller:6.2-amd64 .
+    -t mbentley/omada-controller:6.3-amd64 .
   ```
 
 ### `arm64`
@@ -288,10 +290,10 @@ There are some differences between the build steps for `amd64`, `arm64`, and `ar
   ```bash
   docker build \
     --build-arg BASE=mbentley/ubuntu:24.04 \
-    --build-arg INSTALL_VER="6.2.14.11" \
+    --build-arg INSTALL_VER="6.3.0.44" \
     --build-arg ARCH="arm64" \
     -f Dockerfile \
-    -t mbentley/omada-controller:6.2-arm64 .
+    -t mbentley/omada-controller:6.3-arm64 .
   ```
 
 ### `armv7l`
@@ -333,7 +335,7 @@ docker run -d \
   -e TZ=Etc/UTC \
   -v omada-data:/opt/tplink/EAPController/data \
   -v omada-logs:/opt/tplink/EAPController/logs \
-  mbentley/omada-controller:6.2
+  mbentley/omada-controller:6.3
 ```
 
 ### Using port mapping
@@ -359,7 +361,7 @@ docker run -d \
   -e TZ=Etc/UTC \
   -v omada-data:/opt/tplink/EAPController/data \
   -v omada-logs:/opt/tplink/EAPController/logs \
-  mbentley/omada-controller:6.2
+  mbentley/omada-controller:6.3
 ```
 
 ### Using non-default ports
@@ -541,7 +543,7 @@ MONGOD_EXTRA_ARGS=--wiredTigerCacheSizeGB 0.25
 
 ##### OpenJ9 Image Tags
 
-If memory footprint is a priority, consider using one of the [OpenJ9 image tags](#openj9) (e.g. `6.2-openj9`). Eclipse OpenJ9 is optimized for low memory use and fast startup time. In practice it can reduce the Java process RSS by 30-50% compared to HotSpot at the same `-Xmx` setting due to more aggressive idle GC and shared class caching.
+If memory footprint is a priority, consider using one of the [OpenJ9 image tags](#openj9) (e.g. `6.3-openj9`). Eclipse OpenJ9 is optimized for low memory use and fast startup time. In practice it can reduce the Java process RSS by 30-50% compared to HotSpot at the same `-Xmx` setting due to more aggressive idle GC and shared class caching.
 
 When using an OpenJ9 image you can additionally tune idle behaviour:
 
@@ -557,8 +559,8 @@ OPENJ9_JAVA_OPTIONS=-XX:+IdleTuningGcOnIdle -XX:+IdleTuningCompileAtIdle
 The following environment variables result in approximately 1–1.3 GB RSS in practice, leaving headroom in a 2 GB pod limit:
 
 ```yaml
-# Image tag: mbentley/omada-controller:6.2-openj9
-# (or a pinned version such as 6.2.14.11-openj9)
+# Image tag: mbentley/omada-controller:6.3-openj9
+# (or a pinned version such as 6.3.0.44-openj9)
 
 JAVA_MAX_HEAP_SIZE: "512m"
 JAVA_MIN_HEAP_SIZE: "128m"

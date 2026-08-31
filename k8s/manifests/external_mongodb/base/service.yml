@@ -17,6 +17,11 @@ spec:
     port: 8043
     protocol: TCP
 
+  - name: upgrade-es-https
+    targetPort: upgrade-es-https
+    port: 8044
+    protocol: TCP
+
   #- name: portal-https
   #  targetPort: portal-https
   #  port: 8843

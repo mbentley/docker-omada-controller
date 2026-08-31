@@ -119,7 +119,7 @@ case "${ARCH}:${NO_MONGODB}" in
   amd64:*|arm64:*|armv7l:true|"":*)
     # use openjdk-17 for v5.4 and above; all others use openjdk-8
     case "${OMADA_MAJOR_VER}" in
-      5|6)
+      5)
         # pick specific package based on the major.minor version
         case "${OMADA_MAJOR_MINOR_VER}" in
           5.0|5.1|5.3)
@@ -139,6 +139,26 @@ case "${ARCH}:${NO_MONGODB}" in
             fi
             ;;
         esac
+        ;;
+      6)
+        # starting with 6.3, Spring Boot >= 3.5.5 supports OpenJDK 25; 6.0-6.2 should use OpenJDK 17 due to the Spring Boot versions used
+        if [ "${OMADA_MAJOR_MINOR_VER#*.}" -ge 3 ]
+        then
+          JDK_PKG="openjdk-25-jre-headless"
+        else
+          JDK_PKG="openjdk-17-jre-headless"
+        fi
+
+        # we will use OpenJ9 if present or the selected OpenJDK package if not
+        if [ "$(. /opt/java/openjdk/release >/dev/null 2>&1; echo "${JVM_VARIANT}")" = "Openj9" ]
+        then
+          # we found OpenJ9; assume we want to use that
+          echo "INFO: OpenJ9 was found; using that instead of ${JDK_PKG}!"
+        else
+          # OpenJ9 not found; assume we need to use the selected OpenJDK package
+          echo "INFO: OpenJ9 was NOT found; using adding ${JDK_PKG} to the list of packages to install"
+          PKGS+=( "${JDK_PKG}" )
+        fi
         ;;
       *)
         # all other versions, use openjdk-8
