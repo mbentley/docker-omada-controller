@@ -152,7 +152,7 @@ spec:
               protocol: TCP
             {{- end }}
             {{- if ne .Values.config.ports.upgradeEsHttps .Values.config.ports.manageHttps }}
-            - name: upgrade-es-https
+            - name: upgrade-eshttps
               containerPort: {{ .Values.config.ports.upgradeEsHttps }}
               protocol: TCP
             {{- end }}

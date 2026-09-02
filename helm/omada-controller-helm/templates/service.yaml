@@ -34,9 +34,9 @@ spec:
     targetPort: upgrade-https
   {{- end }}
   {{- if ne .Values.config.ports.upgradeEsHttps .Values.config.ports.manageHttps }}
-  - name: upgrade-es-https
+  - name: upgrade-eshttps
     port: {{ .Values.config.ports.upgradeEsHttps }}
-    targetPort: upgrade-es-https
+    targetPort: upgrade-eshttps
   {{- end }}
   - name: app-discovery
     port: {{ .Values.config.ports.appDiscovery }}

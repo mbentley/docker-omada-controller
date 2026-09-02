@@ -15,7 +15,7 @@ spec:
     port: 8043
     targetPort: 8043
     protocol: TCP
-  - name: upgrade-es-https
+  - name: upgrade-eshttps
     port: 8044
     targetPort: 8044
     protocol: TCP
