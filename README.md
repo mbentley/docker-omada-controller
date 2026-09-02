@@ -616,7 +616,10 @@ A proper long term solution would be to reinstall Raspberry Pi OS on your Pi 4 a
 
 #### 5.8/6.3 - 404s and Blank Pages
 
-It has been reported that a number of users are seeing 404s or blank pages after upgrading to version 5.8. This can be resolved by either force-reloading the page or by clearing your browser's cache.
+It has been reported that a number of users are seeing 404s or blank pages after upgrading to version 5.8 and 6.3. This can be resolved by either force-reloading the page or by clearing your browser's cache.
+
+> [!NOTE]
+> **Additionally for 6.3** - the login URL has changed from `https://<your-ip-or-hostname>:8043/login` to `https://<your-ip-or-hostname>:8043/independent/index.html#login`. Update any bookmarks you may have to the login page.
 
 #### Incorrect CMD
 
