@@ -41,7 +41,7 @@ spec:
             protocol: TCP
 
           # Purpose currently unknown; added in v6.3.0.36
-          - name: upgrade-es-https
+          - name: upgrade-eshttps
             containerPort: 8044
             protocol: TCP
 
