@@ -61,7 +61,7 @@ For instructions on running a legacy v3 or v4 controller, see the [README for v3
             * [Real-World OpenJ9 Example (Small Network)](#real-world-openj9-example-small-network)
         * [Mismatched Userland and Kernel](#mismatched-userland-and-kernel)
     * [Upgrade Issues](#upgrade-issues)
-        * [5.8 - 404s and Blank Pages](#58---404s-and-blank-pages)
+        * [5.8/6.3 - 404s and Blank Pages](#5863---404s-and-blank-pages)
         * [Incorrect CMD](#incorrect-cmd)
         * [5.12 - Unable to Login After Upgrade](#512---unable-to-login-after-upgrade)
         * [Slowness in Safari](#slowness-in-safari)
@@ -614,7 +614,7 @@ A proper long term solution would be to reinstall Raspberry Pi OS on your Pi 4 a
 
 ### Upgrade Issues
 
-#### 5.8 - 404s and Blank Pages
+#### 5.8/6.3 - 404s and Blank Pages
 
 It has been reported that a number of users are seeing 404s or blank pages after upgrading to version 5.8. This can be resolved by either force-reloading the page or by clearing your browser's cache.
 
