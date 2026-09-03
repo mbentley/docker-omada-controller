@@ -37,8 +37,7 @@ services:
       - omada-init-scripts:/init
 
   mongodb:
-    image: mongo:4
-    #image: mongo:8
+    image: mongo:8
     container_name: mongodb
     stop_grace_period: 60s
     depends_on:
@@ -64,7 +63,7 @@ services:
       - omada
 
   omada-controller:
-    image: mbentley/omada-controller:6.0
+    image: mbentley/omada-controller:6
     container_name: omada-controller
     stop_grace_period: 60s
     depends_on:
