@@ -14,6 +14,7 @@ The Helm chart releases do not correspond to the controller version so below is 
 
 | Controller Version | Chart Version | Change Notes |
 | ------------------ | ------------- | :------------ |
+| `6.3.0.44`         | `1.5.2`       | Update to version 6.3.0.45 |
 | `6.3.0.44`         | `1.5.1`       | Fix port name `upgrade-es-https` exceeding Kubernetes' 15 character limit |
 | `6.3.0.44`         | `1.5.0`       | Update to version 6.3.0.44 |
 | `6.2.14.11`        | `1.4.2`       | Added env var for `UPGRADE_ES_HTTPS_PORT` |
