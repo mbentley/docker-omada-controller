@@ -312,12 +312,9 @@ gatewayApi:
 
 #### Backend TLS
 
-The Omada Controller only speaks HTTPS on its management and portal ports, so a Gateway that
-connects in cleartext gets `400 Bad Request - This combination of host and port requires TLS.`
-back from the controller. Enable `gatewayApi.backendTLSPolicy` so the Gateway re-encrypts towards
-the controller. The policy always validates the backend certificate, so the controller needs one
-the Gateway trusts: issue it with cert-manager, serve it through `config.tlsSecretName`, and point
-`caCertificateRefs` at a ConfigMap holding the issuing CA in the release namespace.
+The Omada Controller only speaks HTTPS on its management and portal ports.
+Enable gatewayApi.backendTLSPolicy so the Gateway re-encrypts towards
+the controller. The policy always validates the backend certificate.
 
 ```yaml
 config:
@@ -334,8 +331,7 @@ gatewayApi:
       hostnames:
         - omada.example.com
   backendTLSPolicy:
-    enabled: true
-    # Must match a SAN of the certificate the controller serves; also used as SNI.
+    enabled: true    
     hostname: omada-omada-controller.omada.svc
     caCertificateRefs:
       - group: ""
@@ -344,36 +340,9 @@ gatewayApi:
     sectionNames:
       - manage-https
 
-extraManifests:
-  - apiVersion: cert-manager.io/v1
-    kind: Certificate
-    metadata:
-      name: omada-backend-tls
-    spec:
-      secretName: omada-backend-tls
-      issuerRef:
-        kind: ClusterIssuer
-        name: my-ca-issuer
-      commonName: '{{ include "omada-controller.fullname" . }}.{{ .Release.Namespace }}.svc'
-      dnsNames:
-        - '{{ include "omada-controller.fullname" . }}.{{ .Release.Namespace }}.svc'
-        - '{{ include "omada-controller.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local'
-      usages:
-        - server auth
-  - apiVersion: v1
-    kind: ConfigMap
-    metadata:
-      name: omada-backend-ca
-    data:
-      ca.crt: |
-        -----BEGIN CERTIFICATE-----
-        ...
-        -----END CERTIFICATE-----
 ```
 
-> [!NOTE]
-> `gatewayApi.backendTLSPolicy.sectionNames` refers to Service port names, so use `manage-https`
-> and `portal-https`. Leave it empty to cover the ports of the enabled HTTPRoutes.
+
 
 
 ### Installation with External MongoDB
@@ -518,17 +487,7 @@ ingress:
     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
 ```
 
-When using the Gateway API, a Gateway that connects in cleartext gets this back from the controller:
 
-```
-400 Bad Request
-This combination of host and port requires TLS.
-```
-
-Enable `gatewayApi.backendTLSPolicy` so the Gateway re-encrypts towards the controller. See
-[Backend TLS](#backend-tls) for a complete example. If the backend certificate cannot be verified,
-check that `gatewayApi.backendTLSPolicy.hostname` matches a name in the certificate the controller
-serves and that its CA is referenced through `caCertificateRefs`.
 
 ### MongoDB Connection Issues
 
