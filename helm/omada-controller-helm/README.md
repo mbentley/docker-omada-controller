@@ -487,8 +487,6 @@ ingress:
     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
 ```
 
-
-
 ### MongoDB Connection Issues
 
 Check the logs for MongoDB connection errors. If using external MongoDB, verify the connection URL and credentials.

@@ -12,15 +12,11 @@ Omada Controller Deployed successfully. See below for the application URL.
   https://{{ . }}/
 {{- end }}
 {{- else }}
-     NOTE: No hostnames were configured for the management HTTPRoute, so it matches every
-           hostname of the Gateway it is attached to.
+     NOTE: No hostnames were configured for the management HTTPRoute
 {{- end }}
 {{- if not .Values.gatewayApi.backendTLSPolicy.enabled }}
 
-     NOTE: gatewayApi.backendTLSPolicy is disabled, so the Gateway connects to the controller in
-           cleartext. The controller only speaks HTTPS on its management and portal ports and
-           answers '400 Bad Request - This combination of host and port requires TLS.' Enable
-           gatewayApi.backendTLSPolicy, or configure your Gateway implementation to use TLS
+     NOTE: gatewayApi.backendTLSPolicy is disabled, Enable gatewayApi.backendTLSPolicy, or configure your Gateway implementation to use TLS
            towards the backend.
 {{- end }}
 {{- else if contains "LoadBalancer" .Values.service.type }}
