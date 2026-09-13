@@ -178,6 +178,118 @@ ingress:
   #    hosts:
   #      - omada.example.com
 
+# Configure the Gateway API for the Omada Controller service, as an alternative to the ingress.
+# option above. Requires the Gateway API CRDs and an implementation to be installed in the cluster.
+# See https://gateway-api.sigs.k8s.io/ and https://gateway-api.sigs.k8s.io/implementations/
+gatewayApi:
+  enabled: false
+
+  # Fails early when the Gateway API CRDs are missing. 
+  checkCapabilities: true
+
+  # Optionally create a Gateway. Leave disabled to attach to an existing one via parentRefs.
+  # See https://gateway-api.sigs.k8s.io/reference/api-types/gateway/
+  gateway:
+    enabled: false
+    # Name of the Gateway. Defaults to the fullname template if not set.
+    name: ""
+    # GatewayClass provided by your implementation.
+    gatewayClassName: ""
+    # Extra labels to add to the Gateway
+    labels: {}
+    # Extra annotations to add to the Gateway
+    annotations: {}
+      # cert-manager.io/cluster-issuer: letsencrypt-prod
+    addresses: []
+      # - type: IPAddress
+      #   value: 192.168.1.21
+    infrastructure: {}
+      # annotations:
+      #   metallb.io/loadBalancerIPs: 192.168.1.21
+    listeners:
+      - name: https
+        protocol: HTTPS
+        port: 443
+        # hostname: omada.example.com
+        # tls:
+        #   mode: Terminate
+        #   certificateRefs:
+        #     - name: omada-example-com-tls
+        allowedRoutes:
+          namespaces:
+            from: Same
+
+  # A separate HTTPRoute for the management portal and for the captive portal, so each can use its
+  # own hostnames. See https://gateway-api.sigs.k8s.io/reference/api-types/httproute/
+  httpRoute:
+    enabled: true
+    # Extra labels to add to the HTTPRoutes
+    labels: {}
+    # Extra annotations to add to the HTTPRoutes
+    annotations: {}
+    # Gateways to attach the routes to. Required, unless gateway.enabled is true.
+    parentRefs: []
+      # - name: my-gateway
+      #   namespace: gateway-system
+      #   sectionName: https
+
+    # Management portal HTTPRoute.
+    management:
+      enabled: true
+      hostnames: []
+        # - omada.example.com
+      # Overrides `httpRoute.parentRefs` for this route only
+      parentRefs: []
+      # Overrides the backend port.
+      port: ""
+      # Matches every request when empty
+      matches:
+        - path:
+            type: PathPrefix
+            value: /
+      filters: []
+      timeouts: {}
+        # request: 30s
+
+    # Captive portal.
+    portal:
+      enabled: false
+      # Hostnames 
+      hostnames: []
+        # - omada-portal.example.com
+      # Overrides for this route only.
+      parentRefs: []
+      # Overrides the backend port.
+      port: ""
+      # Matches every request when empty
+      matches:
+        - path:
+            type: PathPrefix
+            value: /
+      filters: []
+      timeouts: {}
+        # request: 30s
+
+  # Makes the Gateway connect to the controller over HTTPS and validate its certificate, so the
+  # controller needs a certificate the Gateway trusts.
+  # See https://gateway-api.sigs.k8s.io/reference/api-types/policy/backendtlspolicy/
+  backendTLSPolicy:
+    enabled: false
+    # Extra labels to add to the BackendTLSPolicy
+    labels: {}
+    # Extra annotations to add to the BackendTLSPolicy
+    annotations: {}    
+    hostname: ""    
+    caCertificateRefs: []
+      # - group: ""
+      #   kind: ConfigMap
+      #   name: omada-ca
+    # Set to System to use the system trust store.
+    wellKnownCACertificates: ""
+    # Service ports to apply the policy to.
+    sectionNames: []
+      # - manage-https
+
 # Configure Resource Requests and Limits for the Omada Controller container. This is left
 # unconfigured by default
 resources: {}

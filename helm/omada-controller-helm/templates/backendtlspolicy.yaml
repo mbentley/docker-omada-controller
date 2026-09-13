@@ -1,0 +1,48 @@
+{{- if and .Values.gatewayApi.enabled .Values.gatewayApi.backendTLSPolicy.enabled -}}
+{{- include "omada-controller.gatewayApiCapabilities" . -}}
+{{- $fullName := include "omada-controller.fullname" . -}}
+{{- $policy := .Values.gatewayApi.backendTLSPolicy -}}
+{{- $apiVersion := include "omada-controller.backendTLSPolicyApiVersion" . -}}
+{{- if and .Values.gatewayApi.checkCapabilities (not (.Capabilities.APIVersions.Has (printf "%s/BackendTLSPolicy" $apiVersion))) -}}
+{{- fail "gatewayApi.backendTLSPolicy.enabled is set to true but the BackendTLSPolicy CRD is not available in this cluster." -}}{{- end -}}
+{{- $sectionNames := $policy.sectionNames -}}
+{{- if not $sectionNames -}}
+{{- $sectionNames = list -}}
+{{- if .Values.gatewayApi.httpRoute.management.enabled -}}
+{{- $sectionNames = append $sectionNames "manage-https" -}}
+{{- end -}}
+{{- if .Values.gatewayApi.httpRoute.portal.enabled -}}
+{{- $sectionNames = append $sectionNames "portal-https" -}}
+{{- end -}}
+{{- end -}}
+apiVersion: {{ $apiVersion }}
+kind: BackendTLSPolicy
+metadata:
+  name: {{ $fullName }}
+  labels:
+    {{- include "omada-controller.labels" . | nindent 4 }}
+    {{- with $policy.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with $policy.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  targetRefs:
+  {{- range $sectionNames }}
+  - group: ""
+    kind: Service
+    name: {{ $fullName }}
+    sectionName: {{ . | quote }}
+  {{- end }}
+  validation:
+    hostname: {{ $policy.hostname | quote }}
+    {{- with $policy.caCertificateRefs }}
+    caCertificateRefs:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
+    {{- with $policy.wellKnownCACertificates }}
+    wellKnownCACertificates: {{ . | quote }}
+    {{- end }}
+{{- end }}
