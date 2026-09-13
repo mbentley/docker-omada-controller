@@ -342,9 +342,6 @@ gatewayApi:
 
 ```
 
-
-
-
 ### Installation with External MongoDB
 
 ```yaml
