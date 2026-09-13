@@ -73,9 +73,6 @@ Verify that the Gateway API CRDs are present in the cluster before rendering any
 resource, so an enabled but unsupported cluster fails early with a clear message instead of
 failing on an unknown resource type during install.
 
-Helm only knows which API versions are served when it can reach the cluster. `helm template` does
-not, so either pass `--api-versions gateway.networking.k8s.io/v1` or set
-`gatewayApi.checkCapabilities` to `false` when rendering the chart offline.
 */}}
 {{- define "omada-controller.gatewayApiCapabilities" -}}
 {{- if .Values.gatewayApi.checkCapabilities }}
