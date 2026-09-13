@@ -158,13 +158,15 @@ The following table lists the configurable parameters of the Omada Controller ch
 | `gatewayApi.httpRoute.management.enabled` | Create the HTTPRoute for the management portal | `true` |
 | `gatewayApi.httpRoute.management.hostnames` | Hostnames for the management portal | `[]` |
 | `gatewayApi.httpRoute.management.parentRefs` | Overrides parentRefs for this route | `[]` |
-| `gatewayApi.httpRoute.management.port` | Overrides the backend port | `""` || 
+| `gatewayApi.httpRoute.management.port` | Overrides the backend port | `""` |
+| `gatewayApi.httpRoute.management.matches` | Request matches for this route | `[]` |
 | `gatewayApi.httpRoute.management.filters` | Filters for requests | `[]` |
 | `gatewayApi.httpRoute.management.timeouts` | Timeouts for requests | `{}` |
 | `gatewayApi.httpRoute.portal.enabled` | Create the HTTPRoute for the captive portal | `false` |
 | `gatewayApi.httpRoute.portal.hostnames` | Hostnames for the captive portal | `[]` |
 | `gatewayApi.httpRoute.portal.parentRefs` | Overrides parentRefs for this route | `[]` |
 | `gatewayApi.httpRoute.portal.port` | Overrides the backend port | `""` |
+| `gatewayApi.httpRoute.portal.matches` | Request matches for this route | `[]` |
 | `gatewayApi.httpRoute.portal.filters` | Filters applied requests | `[]` |
 | `gatewayApi.httpRoute.portal.timeouts` | Timeouts for requests | `{}` |
 | `gatewayApi.backendTLSPolicy.enabled` | Create a BackendTLSPolicy | `false` |
