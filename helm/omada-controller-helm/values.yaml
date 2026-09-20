@@ -92,7 +92,7 @@ config:
   sslKeyName: tls.key
 
   # Name of a kubernetes.io/tls secret to automatically mount as the controller's TLS certificate.
-  # When set, the secret will be mounted to /cert in the container and the controller will use 
+  # When set, the secret will be mounted to /cert in the container and the controller will use
   # the certificate files specified by sslCertName and sslKeyName (defaults: tls.crt/tls.key).
   # This is compatible with cert-manager generated secrets.
   tlsSecretName: ""
@@ -186,7 +186,7 @@ gatewayApi:
   enabled: false
 
   # Fail the render/install early with a clear message when the Gateway API CRDs are not
-  # present in the cluster. 
+  # present in the cluster.
   checkCapabilities: true
 
   # Create a Gateway as part of this release. Leave this disabled to attach the HTTPRoutes
@@ -195,14 +195,14 @@ gatewayApi:
   gateway:
     enabled: false
     # Name of the Gateway. Defaults to the fullname template when left empty.
-    name: ""  
+    name: ""
     gatewayClassName: ""
     # Extra labels to add to the Gateway
     labels: {}
     annotations: {}
     addresses: []
       # - type: IPAddress
-      #   value: 192.168.1.21  
+      #   value: 192.168.1.21
     infrastructure: {}
       # annotations:
       #   metallb.io/loadBalancerIPs: 192.168.1.1
@@ -257,15 +257,15 @@ gatewayApi:
 
     # Route for the user captive portal, backed by config.ports.portalHttps
     portal:
-      enabled: false     
+      enabled: false
       hostnames: []
-        # - omada-portal.example.com     
-      parentRefs: []     
+        # - omada-portal.example.com
+      parentRefs: []
       port: ""
       matches: []
         # - path:
         #     type: PathPrefix
-        #     value: /   
+        #     value: /
       filters: []
       timeouts: {}
         # request: 30s

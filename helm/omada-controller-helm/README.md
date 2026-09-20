@@ -15,7 +15,7 @@ The Helm chart releases do not correspond to the controller version so below is 
 
 | Controller Version | Chart Version | Change Notes |
 | ------------------ | ------------- | :------------ |
-| `6.3.0.45`         | `1.5.4`       | Add optional Gateway API support |
+| `6.3.0.45`         | `1.6.0`       | Add optional Gateway API support |
 | `6.3.0.44`         | `1.5.3`       | Fix Logs Persistent Volume Claim |
 | `6.3.0.44`         | `1.5.2`       | Update to version 6.3.0.45 |
 | `6.3.0.44`         | `1.5.1`       | Fix port name `upgrade-es-https` exceeding Kubernetes' 15 character limit |
@@ -333,8 +333,8 @@ gatewayApi:
       hostnames:
         - omada.example.com
   backendTLSPolicy:
-    enabled: true    
-    hostname: omada-omada-controller.omada.svc
+    enabled: true
+    hostname: omada-controller.omada.svc
     caCertificateRefs:
       - group: ""
         kind: ConfigMap

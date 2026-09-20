@@ -5,6 +5,9 @@
 {{- $apiVersion := include "omada-controller.backendTLSPolicyApiVersion" . -}}
 {{- if and .Values.gatewayApi.checkCapabilities (not (.Capabilities.APIVersions.Has (printf "%s/BackendTLSPolicy" $apiVersion))) -}}
 {{- fail "gatewayApi.backendTLSPolicy.enabled is set to true but the BackendTLSPolicy CRD is not available in this cluster." -}}{{- end -}}
+{{- if not $policy.hostname -}}
+{{- fail "gatewayApi.backendTLSPolicy.enabled is set to true but gatewayApi.backendTLSPolicy.hostname is empty. Set it to the hostname the Gateway must use for SNI and certificate validation towards the Omada Controller (usually the Service DNS name, e.g. <release>-omada-controller.<namespace>.svc)." -}}
+{{- end -}}
 {{- $sectionNames := $policy.sectionNames -}}
 {{- if not $sectionNames -}}
 {{- $sectionNames = list -}}
