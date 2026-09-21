@@ -49,9 +49,12 @@ setup_environment() {
   # EXTRA ARGS for embedded MongoDB (appended to every mongod invocation)
   MONGOD_EXTRA_ARGS="${MONGOD_EXTRA_ARGS:-}"
 
-  # JAVA HEAP OVERRIDES (replace hardcoded -Xmx/-Xms in the CMD)
+  # JAVA HEAP OVERRIDES (fixed -Xmx/-Xms; take precedence over the percentage flags)
   JAVA_MAX_HEAP_SIZE="${JAVA_MAX_HEAP_SIZE:-}"
   JAVA_MIN_HEAP_SIZE="${JAVA_MIN_HEAP_SIZE:-}"
+
+  # EXTRA JVM OPTIONS (appended to JAVA_TOOL_OPTIONS; last occurrence of a -XX flag wins)
+  JAVA_EXTRA_OPTS="${JAVA_EXTRA_OPTS:-}"
 
   # SPRING BOOT APPLICATION PROPERTIES (written to classpath as application.properties)
   APPLICATION_PROPERTIES="${APPLICATION_PROPERTIES:-}"
@@ -449,10 +452,31 @@ inject_cloudsdk_jar() {
   fi
 }
 
+append_java_extra_opts() {
+  # append JAVA_EXTRA_OPTS to JAVA_TOOL_OPTIONS so single flags (e.g. -XX:MaxRAMPercentage)
+  # can be changed without repeating the full image default
+  if [ -z "${JAVA_EXTRA_OPTS}" ]
+  then
+    return
+  fi
+
+  export JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS:+${JAVA_TOOL_OPTIONS} }${JAVA_EXTRA_OPTS}"
+  echo "INFO: JAVA_EXTRA_OPTS appended; JAVA_TOOL_OPTIONS is now: ${JAVA_TOOL_OPTIONS}"
+}
+
+
 patch_java_heap() {
-  # replace hardcoded -Xmx / -Xms in EXEC_ARGS with user-supplied values
+  # replace hardcoded -Xmx / -Xms in EXEC_ARGS with user-supplied values, or append them
+  # when absent; explicit -Xmx/-Xms on the command line take precedence over the
+  # MaxRAMPercentage/InitialRAMPercentage defaults set via JAVA_TOOL_OPTIONS in the image
   if [ -z "${JAVA_MAX_HEAP_SIZE}" ] && [ -z "${JAVA_MIN_HEAP_SIZE}" ]
   then
+    return
+  fi
+
+  if ! echo "${EXEC_ARGS[@]}" | grep -q "OmadaLinuxMain"
+  then
+    echo "INFO: Not starting Omada Controller; skipping java heap override"
     return
   fi
 
@@ -487,17 +511,27 @@ patch_java_heap() {
         ;;
     esac
   done
-  EXEC_ARGS=("${NEW_ARGS[@]}")
 
+  # no existing flag found: insert directly after the java binary (EXEC_ARGS[0])
+  INSERT_ARGS=()
   if [ -n "${JAVA_MAX_HEAP_SIZE}" ] && [ "${XMX_REPLACED}" != "true" ]
   then
-    echo "WARN: JAVA_MAX_HEAP_SIZE was set but no existing -Xmx argument was found in EXEC_ARGS; no replacement was made"
+    echo "INFO: adding '-Xmx${JAVA_MAX_HEAP_SIZE}' (JAVA_MAX_HEAP_SIZE); overrides -XX:MaxRAMPercentage from JAVA_TOOL_OPTIONS"
+    INSERT_ARGS+=("-Xmx${JAVA_MAX_HEAP_SIZE}")
   fi
 
   if [ -n "${JAVA_MIN_HEAP_SIZE}" ] && [ "${XMS_REPLACED}" != "true" ]
   then
-    echo "WARN: JAVA_MIN_HEAP_SIZE was set but no existing -Xms argument was found in EXEC_ARGS; no replacement was made"
+    echo "INFO: adding '-Xms${JAVA_MIN_HEAP_SIZE}' (JAVA_MIN_HEAP_SIZE); overrides -XX:InitialRAMPercentage from JAVA_TOOL_OPTIONS"
+    INSERT_ARGS+=("-Xms${JAVA_MIN_HEAP_SIZE}")
   fi
+
+  if [ "${#INSERT_ARGS[@]}" -gt 0 ]
+  then
+    NEW_ARGS=("${NEW_ARGS[0]}" "${INSERT_ARGS[@]}" "${NEW_ARGS[@]:1}")
+  fi
+  
+  EXEC_ARGS=("${NEW_ARGS[@]}")
 }
 
 warn_autobackup() {
@@ -788,6 +822,7 @@ common_setup_and_validation() {
   validate_mongodb_version
   check_version_downgrade
   check_userland_kernel
+  append_java_extra_opts
   show_java_version
   warn_autobackup
   patch_java_heap
