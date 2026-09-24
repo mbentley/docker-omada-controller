@@ -118,4 +118,17 @@ else
 fi
 echo ""
 
+# compare bin/control.sh files
+echo "========================================"
+echo "Comparing bin/control.sh"
+echo "========================================"
+if git diff --no-index --color=always --src-prefix= --dst-prefix= \
+  "ga/${GA_DIR_NAME}/bin/control.sh" "beta/${BETA_DIR_NAME}/bin/control.sh"
+then
+  echo "INFO: bin/control.sh files are identical"
+else
+  echo "INFO: bin/control.sh files differ (see above)"
+fi
+echo ""
+
 echo "INFO: comparison complete!"
