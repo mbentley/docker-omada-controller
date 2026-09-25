@@ -127,6 +127,10 @@ spec:
             - name: MONGO_EXTERNAL
               value: "true"
             {{- end }}
+            {{- if .Values.config.javaExtraOpts }}
+            - name: JAVA_EXTRA_OPTS
+              value: {{ .Values.config.javaExtraOpts | quote }}
+            {{- end }}
             {{- if .Values.config.javaMaxHeapSize }}
             - name: JAVA_MAX_HEAP_SIZE
               value: {{ .Values.config.javaMaxHeapSize | quote }}
