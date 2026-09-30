@@ -131,4 +131,18 @@ else
 fi
 echo ""
 
+
+# compare readme.txt files
+echo "========================================"
+echo "Comparing readme.txt"
+echo "========================================"
+if git diff --no-index --color=always --src-prefix= --dst-prefix= \
+  "ga/readme.txt" "beta/readme.txt"
+then
+  echo "INFO: readme.txt files are identical"
+else
+  echo "INFO: readme.txt files differ (see above)"
+fi
+echo ""
+
 echo "INFO: comparison complete!"
