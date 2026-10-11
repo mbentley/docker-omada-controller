@@ -92,7 +92,7 @@ config:
   sslKeyName: tls.key
 
   # Name of a kubernetes.io/tls secret to automatically mount as the controller's TLS certificate.
-  # When set, the secret will be mounted to /cert in the container and the controller will use 
+  # When set, the secret will be mounted to /cert in the container and the controller will use
   # the certificate files specified by sslCertName and sslKeyName (defaults: tls.crt/tls.key).
   # This is compatible with cert-manager generated secrets.
   tlsSecretName: ""
@@ -177,6 +177,115 @@ ingress:
   #  - secretName: omada-example-com-tls
   #    hosts:
   #      - omada.example.com
+
+# Configure Gateway API resources for the Omada Controller service. Requires the Gateway API
+# CRDs  to be installed in the cluster. This is an alternative to
+# the ingress options above. For more information see https://gateway-api.sigs.k8s.io/
+
+gatewayApi:
+  enabled: false
+
+  # Fail the render/install early with a clear message when the Gateway API CRDs are not
+  # present in the cluster.
+  checkCapabilities: true
+
+  # Create a Gateway as part of this release. Leave this disabled to attach the HTTPRoutes
+  # to a Gateway which is managed outside of this chart, using httpRoute.parentRefs below.
+  # https://gateway-api.sigs.k8s.io/reference/api-types/gateway/
+  gateway:
+    enabled: false
+    # Name of the Gateway. Defaults to the fullname template when left empty.
+    name: ""
+    gatewayClassName: ""
+    # Extra labels to add to the Gateway
+    labels: {}
+    annotations: {}
+    addresses: []
+      # - type: IPAddress
+      #   value: 192.168.1.21
+    infrastructure: {}
+      # annotations:
+      #   metallb.io/loadBalancerIPs: 192.168.1.1
+    listeners:
+      - name: https
+        protocol: HTTPS
+        port: 443
+        # hostname: omada.example.com
+        tls:
+          mode: Terminate
+          certificateRefs:
+            - name: omada-tls-secret
+        allowedRoutes:
+          namespaces:
+            from: Same
+
+  # HTTPRoutes which route traffic from the Gateway to the Omada Controller service
+  httpRoute:
+    enabled: true
+    # Extra labels to add to the HTTPRoutes
+    labels: {}
+    # Extra annotations to add to the HTTPRoutes
+    annotations: {}
+    parentRefs: []
+      # - name: my-gateway
+      #   namespace: gateway-system
+      #   sectionName: https
+
+    # Route for the management portal, backed by config.ports.manageHttps
+    management:
+      enabled: true
+      # Hostnames which are routed to the management portal
+      hostnames: []
+        # - omada.example.com
+      # Overrides httpRoute.parentRefs for this route only
+      parentRefs: []
+      # Overrides the backend port. Defaults to config.ports.manageHttps.
+      port: ""
+      matches: []
+        # - path:
+        #     type: PathPrefix
+        #     value: /
+      filters: []
+        # - type: RequestHeaderModifier
+        #   requestHeaderModifier:
+        #     set:
+        #       - name: X-Forwarded-Proto
+        #         value: https
+      timeouts: {}
+        # request: 30s
+        # backendRequest: 30s
+
+    # Route for the user captive portal, backed by config.ports.portalHttps
+    portal:
+      enabled: false
+      hostnames: []
+        # - omada-portal.example.com
+      parentRefs: []
+      port: ""
+      matches: []
+        # - path:
+        #     type: PathPrefix
+        #     value: /
+      filters: []
+      timeouts: {}
+        # request: 30s
+        # backendRequest: 30s
+
+  # BackendTLSPolicy which tells the Gateway to re-encrypt traffic towards the Omada
+  # Controller, since it only serves HTTPS on its management and captive portal ports.
+  # The certificate presented by the controller is always validated, s
+  backendTLSPolicy:
+    enabled: false
+    labels: {}
+    annotations: {}
+    hostname: ""
+    caCertificateRefs: []
+      # - group: ""
+      #   kind: ConfigMap
+      #   name: omada-backend-ca
+    wellKnownCACertificates: ""
+    sectionNames: []
+      # - manage-https
 
 # Configure Resource Requests and Limits for the Omada Controller container. This is left
 # unconfigured by default

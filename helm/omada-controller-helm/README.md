@@ -7,6 +7,7 @@ Helm chart for deploying the TP-Link Omada SDN Controller on Kubernetes.
 - Kubernetes 1.19+
 - Helm 3.0+
 - PV provisioner support in the underlying infrastructure (for persistent storage)
+- Gateway API CRDs v1.0+ and a Gateway API implementation (only when gatewayApi.enabled is used)
 
 ## Chart Versions
 
@@ -14,6 +15,7 @@ The Helm chart releases do not correspond to the controller version so below is 
 
 | Controller Version | Chart Version | Change Notes |
 | ------------------ | ------------- | :------------ |
+| `6.3.0.45`         | `1.6.0`       | Add optional Gateway API support |
 | `6.3.0.44`         | `1.5.3`       | Fix Logs Persistent Volume Claim |
 | `6.3.0.44`         | `1.5.2`       | Update to version 6.3.0.45 |
 | `6.3.0.44`         | `1.5.1`       | Fix port name `upgrade-es-https` exceeding Kubernetes' 15 character limit |
@@ -135,6 +137,46 @@ The following table lists the configurable parameters of the Omada Controller ch
 | `ingress.portalHosts` | Hosts for captive portal | `[]` |
 | `ingress.tls` | TLS configuration | `[]` |
 
+### Gateway API Configuration
+
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `gatewayApi.enabled` | Enable Gateway API support | `false` |
+| `gatewayApi.checkCapabilities` | Fail early when the Gateway API CRDs are missing from the cluster | `true` |
+| `gatewayApi.gateway.enabled` | Create a Gateway as part of this release | `false` |
+| `gatewayApi.gateway.name` | Gateway name | `""` |
+| `gatewayApi.gateway.gatewayClassName` | GatewayClass  | `""` |
+| `gatewayApi.gateway.labels` | Additional Gateway labels | `{}` |
+| `gatewayApi.gateway.annotations` | Additional Gateway annotations | `{}` |
+| `gatewayApi.gateway.addresses` | Addresses requested for the Gateway | `[]` |
+| `gatewayApi.gateway.infrastructure` | Infrastructure metadata for the created Gateway | `{}` |
+| `gatewayApi.gateway.listeners` | Listeners of the Gateway |  |
+| `gatewayApi.httpRoute.enabled` | Create HTTPRoutes for the controller | `true` |
+| `gatewayApi.httpRoute.labels` | Additional HTTPRoute labels | `{}` |
+| `gatewayApi.httpRoute.annotations` | Additional HTTPRoute annotations | `{}` |
+| `gatewayApi.httpRoute.parentRefs` | Gateways to attach the routes to | `[]` |
+| `gatewayApi.httpRoute.management.enabled` | Create the HTTPRoute for the management portal | `true` |
+| `gatewayApi.httpRoute.management.hostnames` | Hostnames for the management portal | `[]` |
+| `gatewayApi.httpRoute.management.parentRefs` | Overrides parentRefs for this route | `[]` |
+| `gatewayApi.httpRoute.management.port` | Overrides the backend port | `""` |
+| `gatewayApi.httpRoute.management.matches` | Request matches for this route | `[]` |
+| `gatewayApi.httpRoute.management.filters` | Filters for requests | `[]` |
+| `gatewayApi.httpRoute.management.timeouts` | Timeouts for requests | `{}` |
+| `gatewayApi.httpRoute.portal.enabled` | Create the HTTPRoute for the captive portal | `false` |
+| `gatewayApi.httpRoute.portal.hostnames` | Hostnames for the captive portal | `[]` |
+| `gatewayApi.httpRoute.portal.parentRefs` | Overrides parentRefs for this route | `[]` |
+| `gatewayApi.httpRoute.portal.port` | Overrides the backend port | `""` |
+| `gatewayApi.httpRoute.portal.matches` | Request matches for this route | `[]` |
+| `gatewayApi.httpRoute.portal.filters` | Filters applied requests | `[]` |
+| `gatewayApi.httpRoute.portal.timeouts` | Timeouts for requests | `{}` |
+| `gatewayApi.backendTLSPolicy.enabled` | Create a BackendTLSPolicy | `false` |
+| `gatewayApi.backendTLSPolicy.labels` | Additional BackendTLSPolicy labels | `{}` |
+| `gatewayApi.backendTLSPolicy.annotations` | Additional BackendTLSPolicy annotations | `{}` |
+| `gatewayApi.backendTLSPolicy.hostname` | Hostname used for SNI | `""` |
+| `gatewayApi.backendTLSPolicy.caCertificateRefs` | ConfigMap for CA | `[]` |
+| `gatewayApi.backendTLSPolicy.wellKnownCACertificates` | Use the system trust store instead of caCertificateRefs | `""` |
+| `gatewayApi.backendTLSPolicy.sectionNames` | Service ports the policy applies to | `[]` |
+
 ### Persistence Configuration
 
 | Parameter | Description | Default |
@@ -215,6 +257,91 @@ ingress:
     - secretName: omada-tls-secret
       hosts:
         - omada.example.com
+```
+
+### Installation with the Gateway API
+
+Attach the controller to a Gateway which is already present in the cluster:
+
+```yaml
+service:
+  type: ClusterIP
+
+gatewayApi:
+  enabled: true
+  httpRoute:
+    parentRefs:
+      - name: my-gateway
+        namespace: gateway-system
+        sectionName: https
+    management:
+      hostnames:
+        - omada.example.com
+    portal:
+      enabled: true
+      hostnames:
+        - omada-portal.example.com
+```
+
+Or let the chart create the Gateway as well:
+
+```yaml
+service:
+  type: ClusterIP
+
+gatewayApi:
+  enabled: true
+  gateway:
+    enabled: true
+    gatewayClassName: nginx
+    listeners:
+      - name: https
+        protocol: HTTPS
+        port: 443
+        hostname: omada.example.com
+        tls:
+          mode: Terminate
+          certificateRefs:
+            - name: omada-tls-secret
+        allowedRoutes:
+          namespaces:
+            from: Same
+  httpRoute:
+    management:
+      hostnames:
+        - omada.example.com
+```
+
+#### Backend TLS
+
+The Omada Controller only speaks HTTPS on its management and portal ports.
+Enable gatewayApi.backendTLSPolicy so the Gateway re-encrypts towards
+the controller. The policy always validates the backend certificate.
+
+```yaml
+config:
+  tlsSecretName: omada-backend-tls
+
+gatewayApi:
+  enabled: true
+  httpRoute:
+    parentRefs:
+      - name: my-gateway
+        namespace: gateway-system
+        sectionName: https
+    management:
+      hostnames:
+        - omada.example.com
+  backendTLSPolicy:
+    enabled: true
+    hostname: omada-controller.omada.svc
+    caCertificateRefs:
+      - group: ""
+        kind: ConfigMap
+        name: omada-backend-ca
+    sectionNames:
+      - manage-https
+
 ```
 
 ### Installation with External MongoDB
