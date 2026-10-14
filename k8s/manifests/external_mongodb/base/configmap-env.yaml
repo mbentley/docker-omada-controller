@@ -51,5 +51,6 @@ data:
 
   # Uncomment to reduce the JVM heap from the image default of -Xmx1024m / -Xms128m.
   # Useful on memory-constrained nodes. Replacement is visible in ps output.
+  # JAVA_EXTRA_OPTS: "-XX:MaxRAMPercentage=50.0"
   # JAVA_MAX_HEAP_SIZE: "512m"
   # JAVA_MIN_HEAP_SIZE: "128m"

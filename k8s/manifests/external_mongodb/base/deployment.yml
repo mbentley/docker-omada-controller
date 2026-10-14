@@ -118,6 +118,12 @@ spec:
               name: omada-controller-environment
               optional: false
 
+        # Required for MaxRAMPercentage: the JVM sizes its heap against this limit
+        resources:
+          limits:
+            memory: 2Gi
+          requests:
+            memory: 1Gi
         volumeMounts:
           - name: omada-data
             mountPath: /opt/tplink/EAPController/data

@@ -82,10 +82,22 @@ spec:
           value: "true"
         # Uncomment to reduce the JVM heap from the image default of -Xmx1024m / -Xms128m.
         # Useful on memory-constrained nodes. Replacement is visible in ps output.
+        #Change a single flag with JAVA_EXTRA_OPTS (appended, last -XX wins),
+        # or uncomment below to pin a fixed heap instead (overrides the percentages).
+
+        # - name: JAVA_EXTRA_OPTS
+        #   value: "-XX:MaxRAMPercentage=50.0"
+
         # - name: JAVA_MAX_HEAP_SIZE
         #   value: "512m"
         # - name: JAVA_MIN_HEAP_SIZE
         #   value: "128m"
+        # Required for MaxRAMPercentage: the JVM sizes its heap against this limit
+        resources:
+          limits:
+            memory: 2Gi
+          requests:
+            memory: 1Gi
         volumeMounts:
         - name: omada-data
           mountPath: /opt/tplink/EAPController/data

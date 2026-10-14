@@ -14,6 +14,8 @@ The Helm chart releases do not correspond to the controller version so below is 
 
 | Controller Version | Chart Version | Change Notes |
 | ------------------ | ------------- | :------------ |
+| `6.3.0.45`         | `1.7.0`       | Add `javaExtraOpts`; heap is sized by `MaxRAMPercentage`|
+| `6.3.0.45`         | `1.6.0`       | Add optional Gateway API support |
 | `6.3.0.44`         | `1.5.3`       | Fix Logs Persistent Volume Claim |
 | `6.3.0.44`         | `1.5.2`       | Update to version 6.3.0.45 |
 | `6.3.0.44`         | `1.5.1`       | Fix port name `upgrade-es-https` exceeding Kubernetes' 15 character limit |
@@ -113,8 +115,10 @@ The following table lists the configurable parameters of the Omada Controller ch
 | `config.externalMongoDBUrl` | External MongoDB URL (mutually exclusive with secret) | `""` |
 | `config.externalMongoDBUrlSecret.name` | Secret name containing MongoDB URI (mutually exclusive with URL) | `""` |
 | `config.externalMongoDBUrlSecret.key` | Secret key containing MongoDB URI | `""` |
-| `config.javaMaxHeapSize` | Replaces the hardcoded `-Xmx` in the default CMD (e.g. `512m`, `1g`); leave empty to use image default of `1024m` | `""` |
-| `config.javaMinHeapSize` | Replaces the hardcoded `-Xms` in the default CMD (e.g. `64m`, `128m`); leave empty to use image default of `128m` | `""` |
+| `config.javaExtraOpts` | JVM options appended to the image default `JAVA_TOOL_OPTIONS` (last `-XX` flag wins), e.g. `-XX:MaxRAMPercentage=50.0`; see [JVM Memory Sizing](#jvm-memory-sizing) | `""` |
+| `config.javaMaxHeapSize` | Fixed `-Xmx` (e.g. `512m`, `1g`); overrides `MaxRAMPercentage`. Leave empty to size by percentage | `""` |
+| `config.javaMinHeapSize` | Fixed `-Xms` (e.g. `64m`, `128m`); overrides `InitialRAMPercentage`. Leave empty to size by percentage | `""` |
+
 
 ### Service Configuration
 
@@ -280,6 +284,24 @@ config:
 
 > [!NOTE]
 > The secret must be of type `kubernetes.io/tls` or contain keys matching `sslCertName` and `sslKeyName`.
+
+### JVM Memory Sizing
+
+To change a flag, use `javaExtraOpts`. It is appended to the image default and for a
+duplicate `-XX` flag the JVM uses the last occurrence, so the other defaults stay intact:
+
+- `MaxRAMPercentage`: maximum heap as a percentage of `resources.limits.memory`
+- `InitialRAMPercentage`: initial heap; kept low so the heap can shrink after peaks
+- `MaxHeapFreeRatio`/`MinHeapFreeRatio`: lets G1 return unused heap to the OS after peaks
+- `HeapDumpOnOutOfMemoryError`/`HeapDumpPath`: writes a heap dump to the logs volume on OOM
+- `ExitOnOutOfMemoryError`: after the dump the JVM exits so Kubernetes restarts the pod instead of leaving a half-dead controller
+- `java.awt.headless`: no display available in the container
+
+```yaml
+config:
+  javaExtraOpts: "-XX:MaxRAMPercentage=50.0"
+```
+
 
 ### Resource-Constrained Installation
 

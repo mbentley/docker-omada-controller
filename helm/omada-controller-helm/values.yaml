@@ -103,6 +103,11 @@ config:
   # The timezone for the Omada Controller application
   timezone: Etc/UTC
 
+  # Extra JVM options APPENDED to the image default JAVA_TOOL_OPTIONS. For a duplicate -XX
+  # flag the last occurrence wins, so the other image defaults stay intact.
+  javaExtraOpts: ""
+
+
   # Replaces the hardcoded -Xmx value in the default CMD. Useful on memory-constrained nodes.
   # Example: "512m", "1g". Leave empty to use the image default (1024m).
   javaMaxHeapSize: ""
