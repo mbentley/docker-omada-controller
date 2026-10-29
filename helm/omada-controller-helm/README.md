@@ -14,6 +14,7 @@ The Helm chart releases do not correspond to the controller version so below is 
 
 | Controller Version | Chart Version | Change Notes |
 | ------------------ | ------------- | :------------ |
+| `6.3.0.111`        | `1.5.5`       | Add ability to customize `securityContext` |
 | `6.3.0.111`        | `1.5.4`       | Update to version 6.3.0.111 |
 | `6.3.0.44`         | `1.5.3`       | Fix Logs Persistent Volume Claim |
 | `6.3.0.44`         | `1.5.2`       | Update to version 6.3.0.45 |
