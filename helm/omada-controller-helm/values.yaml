@@ -32,6 +32,8 @@ podAnnotations: {}
 # For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
 podLabels: {}
 
+securityContext: {}
+
 # Configuration options for the Omada Controller application. See the omada-controller documentation
 # for details on these options.
 config:
