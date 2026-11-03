@@ -48,8 +48,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: password
       MONGO_INITDB_DATABASE: omada
     healthcheck:
-      test: ["CMD", "mongo", "--quiet", "--eval", "db.adminCommand('ping')"]
-      #test: ["CMD", "mongosh","--eval","db.adminCommand({ ping: 1 })"]
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -77,6 +76,7 @@ services:
     ports:
       - "8088:8088"
       - "8043:8043"
+      - "8044:8044"
       - "8843:8843"
       - "19810:19810/udp"
       - "27001:27001/udp"

@@ -442,7 +442,7 @@ The example manifests are in the [k8s/manifests](./k8s/manifests/) directory. It
 | `PORT_MANAGER_V2` | `29814` | `1024`-`65535` | Omada Controller and Omada Discovery Utility manage the Omada devices running firmware fully adapted to Omada Controller v5* | >= `5.x` |
 | `PORT_TRANSFER_V2` | `29815` | `1024`-`65535` | Omada Controller receives Device Info and Packet Capture files from the Omada devices | >= `5.9` |
 | `PORT_RTTY` | `29816` | `1024`-`65535` | Omada Controller establishes the remote control terminal session with the Omada devices | >= `5.9` |
-| `PORT_DEVICE_MONITOR` | `29817` | `1024`-`65535` | Omada Controller ??? (currently unknown the full purpose) | >= `06.0` |
+| `PORT_DEVICE_MONITOR` | `29817` | `1024`-`65535` | Omada Controller ??? (currently unknown the full purpose) | >= `6.0` |
 | `PUID` | `508` | _any_ | Set the `omada` process user ID ` | >= `3.2` |
 | `PUSERNAME` | `omada` | _any_ | Set the username for the process user ID to run as | >= `5.0` |
 | `ROOTLESS` | `false` | `true`, `false` | Sets the entrypoint for [rootless mode](#running-rootless) | >= `5.14` |

@@ -104,6 +104,7 @@ This expects that you are in this project's root where the `Dockerfile` is.  Upd
       --stop-timeout 60 \
       -p 8088:8088 \
       -p 8043:8043 \
+      -p 8044:8044 \
       -p 8843:8843 \
       -p 19810:19810/udp \
       -p 27001:27001/udp \
@@ -143,6 +144,7 @@ docker run -d \
   --stop-timeout 60 \
   -p 8088:8088 \
   -p 8043:8043 \
+  -p 8044:8044 \
   -p 8843:8843 \
   -p 19810:19810/udp \
   -p 27001:27001/udp \
@@ -196,6 +198,7 @@ docker run -d \
       --stop-timeout 60 \
       -p 8088:8088 \
       -p 8043:8043 \
+      -p 8044:8044 \
       -p 8843:8843 \
       -p 19810:19810/udp \
       -p 27001:27001/udp \

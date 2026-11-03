@@ -57,7 +57,7 @@ docker run -it --rm \
   mbentley/omada-controller:mongodb-upgrade-3.6-to-8
 ```
 
-Now that the migration is complete, you can update your tag to reflect the `6.0` image tag. Also make sure that you have updated your deployment to also expose port `tcp/29817` as that was added in v6.
+Now that the migration is complete, you can update your tag to reflect the `6` (or `6.3`) image tag. Also make sure that you have updated your deployment to also expose port `tcp/29817` as that was added in v6. If you are using bridge networking, also expose port `tcp/8044` as that was added in v6.3 for ES series device upgrades.
 
 ### Kubernetes
 

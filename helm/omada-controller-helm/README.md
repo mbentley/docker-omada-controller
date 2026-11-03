@@ -14,6 +14,7 @@ The Helm chart releases do not correspond to the controller version so below is 
 
 | Controller Version | Chart Version | Change Notes |
 | ------------------ | ------------- | :------------ |
+| `6.3.0.111`        | `1.5.5`       | Fix duplicate port when `upgradeEsHttps` equals a non-default `upgradeHttps`; fix type error when overriding ports with `--set`; document `upgradeEsHttps` and the 8044/TCP and 19810/UDP ports; use `manageHttps` in port-forward notes |
 | `6.3.0.111`        | `1.5.4`       | Update to version 6.3.0.111 |
 | `6.3.0.44`         | `1.5.3`       | Fix Logs Persistent Volume Claim |
 | `6.3.0.44`         | `1.5.2`       | Update to version 6.3.0.45 |
@@ -92,6 +93,7 @@ The following table lists the configurable parameters of the Omada Controller ch
 | `config.ports.portalHttp` | Captive portal HTTP port | `8088` |
 | `config.ports.portalHttps` | Captive portal HTTPS port | `8843` |
 | `config.ports.upgradeHttps` | Dedicated HTTPS port for upgrades | `8043` |
+| `config.ports.upgradeEsHttps` | Dedicated HTTPS port for ES series device upgrades (Omada 6.3+) | `8044` |
 | `config.ports.appDiscovery` | UDP port for Omada App discovery | `27001` |
 | `config.ports.adoptV1` | Device adoption port (v1) | `29812` |
 | `config.ports.upgradeV1` | Device upgrade port (v1) | `29813` |
@@ -314,10 +316,12 @@ persistence:
 The Omada Controller requires several ports to be accessible for proper operation:
 
 - **8043/TCP** - HTTPS management portal and Device Firmware Upgrades (primary interface)
+- **8044/TCP** - HTTPS firmware upgrades for ES series devices (Omada 6.3+)
 - **8088/TCP** - HTTP management portal
 - **8843/TCP** - HTTPS captive portal
 - **27001/UDP** - Omada app discovery
 - **29810/UDP** - Device discovery
+- **19810/UDP** - Device management
 - **29811-29817/TCP** - Device management, adoption, and monitoring
 
 When using a LoadBalancer service, ensure your load balancer supports both TCP and UDP protocols.
