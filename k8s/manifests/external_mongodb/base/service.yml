@@ -37,6 +37,11 @@ spec:
     port: 29810
     protocol: UDP
 
+  - name: udp-management
+    targetPort: udp-management
+    port: 19810
+    protocol: UDP
+
   - name: manager-v1
     targetPort: manager-v1
     port: 29811

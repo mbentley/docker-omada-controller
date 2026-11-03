@@ -146,12 +146,12 @@ spec:
             - name: manage-http
               containerPort: {{ .Values.config.ports.manageHttp }}
               protocol: TCP
-            {{- if ne .Values.config.ports.upgradeHttps .Values.config.ports.manageHttps }}
+            {{- if ne (int .Values.config.ports.upgradeHttps) (int .Values.config.ports.manageHttps) }}
             - name: upgrade-https
               containerPort: {{ .Values.config.ports.upgradeHttps }}
               protocol: TCP
             {{- end }}
-            {{- if ne .Values.config.ports.upgradeEsHttps .Values.config.ports.manageHttps }}
+            {{- if and (ne (int .Values.config.ports.upgradeEsHttps) (int .Values.config.ports.manageHttps)) (ne (int .Values.config.ports.upgradeEsHttps) (int .Values.config.ports.upgradeHttps)) }}
             - name: upgrade-eshttps
               containerPort: {{ .Values.config.ports.upgradeEsHttps }}
               protocol: TCP
@@ -159,7 +159,7 @@ spec:
             - name: portal-https
               containerPort: {{ .Values.config.ports.portalHttps }}
               protocol: TCP
-            {{- if ne .Values.config.ports.portalHttp .Values.config.ports.manageHttp }}
+            {{- if ne (int .Values.config.ports.portalHttp) (int .Values.config.ports.manageHttp) }}
             - name: portal-http
               containerPort: {{ .Values.config.ports.portalHttp }}
               protocol: TCP

@@ -23,17 +23,17 @@ spec:
   - name: portal-https
     port: {{ .Values.config.ports.portalHttps }}
     targetPort: portal-https
-  {{- if ne .Values.config.ports.portalHttp .Values.config.ports.manageHttp }}
+  {{- if ne (int .Values.config.ports.portalHttp) (int .Values.config.ports.manageHttp) }}
   - name: portal-http
     port: {{ .Values.config.ports.portalHttp }}
     targetPort: portal-http
   {{- end }}
-  {{- if ne .Values.config.ports.upgradeHttps .Values.config.ports.manageHttps }}
+  {{- if ne (int .Values.config.ports.upgradeHttps) (int .Values.config.ports.manageHttps) }}
   - name: upgrade-https
     port: {{ .Values.config.ports.upgradeHttps }}
     targetPort: upgrade-https
   {{- end }}
-  {{- if ne .Values.config.ports.upgradeEsHttps .Values.config.ports.manageHttps }}
+  {{- if and (ne (int .Values.config.ports.upgradeEsHttps) (int .Values.config.ports.manageHttps)) (ne (int .Values.config.ports.upgradeEsHttps) (int .Values.config.ports.upgradeHttps)) }}
   - name: upgrade-eshttps
     port: {{ .Values.config.ports.upgradeEsHttps }}
     targetPort: upgrade-eshttps

@@ -40,7 +40,7 @@ spec:
             containerPort: 8043
             protocol: TCP
 
-          # Purpose currently unknown; added in v6.3.0.36
+          # Firmware upgrades for ES series devices; added in v6.3.0.36
           - name: upgrade-eshttps
             containerPort: 8044
             protocol: TCP
@@ -66,6 +66,11 @@ spec:
           # Omada Controller and Omada Discovery Utility discover Omada devices
           - name: discovery
             containerPort: 29810
+            protocol: UDP
+
+          # UDP port used for device management (not configurable)
+          - name: udp-management
+            containerPort: 19810
             protocol: UDP
 
           # Omada Controller and Omada Discovery Utility manage the Omada devices running firmware
