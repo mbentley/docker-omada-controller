@@ -59,7 +59,7 @@ services:
     volumes:
       - omada-mongo-config:/data/configdb
       - omada-mongo-data:/data/db
-      - omada-init-scripts:/docker-entrypoint-initdb.d/omada.js
+      - omada-init-scripts:/docker-entrypoint-initdb.d
 
   omada-controller:
     image: mbentley/omada-controller:6
