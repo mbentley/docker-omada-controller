@@ -21,6 +21,11 @@ ARG MONGODB_VER
 RUN /install.sh &&\
   rm /install.sh
 
+# temp test for tzupdater
+RUN --mount=type=bind,source=tzupdater.jar,target=/tmp/tzupdater.jar \
+  TZDATA_URL="https://data.iana.org/time-zones/releases/tzdata2026e.tar.gz" &&\
+  java -jar /tmp/tzupdater.jar -l "${TZDATA_URL}" -v
+
 COPY entrypoint-unified.sh /entrypoint.sh
 
 WORKDIR /opt/tplink/EAPController/lib
