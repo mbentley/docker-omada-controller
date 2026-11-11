@@ -58,8 +58,10 @@ spec:
               value: {{ .Values.config.ports.manageHttp | quote }}
             - name: PORTAL_HTTPS_PORT
               value: {{ .Values.config.ports.portalHttps | quote }}
+            {{- if .Values.config.ports.upgradeHttps }}
             - name: UPGRADE_HTTPS_PORT
               value: {{ .Values.config.ports.upgradeHttps | quote }}
+            {{- end }}
             - name: UPGRADE_ES_HTTPS_PORT
               value: {{ .Values.config.ports.upgradeEsHttps | quote }}
             - name: PORTAL_HTTP_PORT
@@ -146,7 +148,7 @@ spec:
             - name: manage-http
               containerPort: {{ .Values.config.ports.manageHttp }}
               protocol: TCP
-            {{- if ne (int .Values.config.ports.upgradeHttps) (int .Values.config.ports.manageHttps) }}
+            {{- if and .Values.config.ports.upgradeHttps (ne (int .Values.config.ports.upgradeHttps) (int .Values.config.ports.manageHttps)) }}
             - name: upgrade-https
               containerPort: {{ .Values.config.ports.upgradeHttps }}
               protocol: TCP

@@ -28,7 +28,7 @@ spec:
     port: {{ .Values.config.ports.portalHttp }}
     targetPort: portal-http
   {{- end }}
-  {{- if ne (int .Values.config.ports.upgradeHttps) (int .Values.config.ports.manageHttps) }}
+  {{- if and .Values.config.ports.upgradeHttps (ne (int .Values.config.ports.upgradeHttps) (int .Values.config.ports.manageHttps)) }}
   - name: upgrade-https
     port: {{ .Values.config.ports.upgradeHttps }}
     targetPort: upgrade-https

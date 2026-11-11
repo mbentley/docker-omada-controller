@@ -131,6 +131,42 @@ else
 fi
 echo ""
 
+# compare the file tree (excluding lib/) to catch new or removed scripts and files
+echo "========================================"
+echo "Comparing file tree (excluding lib/)"
+echo "========================================"
+if diff <(cd "ga/${GA_DIR_NAME}" && find . -not -path './lib/*' | sort) <(cd "beta/${BETA_DIR_NAME}" && find . -not -path './lib/*' | sort)
+then
+  echo "INFO: file trees are identical"
+else
+  echo "INFO: file trees differ (see above; < is GA, > is BETA)"
+fi
+echo ""
+
+# print "<artifact> <version[,version...]>" for each jar in a lib directory
+jar_versions() {
+  find "$1" -maxdepth 1 -name '*.jar' -exec basename {} \; | sed -nE 's/^(.+)-([0-9][0-9A-Za-z._-]*)\.jar$/\1 \2/p' | sort |\
+    awk '{v[$1]=($1 in v)?v[$1]","$2:$2} END {for (a in v) print a, v[a]}' | sort
+}
+
+# compare bundled libraries by artifact name; skip TP-Link jars that only bump to the controller version
+echo "========================================"
+echo "Comparing lib/ (bundled libraries)"
+echo "========================================"
+GA_VER="$(echo "${GA_DIR_NAME}" | sed -E 's/.*_v([0-9.]+)_.*/\1/')"
+BETA_VER="$(echo "${BETA_DIR_NAME}" | sed -E 's/.*_v([0-9.]+)_.*/\1/')"
+echo "INFO: $(find "ga/${GA_DIR_NAME}/lib" -name '*.jar' | wc -l | tr -d ' ') jars in GA; $(find "beta/${BETA_DIR_NAME}/lib" -name '*.jar' | wc -l | tr -d ' ') jars in BETA"
+join -a1 -a2 -e '-' -o 0,1.2,2.2 <(jar_versions "ga/${GA_DIR_NAME}/lib") <(jar_versions "beta/${BETA_DIR_NAME}/lib") |\
+  awk -v ga="${GA_VER}" -v beta="${BETA_VER}" '
+    $2 == "-"                              { added[++na] = "  + " $1 " " $3; next }
+    $3 == "-"                              { removed[++nr] = "  - " $1 " " $2; next }
+    $2 != $3 && !($2 == ga && $3 == beta)  { changed[++nc] = "  ~ " $1 " " $2 " -> " $3 }
+    END {
+      print "Added (" na+0 "):";   for (i = 1; i <= na; i++) print added[i]
+      print "Removed (" nr+0 "):"; for (i = 1; i <= nr; i++) print removed[i]
+      print "Changed (" nc+0 "):"; for (i = 1; i <= nc; i++) print changed[i]
+    }'
+echo ""
 
 # compare readme.txt files
 echo "========================================"

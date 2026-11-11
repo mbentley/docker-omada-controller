@@ -14,6 +14,7 @@ The Helm chart releases do not correspond to the controller version so below is 
 
 | Controller Version | Chart Version | Change Notes |
 | ------------------ | ------------- | :------------ |
+| `6.3.0.111`        | `1.6.0`       | Support 6.4 (beta): `upgradeHttps` now defaults to empty so the image picks the version-appropriate upgrade port (8043 for < 6.4, `upgradeEsHttps` for >= 6.4); probes use `/api/info` as `/login` returns 404 in 6.4 |
 | `6.3.0.111`        | `1.5.5`       | Fix duplicate port when `upgradeEsHttps` equals a non-default `upgradeHttps`; fix type error when overriding ports with `--set`; document `upgradeEsHttps` and the 8044/TCP and 19810/UDP ports; use `manageHttps` in port-forward notes |
 | `6.3.0.111`        | `1.5.4`       | Update to version 6.3.0.111 |
 | `6.3.0.44`         | `1.5.3`       | Fix Logs Persistent Volume Claim |
@@ -92,8 +93,8 @@ The following table lists the configurable parameters of the Omada Controller ch
 | `config.ports.manageHttps` | Management portal HTTPS port | `8043` |
 | `config.ports.portalHttp` | Captive portal HTTP port | `8088` |
 | `config.ports.portalHttps` | Captive portal HTTPS port | `8843` |
-| `config.ports.upgradeHttps` | Dedicated HTTPS port for upgrades | `8043` |
-| `config.ports.upgradeEsHttps` | Dedicated HTTPS port for ES series device upgrades (Omada 6.3+) | `8044` |
+| `config.ports.upgradeHttps` | Dedicated HTTPS port for upgrades; leave empty to use the image default (8043, shared with `manageHttps`, for < 6.4; the `upgradeEsHttps` value for >= 6.4) | `""` |
+| `config.ports.upgradeEsHttps` | Dedicated HTTPS port for ES series device upgrades (6.3); used as the upgrade port for >= 6.4 when `upgradeHttps` is empty | `8044` |
 | `config.ports.appDiscovery` | UDP port for Omada App discovery | `27001` |
 | `config.ports.adoptV1` | Device adoption port (v1) | `29812` |
 | `config.ports.upgradeV1` | Device upgrade port (v1) | `29813` |

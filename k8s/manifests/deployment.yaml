@@ -44,8 +44,9 @@ spec:
           value: "8088"
         - name: PORTAL_HTTPS_PORT
           value: "8843"
-        - name: UPGRADE_HTTPS_PORT
-          value: "8043"
+        # UPGRADE_HTTPS_PORT defaults to 8043 (< 6.4) or 8044 (>= 6.4); only set it to override
+        # - name: UPGRADE_HTTPS_PORT
+        #   value: "8043"
         - name: UPGRADE_ES_HTTPS_PORT
           value: "8044"
         - name: PORT_APP_DISCOVERY
