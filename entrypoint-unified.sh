@@ -32,8 +32,12 @@ setup_environment() {
   PORT_TRANSFER_V2="${PORT_TRANSFER_V2:-29815}"
   PORT_RTTY="${PORT_RTTY:-29816}"
   PORT_DEVICE_MONITOR="${PORT_DEVICE_MONITOR:-29817}"
-  UPGRADE_HTTPS_PORT="${UPGRADE_HTTPS_PORT:-8043}"
-  UPGRADE_ES_HTTPS_PORT="${UPGRADE_ES_HTTPS_PORT:-8044}"
+  # defaults for the upgrade ports are version dependent; set in configure_upgrade_ports
+  UPGRADE_HTTPS_PORT="${UPGRADE_HTTPS_PORT:-}"
+  UPGRADE_ES_HTTPS_PORT="${UPGRADE_ES_HTTPS_PORT:-}"
+
+  # skip the 6.4 upgrade precheck (only if you REALLY know what you're doing)
+  SKIP_6_4_UPGRADE_PRECHECK="${SKIP_6_4_UPGRADE_PRECHECK:-false}"
 
   # WEB CONFIG OVERRIDE
   WEB_CONFIG_OVERRIDE="${WEB_CONFIG_OVERRIDE:-false}"
@@ -104,9 +108,77 @@ print_timezone_info() {
   echo "INFO: Time zone set to '${TZ}'"
 }
 
+version_ge() {
+  # return 0 if version ${1} is greater than or equal to version ${2}
+  [ "$(printf '%s\n' "${1}" "${2}" | sort -V | head -n1)" = "${2}" ]
+}
+
+load_image_version() {
+  # read the version from the image
+  if [ -f "/opt/tplink/EAPController/IMAGE_OMADA_VER.txt" ]
+  then
+    # file found; read the version that is in the image
+    IMAGE_OMADA_VER="$(cat /opt/tplink/EAPController/IMAGE_OMADA_VER.txt)"
+  else
+    echo "ERROR: Missing image version file (/opt/tplink/EAPController/IMAGE_OMADA_VER.txt); this should never happen!"
+    exit 1
+  fi
+
+  # get version strings that will be useful
+  IMAGE_MAJOR_VER="$(echo "${IMAGE_OMADA_VER}" | awk -F '.' '{print $1}')"
+  IMAGE_MINOR_VER="$(echo "${IMAGE_OMADA_VER}" | awk -F '.' '{print $2}')"
+}
+
+configure_upgrade_ports() {
+  # starting with 6.4, upgrade.es.https.port was removed and upgrade.https.port moved from 8043 (shared with the management port) to 8044
+  if version_ge "${IMAGE_OMADA_VER}" "6.4"
+  then
+    if [ -z "${UPGRADE_HTTPS_PORT}" ]
+    then
+      # not explicitly set; use the ES upgrade port if it was customized, otherwise the 6.4 default
+      if [ -n "${UPGRADE_ES_HTTPS_PORT}" ] && [ "${UPGRADE_ES_HTTPS_PORT}" != "8044" ]
+      then
+        echo "WARN: UPGRADE_ES_HTTPS_PORT is deprecated as of 6.4 (merged into UPGRADE_HTTPS_PORT); using its value (${UPGRADE_ES_HTTPS_PORT}) for UPGRADE_HTTPS_PORT"
+        if [ "${WEB_CONFIG_OVERRIDE}" != "true" ]
+        then
+          # once the controller has run, it uses the ports stored in its database; when upgrading, 6.4 resets the ES upgrade port to 8044
+          echo "  Note: if upgrading an existing controller, set WEB_CONFIG_OVERRIDE=true for this to apply; otherwise the controller will use 8044"
+        fi
+        UPGRADE_HTTPS_PORT="${UPGRADE_ES_HTTPS_PORT}"
+      else
+        UPGRADE_HTTPS_PORT="8044"
+      fi
+    elif [ -n "${UPGRADE_ES_HTTPS_PORT}" ] && [ "${UPGRADE_ES_HTTPS_PORT}" != "${UPGRADE_HTTPS_PORT}" ]
+    then
+      echo "WARN: UPGRADE_ES_HTTPS_PORT (${UPGRADE_ES_HTTPS_PORT}) is ignored as of 6.4; it was merged into UPGRADE_HTTPS_PORT (${UPGRADE_HTTPS_PORT})"
+    fi
+
+    # warn if the upgrade port is shared with the management port (the pre-6.4 default); 6.4 ignores it and falls back to 8044
+    if [ "${UPGRADE_HTTPS_PORT}" = "${MANAGE_HTTPS_PORT}" ]
+    then
+      echo "##############################################################################"
+      echo "WARN: UPGRADE_HTTPS_PORT (${UPGRADE_HTTPS_PORT}) is the same as MANAGE_HTTPS_PORT!"
+      echo "  Starting with 6.4, the upgrade port can no longer share the management port; the controller will use 8044 instead."
+      echo "  Remove UPGRADE_HTTPS_PORT from your configuration and make sure 8044/tcp is reachable from your devices."
+      echo "##############################################################################"
+    fi
+  else
+    UPGRADE_HTTPS_PORT="${UPGRADE_HTTPS_PORT:-8043}"
+    UPGRADE_ES_HTTPS_PORT="${UPGRADE_ES_HTTPS_PORT:-8044}"
+  fi
+}
+
 update_port_configuration() {
   # update stored ports when different of enviroment defined ports (works for numbers only)
-  for ELEM in MANAGE_HTTP_PORT MANAGE_HTTPS_PORT PORTAL_HTTP_PORT PORTAL_HTTPS_PORT PORT_ADOPT_V1 PORT_APP_DISCOVERY PORT_UPGRADE_V1 PORT_MANAGER_V1 PORT_MANAGER_V2 PORT_DISCOVERY PORT_TRANSFER_V2 PORT_RTTY PORT_DEVICE_MONITOR UPGRADE_HTTPS_PORT UPGRADE_ES_HTTPS_PORT
+  PORT_ELEMS=( MANAGE_HTTP_PORT MANAGE_HTTPS_PORT PORTAL_HTTP_PORT PORTAL_HTTPS_PORT PORT_ADOPT_V1 PORT_APP_DISCOVERY PORT_UPGRADE_V1 PORT_MANAGER_V1 PORT_MANAGER_V2 PORT_DISCOVERY PORT_TRANSFER_V2 PORT_RTTY PORT_DEVICE_MONITOR UPGRADE_HTTPS_PORT )
+
+  # upgrade.es.https.port was removed in 6.4; leave any stale value alone
+  if ! version_ge "${IMAGE_OMADA_VER}" "6.4"
+  then
+    PORT_ELEMS+=( UPGRADE_ES_HTTPS_PORT )
+  fi
+
+  for ELEM in "${PORT_ELEMS[@]}"
   do
     # convert element to key name
     KEY="$(echo "${ELEM}" | tr '[:upper:]' '[:lower:]' | tr '_' '.')"
@@ -246,16 +318,7 @@ check_old_cmd() {
 }
 
 validate_versions() {
-  # compare version from the image to the version stored in the persistent data (last ran version)
-  if [ -f "/opt/tplink/EAPController/IMAGE_OMADA_VER.txt" ]
-  then
-    # file found; read the version that is in the image
-    IMAGE_OMADA_VER="$(cat /opt/tplink/EAPController/IMAGE_OMADA_VER.txt)"
-  else
-    echo "ERROR: Missing image version file (/opt/tplink/EAPController/IMAGE_OMADA_VER.txt); this should never happen!"
-    exit 1
-  fi
-
+  # compare version from the image (see load_image_version) to the version stored in the persistent data (last ran version)
   # load LAST_RAN_OMADA_VER, if file present
   if [ -f "/opt/tplink/EAPController/data/LAST_RAN_OMADA_VER.txt" ]
   then
@@ -268,8 +331,6 @@ validate_versions() {
 
   # get version strings that will be useful
   LAST_RAN_MAJOR_VER="$(echo "${LAST_RAN_OMADA_VER}" | awk -F '.' '{print $1}')"
-  IMAGE_MAJOR_VER="$(echo "${IMAGE_OMADA_VER}" | awk -F '.' '{print $1}')"
-  IMAGE_MINOR_VER="$(echo "${IMAGE_OMADA_VER}" | awk -F '.' '{print $2}')"
 
   # make sure we are not trying to upgrade from 4.x to 5.14.32.x or greater
   if [ "${LAST_RAN_MAJOR_VER}" = "4" ] && [ "${IMAGE_MAJOR_VER}" -ge "5" ]
@@ -364,6 +425,73 @@ validate_mongodb_version() {
       echo "INFO: Not updating to v6; skipping MongoDB version check (this is normal)"
     fi
   fi
+}
+
+validate_upgrade_precheck() {
+  # 6.4 and above can only be upgraded to from 6.3 and refuse to upgrade when managing devices with firmware that is no longer supported
+  # this mirrors ecspv1_device_count_precheck from the vendor install.sh (which reads a file written by 6.3 and above) but never deletes data
+  PRECHECK_FILE="/opt/tplink/EAPController/data/db/upgrade_precheck.json"
+
+  # only applies when upgrading to 6.4 or above from an older version
+  if ! version_ge "${IMAGE_OMADA_VER}" "6.4" || version_ge "${LAST_RAN_OMADA_VER}" "6.4"
+  then
+    return
+  fi
+
+  if [ "${SKIP_6_4_UPGRADE_PRECHECK}" = "true" ]
+  then
+    echo "WARN: SKIP_6_4_UPGRADE_PRECHECK=true; skipping the ${IMAGE_OMADA_VER} upgrade precheck!"
+    return
+  fi
+
+  # first run with no precheck file means this is a fresh install
+  if [ "${LAST_RAN_OMADA_VER}" = "0.0.0" ] && [ ! -f "${PRECHECK_FILE}" ]
+  then
+    echo "INFO: skipping ${IMAGE_OMADA_VER} upgrade precheck; first time running"
+    return
+  fi
+
+  echo "INFO: running ${IMAGE_OMADA_VER} upgrade precheck (last version ran: ${LAST_RAN_OMADA_VER})..."
+  PRECHECK_BYPASS_MSG="  To bypass this check, set SKIP_6_4_UPGRADE_PRECHECK=true only if you REALLY know what you're doing!"
+
+  # rule 1: must be upgrading from 6.3 or above (6.3 is what writes the precheck file)
+  if [ "${LAST_RAN_OMADA_VER}" != "0.0.0" ] && ! version_ge "${LAST_RAN_OMADA_VER}" "6.3"
+  then
+    echo "ERROR: Unable to upgrade directly from ${LAST_RAN_OMADA_VER} to ${IMAGE_OMADA_VER}!"
+    echo "  Upgrade to the latest 6.3 first and let it fully start before upgrading to ${IMAGE_OMADA_VER}."
+    echo "${PRECHECK_BYPASS_MSG}"
+    exit 1
+  fi
+
+  if [ ! -f "${PRECHECK_FILE}" ]
+  then
+    echo "ERROR: Unable to upgrade to ${IMAGE_OMADA_VER}; the upgrade precheck file (${PRECHECK_FILE}) was not found!"
+    echo "  Start 6.3 and let it fully start (it writes this file once startup completes) before upgrading to ${IMAGE_OMADA_VER}."
+    echo "${PRECHECK_BYPASS_MSG}"
+    exit 1
+  fi
+
+  # rule 2: the device count must be present and valid
+  ECSPV1_DEVICE_COUNT="$(grep -o '"ecspv1_device_count"[[:space:]]*:[[:space:]]*[0-9][0-9]*' "${PRECHECK_FILE}" 2>/dev/null | sed 's/.*:[[:space:]]*//' | head -n 1 || true)"
+
+  if [ -z "${ECSPV1_DEVICE_COUNT}" ]
+  then
+    echo "ERROR: Unable to upgrade to ${IMAGE_OMADA_VER}; the upgrade precheck file (${PRECHECK_FILE}) is invalid!"
+    echo "  TP-Link reports this as an invalid controller database; contact TP-Link technical support."
+    echo "${PRECHECK_BYPASS_MSG}"
+    exit 1
+  fi
+
+  # rule 3: no devices with firmware that is no longer supported
+  if [ "${ECSPV1_DEVICE_COUNT}" != "0" ]
+  then
+    echo "ERROR: Unable to upgrade to ${IMAGE_OMADA_VER}; the controller is managing ${ECSPV1_DEVICE_COUNT} device(s) with outdated firmware that ${IMAGE_OMADA_VER} no longer supports!"
+    echo "  Update the firmware of these devices using 6.3 before upgrading to ${IMAGE_OMADA_VER}."
+    echo "${PRECHECK_BYPASS_MSG}"
+    exit 1
+  fi
+
+  echo "INFO: ${IMAGE_OMADA_VER} upgrade precheck passed"
 }
 
 check_version_downgrade() {
@@ -774,6 +902,8 @@ common_setup_and_validation() {
   restore_properties_files
   setup_directories
   print_timezone_info
+  load_image_version
+  configure_upgrade_ports
   update_port_configuration
   update_general_properties
   fix_permissions
@@ -786,6 +916,7 @@ common_setup_and_validation() {
   validate_versions
   check_cpu_features
   validate_mongodb_version
+  validate_upgrade_precheck
   check_version_downgrade
   check_userland_kernel
   show_java_version

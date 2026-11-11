@@ -25,6 +25,7 @@ For instructions on running a legacy v3 or v4 controller, see the [README for v3
     * [Container Resource Constraints](#container-resource-constraints)
     * [Controller Backups](#controller-backups)
     * [Controller Upgrades](#controller-upgrades)
+        * [6.4 - Upgrade Requirements](#64---upgrade-requirements)
     * [Preventing Database Corruption](#preventing-database-corruption)
 * [Building Images](#building-images)
     * [`amd64`](#amd64)
@@ -148,6 +149,9 @@ If you tried to run the v6 controller without doing the upgrade, see [HELP! My C
 
 For every version at any given point in time, there are many different tags: `major`, `major.minor`, and a full `major.minor.patch.build` tag. For guidance on what image tag you should use, check out the _Picking an image tag_ section of the [quickstart guide](#quickstart-guide) above but the gist of it is that most people will want to use either a `major` or `major.minor` version tag.
 
+> [!NOTE]
+> **Supported versions** - images are built and kept up to date for the two most recent GA `major.minor` releases (currently `6.3` and `6.2`) plus the current beta. When a new `major.minor` release goes GA, the oldest supported release moves to [Archived Tags](#archived-tags) and is no longer built. Around a major version change, an older release may be kept up to date for longer to give people more time to upgrade.
+
 > [!IMPORTANT]
 > The `latest` tag still points to the latest v5 version of the software even thought v6 is available. This will not change in the future as I am deprecating the use of the `latest` tag due to the inability for me to perform a migration for v5 to v6 without manual user intervention and not wanting to break anyone's controller who is using an auto-update mechanism. Review the quickstart guide on tag versions to understand the tagging methodology or review the version tables below.
 
@@ -190,15 +194,18 @@ These are multi-arch tags. For the full tag listings, see the Docker Hub tags ab
 
 | Tag(s) | Major.Minor Release | Current Version |
 | :----- | ------------------- | --------------- |
-| `beta`, `beta-6.3`, `beta-6.3.0.111` | `6.3.x` Beta | `6.3.0.111` |
-| `beta-openj9`, `beta-6.3-openj9`, `beta-6.3.0.111-openj9` | `6.3.x` Beta w/OpenJ9 | `6.3.0.111` |
+| `beta`, `beta-6.4`, `beta-6.4.0.25` | `6.4.x` Beta | `6.4.0.25` |
+| `beta-openj9`, `beta-6.4-openj9`, `beta-6.4.0.25-openj9` | `6.4.x` Beta w/OpenJ9 | `6.4.0.25` |
+
+> [!IMPORTANT]
+> Upgrading to 6.4 has additional requirements; see [6.4 - Upgrade Requirements](#64---upgrade-requirements) before upgrading.
 
 ## Archived Tags
 
 > [!WARNING]
 > Do **NOT** run the `armv7l` (32 bit) images. Upgrade your operating system to `arm64` (64 bit) unless you accept that you're running an outdated MongoDB, a base operating system with unpatched vulnerabilities, an old version of Java, and a controller that will never be upgraded beyond `5.15.8.2`! See the [Known Issues section](#notes-for-armv7l) for more information.
 
-These images are still published on Docker Hub but are no longer regularly updated due to the controller software no longer being updated. **Use with extreme caution as these images are likely to contain unpatched security vulnerabilities!**. See [Archived Tags for v3 and v4](README_v3_and_v4.md#archived-tags) for details on the old, unmaintained image tags.
+These images are still published on Docker Hub but are **no longer built or updated**. They will not receive controller updates, base OS fixes, or security patches. **Use with extreme caution as these images are likely to contain unpatched security vulnerabilities!** Upgrade to a [supported version](#multi-arch-tags); upgrading from `6.0` or `6.1` to `6.3` is a standard image update, while `5.x` requires the [v5 to v6 Upgrade Guide](#v5-to-v6-upgrade-guide). See [Archived Tags for v3 and v4](README_v3_and_v4.md#archived-tags) for details on the old, unmaintained image tags.
 
 | Tag(s) | Major.Minor Release | Current Version |
 | :----- | ------------------- | --------------- |
@@ -256,6 +263,25 @@ If you do want to just take a snapshot of your persistent data, make sure you st
 ### Controller Upgrades
 
 Before performing any upgrade, I would suggest taking a backup through the controller itself. Controller upgrades are done by stopping the existing container gracefully (see the [note below](#preventing-database-corruption) on this topic), removing the existing container, and running a new container with the new version of the controller. This can be done manually, with compose, or with many other 3rd party tools which auto-update containers, such as [Watchtower](https://containrrr.dev/watchtower/).
+
+Some upgrades have additional requirements that must be met **before** you upgrade. Check this list before moving to a new major or minor version:
+
+* **v5 to v6** - requires a manual MongoDB upgrade; see the [v5 to v6 Upgrade Guide](#v5-to-v6-upgrade-guide)
+* **6.3 to 6.4** - see [6.4 - Upgrade Requirements](#64---upgrade-requirements) below
+
+For known problems that can show up after an upgrade, see [Upgrade Issues](#upgrade-issues).
+
+#### 6.4 - Upgrade Requirements
+
+6.4 changes a few things that impact upgrades:
+
+* **You must upgrade from 6.3** - upgrading directly from 6.2 or older is not supported. Upgrade to the latest 6.3 first and let it fully start before upgrading to 6.4.
+* **Devices with outdated firmware block the upgrade** - once it has fully started, 6.3 writes the number of managed devices running firmware that 6.4 no longer supports to `/opt/tplink/EAPController/data/db/upgrade_precheck.json` (in the data volume, even when using an external MongoDB) and refreshes it every 2 hours. If that count is not `0`, update the firmware of those devices using 6.3 before upgrading.
+* **The upgrade port changed** - the dedicated upgrade port moved from `8043` (shared with the management port) to `8044` and the separate ES series upgrade port (`UPGRADE_ES_HTTPS_PORT`) was merged into it. The upgrade port can no longer share the management port; if you set `UPGRADE_HTTPS_PORT=8043` explicitly (it was in the example compose files), the controller ignores it and uses `8044`. Remove it from your configuration and make sure `8044/tcp` is reachable from your devices. If you customized `UPGRADE_ES_HTTPS_PORT`, 6.4 resets it to `8044` on upgrade; to keep your custom port, set `UPGRADE_HTTPS_PORT` to it along with `WEB_CONFIG_OVERRIDE=true` (see [Using non-default ports](#using-non-default-ports)).
+* **External MongoDB must be 4.0 or newer** - 6.4 supports MongoDB 4.0 to 8.0 (previously 3.0 to 8.0). TP-Link upgraded the MongoDB Java driver bundled with the controller from `4.7.2` to `5.4.0` and the 5.x driver no longer supports MongoDB 3.x. Against a 3.x server, the controller fails to start with an error like `MongoIncompatibleDriverException: ... wire version 6, but this version of the driver requires at least 7` (wire version 7 is MongoDB 4.0). Upgrade your external MongoDB before upgrading to 6.4. The embedded MongoDB in these images is already 8.0.
+* **`/login` returns a 404** - if you have external monitoring or a custom healthcheck that uses `https://<your-ip-or-hostname>:8043/login`, change it to `https://<your-ip-or-hostname>:8043/api/info`, which works on 6.2 and newer and is what the image's built-in healthcheck and the Helm chart probes now use.
+
+The container mirrors the checks from TP-Link's installer and will refuse to start (without modifying your data) if the first two requirements aren't met; the error message explains what to do. The check relies on the persistent data volume, so it is skipped if `/opt/tplink/EAPController/data` is not persisted (possible when using an external MongoDB). To bypass the check, set `SKIP_6_4_UPGRADE_PRECHECK=true` only if you **REALLY** know what you're doing.
 
 ### Preventing Database Corruption
 
@@ -448,13 +474,14 @@ The example manifests are in the [k8s/manifests](./k8s/manifests/) directory. It
 | `ROOTLESS` | `false` | `true`, `false` | Sets the entrypoint for [rootless mode](#running-rootless) | >= `5.14` |
 | `SHOW_SERVER_LOGS` | `true` | `true`, `false` | Outputs Omada Controller logs to STDOUT at runtime | >= `4.1` |
 | `SHOW_MONGODB_LOGS` | `false` | `true`, `false` | Outputs MongoDB logs to STDOUT at runtime | >= `4.1` |
+| `SKIP_6_4_UPGRADE_PRECHECK` | `false` | `true`, `false` | When set to `true`, skips the 6.4 upgrade precheck; see [6.4 - Upgrade Requirements](#64---upgrade-requirements). Only use this if you **REALLY** know what you're doing | >= `6.4` |
 | `SKIP_USERLAND_KERNEL_CHECK` | `false` | `true`, `false` | When set to `true`, skips the userland/kernel match check for `armv7l` & `arm64` | >= `3.2` |
 | `SSL_CERT_NAME` | `tls.crt` | _any_ | Name of the public cert chain mounted to `/cert`; see [Custom SSL Certificates](#custom-ssl-certificates) | >= `3.2` |
 | `SSL_KEY_NAME` | `tls.key` | _any_ | Name of the private cert mounted to `/cert`; see [Custom SSL Certificates](#custom-ssl-certificates) | >= `3.2` |
 | `TLS_1_11_ENABLED` | `false` | `true`, `false` | Re-enables TLS 1.0 & 1.1 if set to `true` | >= `4.1` |
 | `TZ` | `Etc/UTC` | _\<many\>_ | See [Time Zones](#time-zones) for more detail | >= `3.2` |
-| `UPGRADE_ES_HTTPS_PORT` | `8044` | `1024`-`65535` | Dedicated HTTPS port for upgrades for ES series devices | >= `6.3.0.36` |
-| `UPGRADE_HTTPS_PORT` | `8043` | `1024`-`65535` | Dedicated HTTPS port for upgrades, separate from the main Controller port | >= `6.1` |
+| `UPGRADE_ES_HTTPS_PORT` | `8044` | `1024`-`65535` | Dedicated HTTPS port for upgrades for ES series devices; removed in 6.4 (merged into `UPGRADE_HTTPS_PORT`) - on 6.4, a non-default value is used for `UPGRADE_HTTPS_PORT` if that is not set (when upgrading an existing controller, this also requires `WEB_CONFIG_OVERRIDE=true`) | `6.3.0.36` - `6.3.x` |
+| `UPGRADE_HTTPS_PORT` | `8043` (< `6.4`), `8044` (>= `6.4`) | `1024`-`65535` | Dedicated HTTPS port for upgrades, separate from the main Controller port; only set this if you need to override the default | >= `6.1` |
 | `WEB_CONFIG_OVERRIDE` | `false` | `true`, `false` | Forces the controller to re-read port configuration from `omada.properties` on startup; see [Using non-default ports](#using-non-default-ports) | >= `5.x` |
 
 Documentation on the ports used by the controller can be found in the [TP-Link FAQ](https://support.omadanetworks.com/us/document/13090/).

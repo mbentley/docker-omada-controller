@@ -25,7 +25,8 @@ services:
       - MANAGE_HTTPS_PORT=8043
       - PORTAL_HTTP_PORT=8088
       - PORTAL_HTTPS_PORT=8843
-      - UPGRADE_HTTPS_PORT=8043
+      # UPGRADE_HTTPS_PORT defaults to 8043 (< 6.4) or 8044 (>= 6.4); only set it to override
+      # - UPGRADE_HTTPS_PORT=8043
       - UPGRADE_ES_HTTPS_PORT=8044
       - PORT_APP_DISCOVERY=27001
       - PORT_DISCOVERY=29810

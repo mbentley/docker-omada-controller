@@ -44,9 +44,11 @@ config:
     portalHttp: 8088
     # User captive portal for HTTPS
     portalHttps: 8843
-    # Port for HTTPS device upgrade downloads
-    upgradeHttps: 8043
-    # HTTPS port used for ES series device upgrades (v6.3+)
+    # Port for HTTPS device upgrade downloads; leave empty to use the image default
+    # (< 6.4: 8043, shared with manageHttps; >= 6.4: the value of upgradeEsHttps)
+    upgradeHttps: ""
+    # HTTPS port used for ES series device upgrades (6.3); 6.4+ merged this into the upgrade port
+    # so it is used as the upgrade port when upgradeHttps is empty
     upgradeEsHttps: 8044
     # UDP Port allowing the Omada App to discover the Controller while on the same network
     appDiscovery: 27001
@@ -192,7 +194,7 @@ resources: {}
 # Kubernetes will restart the pod. This is disabled by default, in favor of the readiness probe.
 livenessProbe: {}
   # httpGet:
-  #   path: /login
+  #   path: /api/info
   #   port: manage-https
   #   scheme: HTTPS
 
@@ -200,7 +202,7 @@ livenessProbe: {}
 # the pod will be removed from service endpoints until it passes.
 readinessProbe:
   httpGet:
-    path: /login
+    path: /api/info
     port: manage-https
     scheme: HTTPS
 
@@ -210,7 +212,7 @@ readinessProbe:
 # before it is ready. Once the startup probe succeeds, the liveness and readiness probes take over.
 startupProbe:
   httpGet:
-    path: /login
+    path: /api/info
     port: manage-https
     scheme: HTTPS
   failureThreshold: 30
