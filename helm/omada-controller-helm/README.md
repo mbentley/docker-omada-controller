@@ -14,6 +14,7 @@ The Helm chart releases do not correspond to the controller version so below is 
 
 | Controller Version | Chart Version | Change Notes |
 | ------------------ | ------------- | :------------ |
+| `6.3.0.111`        | `1.7.0`       | Add ability to customize pod- and container-level `securityContext`; user values are merged over the `config.rootless` defaults |
 | `6.3.0.111`        | `1.6.0`       | Support 6.4 (beta): `upgradeHttps` now defaults to empty so the image picks the version-appropriate upgrade port (8043 for < 6.4, `upgradeEsHttps` for >= 6.4); probes use `/api/info` as `/login` returns 404 in 6.4 |
 | `6.3.0.111`        | `1.5.5`       | Fix duplicate port when `upgradeEsHttps` equals a non-default `upgradeHttps`; fix type error when overriding ports with `--set`; document `upgradeEsHttps` and the 8044/TCP and 19810/UDP ports; use `manageHttps` in port-forward notes |
 | `6.3.0.111`        | `1.5.4`       | Update to version 6.3.0.111 |
@@ -180,6 +181,23 @@ The following table lists the configurable parameters of the Omada Controller ch
 | `initContainers` | Init containers to add to the pod | `[]` |
 | `extraEnvVars` | Additional environment variables | `{}` |
 | `extraManifests` | Additional Kubernetes manifests | `[]` |
+| `podSecurityContext` | Pod-level security context entries merged over the defaults applied when `config.rootless` is true (`runAsUser`/`runAsGroup`/`fsGroup` 508, `runAsNonRoot`, `fsGroupChangePolicy: OnRootMismatch`, `seccompProfile: RuntimeDefault`); keys you set win, unset defaults are kept | `{}` |
+| `securityContext` | Container-level security context entries merged over the rootless defaults (`allowPrivilegeEscalation: false`, `capabilities.drop: [ALL]`); also applied when `config.rootless` is false if set | `{}` |
+
+#### OpenShift/OKD example
+
+OpenShift's restricted SCC requires UIDs/GIDs inside its assigned range, so set the rootless user/group IDs explicitly while the remaining rootless defaults (seccompProfile, dropped capabilities, etc.) are preserved:
+
+```yaml
+extraEnvVars:
+  PUID: "1000840000"
+  PGID: "1000840000"
+  ROOTLESS: "true"
+podSecurityContext:
+  runAsUser: 1000840000
+  runAsGroup: 1000840000
+  fsGroup: 1000840000
+```
 
 ## Example Configurations
 

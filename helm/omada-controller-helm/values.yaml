@@ -32,6 +32,19 @@ podAnnotations: {}
 # For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
 podLabels: {}
 
+# Extra/overriding entries for the POD-level security context. Merged over the
+# defaults applied when config.rootless is true (runAsUser: 508, runAsGroup: 508,
+# runAsNonRoot: true, fsGroup: 508, fsGroupChangePolicy: OnRootMismatch,
+# seccompProfile: RuntimeDefault) — keys you set win, everything else is kept.
+# Set these when the cluster (e.g. OpenShift/OKD) assigns different UID/GIDs than 508;
+# pair with PUID/PGID/ROOTLESS via extraEnvVars so entrypoint-unified.sh agrees.
+podSecurityContext: {}
+
+# Extra/overriding entries for the CONTAINER-level security context. Merged over the
+# defaults applied when config.rootless is true (allowPrivilegeEscalation: false,
+# capabilities.drop: [ALL]). Applied even when config.rootless is false if you set keys here.
+securityContext: {}
+
 # Configuration options for the Omada Controller application. See the omada-controller documentation
 # for details on these options.
 config:
