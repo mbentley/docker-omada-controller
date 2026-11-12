@@ -26,18 +26,14 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       serviceAccountName: {{ include "omada-controller.serviceAccountName" . }}
-      {{- if .Values.securityContext }}
+      {{- $podSC := dict }}
+      {{- if .Values.config.rootless }}
+      {{- $podSC = dict "runAsUser" 508 "runAsGroup" 508 "runAsNonRoot" true "fsGroup" 508 "fsGroupChangePolicy" "OnRootMismatch" "seccompProfile" (dict "type" "RuntimeDefault") }}
+      {{- end }}
+      {{- $podSC = mustMergeOverwrite $podSC (.Values.podSecurityContext | default dict) }}
+      {{- with $podSC }}
       securityContext:
-        {{- toYaml .Values.securityContext | nindent 8 }}
-      {{- else if .Values.config.rootless }}
-      securityContext:
-        runAsUser: 508
-        runAsGroup: 508
-        runAsNonRoot: true
-        fsGroup: 508
-        fsGroupChangePolicy: "OnRootMismatch"
-        seccompProfile:
-          type: RuntimeDefault
+        {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- with .Values.initContainers }}
       initContainers:
@@ -45,12 +41,14 @@ spec:
       {{- end }}
       containers:
         - name: {{ .Chart.Name | trimSuffix "-helm" }}
+          {{- $ctrSC := dict }}
           {{- if .Values.config.rootless }}
+          {{- $ctrSC = dict "allowPrivilegeEscalation" false "capabilities" (dict "drop" (list "ALL")) }}
+          {{- end }}
+          {{- $ctrSC = mustMergeOverwrite $ctrSC (.Values.securityContext | default dict) }}
+          {{- with $ctrSC }}
           securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-              - ALL
+            {{- toYaml . | nindent 12 }}
           {{- end }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
