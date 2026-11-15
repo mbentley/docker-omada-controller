@@ -530,50 +530,64 @@ show_java_version() {
   echo -e "INFO: output of 'java -version':\n$(java -version 2>&1)\n"
 }
 
-inject_cloudsdk_jar() {
-  # inject cloudsdk JAR at the beginning of the classpath to ensure correct certificate loads first
+expand_classpath_wildcards() {
+  # expand classpath wildcard entries (e.g. lib/*) into an explicit, sorted list of JARs
+  #   TP-Link's control.sh starts the controller with jsvc, which expands wildcards itself using glob(3), so the JARs
+  #   are always in alphabetical order. the java launcher instead expands wildcards with readdir() in an unspecified
+  #   order which varies by filesystem, so the same image can load JARs in a different order on different hosts. the
+  #   Omada controller depends on that order where JARs contain conflicting classes, resources, or Spring beans, so
+  #   match jsvc's behavior to load them the same way a native install does (fixes #621 and #835)
   # check if we're actually starting the Omada controller (not just running some other command)
   if echo "${EXEC_ARGS[@]}" | grep -q "com.tplink.smb.omada.starter.OmadaLinuxMain"
   then
-    echo "INFO: Omada Controller startup detected; proceeding with cloudsdk JAR injection"
+    echo "INFO: Omada Controller startup detected; expanding classpath wildcards in sorted order (matches jsvc)"
 
-    # find the cloudsdk JAR dynamically (version-agnostic)
-    CLOUDSDK_JAR="$(find /opt/tplink/EAPController/lib -maxdepth 1 -name "cloudsdk-*.jar" | head -n 1)"
+    # parse CMD arguments to find and modify the -cp parameter
+    NEW_ARGS=()
+    NEXT_IS_CP=false
 
-    if [ -n "${CLOUDSDK_JAR}" ]
-    then
-      echo "INFO: Found cloudsdk JAR: ${CLOUDSDK_JAR}"
+    for ARG in "${EXEC_ARGS[@]}"
+    do
+      if [ "${NEXT_IS_CP}" = "true" ]
+      then
+        # this is the classpath value; expand each entry ending in an asterisk the same way jsvc does (dir/* -> dir/*.jar)
+        NEW_CP=()
+        IFS=':' read -r -a CP_ENTRIES <<< "${ARG}"
+        for CP_ENTRY in "${CP_ENTRIES[@]}"
+        do
+          if [ "${CP_ENTRY%\*}" != "${CP_ENTRY}" ]
+          then
+            # glob in a subshell using the C locale so the sort order is byte order regardless of the container's locale
+            CP_JARS="$(export LC_ALL=C; shopt -s nullglob; JARS=("${CP_ENTRY%\*}"*.jar); IFS=':'; echo "${JARS[*]}")"
+            if [ -n "${CP_JARS}" ]
+            then
+              echo "INFO: Expanded classpath entry '${CP_ENTRY}' to $(echo "${CP_JARS}" | tr ':' '\n' | wc -l) JARs in sorted order"
+              NEW_CP+=("${CP_JARS}")
+            else
+              echo "WARN: Classpath entry '${CP_ENTRY}' did not match any JARs; leaving it unchanged"
+              NEW_CP+=("${CP_ENTRY}")
+            fi
+          else
+            NEW_CP+=("${CP_ENTRY}")
+          fi
+        done
+        NEW_ARGS+=("$(IFS=':'; echo "${NEW_CP[*]}")")
+        NEXT_IS_CP=false
+      elif [ "${ARG}" = "-cp" ] || [ "${ARG}" = "-classpath" ]
+      then
+        # found the classpath flag
+        NEW_ARGS+=("${ARG}")
+        NEXT_IS_CP=true
+      else
+        # regular argument
+        NEW_ARGS+=("${ARG}")
+      fi
+    done
 
-      # parse CMD arguments to find and modify the -cp parameter
-      NEW_ARGS=()
-      NEXT_IS_CP=false
-
-      for ARG in "${EXEC_ARGS[@]}"
-      do
-        if [ "${NEXT_IS_CP}" = "true" ]
-        then
-          # this is the classpath value; inject cloudsdk JAR at the beginning
-          NEW_ARGS+=("${CLOUDSDK_JAR}:${ARG}")
-          NEXT_IS_CP=false
-          echo "INFO: Modified classpath to: ${CLOUDSDK_JAR}:${ARG}"
-        elif [ "${ARG}" = "-cp" ] || [ "${ARG}" = "-classpath" ]
-        then
-          # found the classpath flag
-          NEW_ARGS+=("${ARG}")
-          NEXT_IS_CP=true
-        else
-          # regular argument
-          NEW_ARGS+=("${ARG}")
-        fi
-      done
-
-      # replace the global EXEC_ARGS array with modified one
-      EXEC_ARGS=("${NEW_ARGS[@]}")
-    else
-      echo "WARN: cloudsdk JAR not found; classpath injection skipped (cloud connection may fail!)"
-    fi
+    # replace the global EXEC_ARGS array with modified one
+    EXEC_ARGS=("${NEW_ARGS[@]}")
   else
-    echo "INFO: Not starting Omada Controller; skipping cloudsdk JAR injection"
+    echo "INFO: Not starting Omada Controller; skipping classpath wildcard expansion"
   fi
 }
 
@@ -922,7 +936,7 @@ common_setup_and_validation() {
   show_java_version
   warn_autobackup
   patch_java_heap
-  inject_cloudsdk_jar
+  expand_classpath_wildcards
 }
 
 main_root() {
