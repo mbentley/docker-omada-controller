@@ -537,14 +537,17 @@ expand_classpath_wildcards() {
   #   order which varies by filesystem, so the same image can load JARs in a different order on different hosts. the
   #   Omada controller depends on that order where JARs contain conflicting classes, resources, or Spring beans, so
   #   match jsvc's behavior to load them the same way a native install does (fixes #621 and #835)
+  # the expanded classpath is passed using the CLASSPATH environment variable instead of -cp so the hundreds of JAR
+  #   paths don't end up on the java command line (as seen in ps, top, etc.); java uses CLASSPATH when -cp is not set
   # check if we're actually starting the Omada controller (not just running some other command)
   if echo "${EXEC_ARGS[@]}" | grep -q "com.tplink.smb.omada.starter.OmadaLinuxMain"
   then
     echo "INFO: Omada Controller startup detected; expanding classpath wildcards in sorted order (matches jsvc)"
 
-    # parse CMD arguments to find and modify the -cp parameter
+    # parse CMD arguments to find and remove the -cp parameter, keeping its expanded value for CLASSPATH
     NEW_ARGS=()
     NEXT_IS_CP=false
+    EXPANDED_CP=""
 
     for ARG in "${EXEC_ARGS[@]}"
     do
@@ -571,12 +574,12 @@ expand_classpath_wildcards() {
             NEW_CP+=("${CP_ENTRY}")
           fi
         done
-        NEW_ARGS+=("$(IFS=':'; echo "${NEW_CP[*]}")")
+        # if -cp is passed more than once, java uses the last one so do the same
+        EXPANDED_CP="$(IFS=':'; echo "${NEW_CP[*]}")"
         NEXT_IS_CP=false
       elif [ "${ARG}" = "-cp" ] || [ "${ARG}" = "-classpath" ]
       then
-        # found the classpath flag
-        NEW_ARGS+=("${ARG}")
+        # found the classpath flag; drop it from the arguments as the value is passed using CLASSPATH instead
         NEXT_IS_CP=true
       else
         # regular argument
@@ -584,8 +587,15 @@ expand_classpath_wildcards() {
       fi
     done
 
-    # replace the global EXEC_ARGS array with modified one
-    EXEC_ARGS=("${NEW_ARGS[@]}")
+    if [ -n "${EXPANDED_CP}" ]
+    then
+      # replace the global EXEC_ARGS array with modified one and pass the classpath through the environment
+      EXEC_ARGS=("${NEW_ARGS[@]}")
+      export CLASSPATH="${EXPANDED_CP}"
+      echo "INFO: Passing the classpath to java using the CLASSPATH environment variable"
+    else
+      echo "INFO: No -cp argument found; leaving the java command unchanged"
+    fi
   else
     echo "INFO: Not starting Omada Controller; skipping classpath wildcard expansion"
   fi
