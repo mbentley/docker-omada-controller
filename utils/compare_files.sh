@@ -2,9 +2,19 @@
 
 set -e
 
-GA_URL="$(wget -q -O - "https://omada-controller-url.mbentley.net/hooks/omada_ver_to_url?omada-ver=6.3")"
-BETA_URL="$(wget -q -O - "https://omada-controller-url.mbentley.net/hooks/omada_ver_to_url?omada-ver=beta")"
-#BETA_URL="$(wget -q -O - "https://omada-controller-url.mbentley.net/hooks/omada_ver_to_url?omada-ver=beta-6.3.0.36")"
+# either side can be any version the URL hook understands (e.g. "6.3", "beta", "beta-6.3.0.36") so two betas
+#   can be compared with: GA_OMADA_VER=beta-6.4.0.30 BETA_OMADA_VER=beta-6.4.0.33 ./compare_files.sh
+# GA_URL/BETA_URL can also be set directly to skip the URL hook lookup entirely
+GA_OMADA_VER="${GA_OMADA_VER:-6.3}"
+BETA_OMADA_VER="${BETA_OMADA_VER:-beta}"
+GA_URL="${GA_URL:-$(wget -q -O - "https://omada-controller-url.mbentley.net/hooks/omada_ver_to_url?omada-ver=${GA_OMADA_VER}")}"
+BETA_URL="${BETA_URL:-$(wget -q -O - "https://omada-controller-url.mbentley.net/hooks/omada_ver_to_url?omada-ver=${BETA_OMADA_VER}")}"
+
+if [ -z "${GA_URL}" ] || [ -z "${BETA_URL}" ]
+then
+  echo "ERROR: unable to determine download URL(s) (GA_URL='${GA_URL}', BETA_URL='${BETA_URL}')"
+  exit 1
+fi
 
 # CACHE=true will store downloaded files in CACHE_DIR and reuse them on subsequent runs
 CACHE="${CACHE:-true}"
@@ -35,6 +45,25 @@ download_file() {
   fi
 }
 
+# extract a package in the current directory (may be a plain .tar.gz or a .tar.gz wrapped in a .zip)
+extract_package() {
+  local PKG="$1"
+
+  case "${PKG}" in
+    *.zip)
+      unzip -q "${PKG}"
+      tar xzf ./*.tar.gz
+      ;;
+    *.tar.gz)
+      tar xzf "${PKG}"
+      ;;
+    *)
+      echo "ERROR: unknown file extension for package (${PKG})"
+      exit 1
+      ;;
+  esac
+}
+
 # create temp directory
 TEMP_DIR="$(mktemp -d)"
 
@@ -59,27 +88,14 @@ BETA_TAR="$(ls "${TEMP_DIR}/beta")"
 
 echo ""
 
-# extract GA version (.tar.gz)
+# extract both versions
 echo "INFO: extracting GA version..."
 cd "${TEMP_DIR}/ga" || exit 1
-tar xzf "${GA_TAR}"
+extract_package "${GA_TAR}"
 
-# extract BETA version (may be a plain .tar.gz or a .tar.gz wrapped in a .zip)
 echo "INFO: extracting BETA version..."
 cd "${TEMP_DIR}/beta" || exit 1
-case "${BETA_TAR}" in
-  *.zip)
-    unzip -q "${BETA_TAR}"
-    tar xzf *.tar.gz
-    ;;
-  *.tar.gz)
-    tar xzf "${BETA_TAR}"
-    ;;
-  *)
-    echo "ERROR: unknown file extension for BETA_TAR (${BETA_TAR})"
-    exit 1
-    ;;
-esac
+extract_package "${BETA_TAR}"
 cd "${TEMP_DIR}" || exit 1
 
 echo ""
