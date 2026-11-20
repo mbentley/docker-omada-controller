@@ -194,8 +194,8 @@ These are multi-arch tags. For the full tag listings, see the Docker Hub tags ab
 
 | Tag(s) | Major.Minor Release | Current Version |
 | :----- | ------------------- | --------------- |
-| `beta`, `beta-6.4`, `beta-6.4.0.25` | `6.4.x` Beta | `6.4.0.25` |
-| `beta-openj9`, `beta-6.4-openj9`, `beta-6.4.0.25-openj9` | `6.4.x` Beta w/OpenJ9 | `6.4.0.25` |
+| `beta`, `beta-6.4`, `beta-6.4.0.33` | `6.4.x` Beta | `6.4.0.33` |
+| `beta-openj9`, `beta-6.4-openj9`, `beta-6.4.0.33-openj9` | `6.4.x` Beta w/OpenJ9 | `6.4.0.33` |
 
 > [!IMPORTANT]
 > Upgrading to 6.4 has additional requirements; see [6.4 - Upgrade Requirements](#64---upgrade-requirements) before upgrading.
