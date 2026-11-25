@@ -14,6 +14,7 @@ The Helm chart releases do not correspond to the controller version so below is 
 
 | Controller Version | Chart Version | Change Notes |
 | ------------------ | ------------- | :------------ |
+| `6.3.0.112`        | `1.7.1`       | Update to version 6.3.0.112 |
 | `6.3.0.111`        | `1.7.0`       | Add ability to customize pod- and container-level `securityContext`; user values are merged over the `config.rootless` defaults |
 | `6.3.0.111`        | `1.6.0`       | Support 6.4 (beta): `upgradeHttps` now defaults to empty so the image picks the version-appropriate upgrade port (8043 for < 6.4, `upgradeEsHttps` for >= 6.4); probes use `/api/info` as `/login` returns 404 in 6.4 |
 | `6.3.0.111`        | `1.5.5`       | Fix duplicate port when `upgradeEsHttps` equals a non-default `upgradeHttps`; fix type error when overriding ports with `--set`; document `upgradeEsHttps` and the 8044/TCP and 19810/UDP ports; use `manageHttps` in port-forward notes |
